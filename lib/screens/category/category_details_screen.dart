@@ -3,6 +3,8 @@ import '../../models/video_category.dart';
 import '../../services/api_service.dart';
 import '../../utils/colors.dart';
 import '../../widgets/prompt_grid_card.dart';
+import '../../widgets/shimmer_grid_card.dart';
+import 'prompt_details_screen.dart';
 
 class CategoryDetailsScreen extends StatefulWidget {
   final int categoryId;
@@ -82,10 +84,16 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+      return GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.70, // Standard 9:16 layout ratio
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
         ),
+        itemCount: 6, // Show 6 shimmer cards while loading
+        itemBuilder: (context, index) => const ShimmerGridCard(),
       );
     }
 
@@ -140,98 +148,21 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
         final item = _videos[index];
         return PromptGridCard(
           item: item,
-          categoryName: widget.categoryName,
+          categoryName: '',
           isPremium: index < 1, // Mark first item as premium for representation
           onTap: () {
-            _showPromptDetails(context, item);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PromptDetailsScreen(
+                  item: item,
+                  categoryItems: _videos,
+                  categoryName: widget.categoryName,
+                  categoryId: widget.categoryId,
+                ),
+              ),
+            );
           },
-        );
-      },
-    );
-  }
-
-  void _showPromptDetails(BuildContext context, VideoItem item) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.mainBackground,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.categoryName,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'AI Prompt Text:',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBackground,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Text(
-                    item.aiPrompt,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 14,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Prompt copied to clipboard!')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: const Text(
-                    'Use Prompt Template',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-          ),
         );
       },
     );

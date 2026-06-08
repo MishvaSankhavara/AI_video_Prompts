@@ -16,6 +16,9 @@ class AppState extends ChangeNotifier {
   bool _isLoadingCategories = false;
   String _apiError = '';
 
+  // Favorites State
+  final List<VideoItem> _favorites = [];
+
   // Getters
   String get currentPrompt => _currentPrompt;
   bool get isGenerating => _isGenerating;
@@ -25,6 +28,8 @@ class AppState extends ChangeNotifier {
   List<VideoCategory> get categories => _categories;
   bool get isLoadingCategories => _isLoadingCategories;
   String get apiError => _apiError;
+
+  List<VideoItem> get favorites => _favorites;
 
   // Change tab selection
   void changeTab(int index) {
@@ -46,6 +51,20 @@ class AppState extends ChangeNotifier {
       _isLoadingCategories = false;
       notifyListeners();
     }
+  }
+
+  // Favorites Actions
+  void toggleFavorite(VideoItem item) {
+    if (_favorites.any((fav) => fav.id == item.id)) {
+      _favorites.removeWhere((fav) => fav.id == item.id);
+    } else {
+      _favorites.add(item);
+    }
+    notifyListeners();
+  }
+
+  bool isFavorite(VideoItem item) {
+    return _favorites.any((fav) => fav.id == item.id);
   }
 
   // Prompt Actions

@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
-            transitionDuration: const Duration(milliseconds: 800),
+            transitionDuration: const Duration(milliseconds: 300),
           ),
         );
       }
@@ -99,10 +99,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             width: 180,
                             height: 180,
                             decoration: BoxDecoration(
-                              color: AppColors.splashAccent.withOpacity(0.1),
+                              color: AppColors.splashAccent.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(24),
                               border: Border.all(
-                                color: AppColors.splashAccent.withOpacity(0.5),
+                                color: AppColors.splashAccent.withValues(alpha: 0.5),
                                 width: 2,
                               ),
                             ),
@@ -145,7 +145,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     width: 240,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.05), // Darker track for visibility on white
+                      color: Colors.black.withValues(alpha: 0.05), // Darker track for visibility on white
                       borderRadius: BorderRadius.circular(10),
                     ),
                     clipBehavior: Clip.antiAlias,

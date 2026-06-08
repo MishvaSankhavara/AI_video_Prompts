@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'screens/splash_screen.dart';
+import 'screens/splash/splash_screen.dart';
 import 'services/app_state.dart';
 import 'utils/colors.dart';
 import 'utils/strings.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
-import '../utils/strings.dart';
-import 'home_screen.dart';
+import '../../utils/colors.dart';
+import '../../utils/strings.dart';
+import '../home/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -80,7 +80,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: Stack(
             children: [
               // Center Logo and App Name
-              Center(
+              Align(
+                alignment: const Alignment(0.0, -0.25),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: Column(
@@ -118,13 +119,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           );
                         },
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 1),
                       // Text Title
                       const Text(
                         AppStrings.appName,
                         style: TextStyle(
                           color: AppColors.textPrimary,
-                          fontSize: 32,
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
                         ),
@@ -160,7 +161,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                 gradient: const LinearGradient(
                                   colors: [
                                     AppColors.splashAccent,
-                                    Color(0xFF34D399), // Mint green glow
+                                    Color(0xFF5EEAD4), // Lighter mint/teal green
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(10),

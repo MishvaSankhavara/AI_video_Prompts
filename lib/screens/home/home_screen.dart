@@ -6,6 +6,7 @@ import '../../utils/strings.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/custom_bottom_bar.dart';
 import '../../models/video_category.dart';
+import '../category/category_details_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -175,25 +176,10 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // Flatten items across all categories for Home feed
-    final List<Map<String, dynamic>> allItems = [];
-    for (var cat in appState.categories) {
-      // Skip "Latest" category when flattening to prevent duplicates, or use it.
-      // Let's include everything but make sure they are unique by ID
-      for (var item in cat.items) {
-        if (!allItems.any((element) => element['item'].id == item.id)) {
-          allItems.add({
-            'item': item,
-            'categoryName': cat.categoryName,
-          });
-        }
-      }
-    }
-
-    if (allItems.isEmpty) {
+    if (appState.categories.isEmpty) {
       return const Center(
         child: Text(
-          'No templates available.',
+          'No categories available.',
           style: TextStyle(color: AppColors.textMuted),
         ),
       );
@@ -207,20 +193,29 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
-      itemCount: allItems.length,
+      itemCount: appState.categories.length,
       itemBuilder: (context, index) {
-        final itemMap = allItems[index];
-        final item = itemMap['item'];
-        final categoryName = _getThematicCategory(appState, item.id);
-        // Mark first 3 items as premium/Pro for demonstration
-        final isPremium = index < 3;
+        final category = appState.categories[index];
+        if (category.items.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final firstItem = category.items.first;
+        final isPremium = index == 0 || index == 1; // Mark some as premium
 
         return PromptGridCard(
-          item: item,
-          categoryName: categoryName,
+          item: firstItem,
+          categoryName: category.categoryName,
           isPremium: isPremium,
           onTap: () {
-            _showPromptDetails(context, item, categoryName);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryDetailsScreen(
+                  categoryId: category.categoryId,
+                  categoryName: category.categoryName,
+                ),
+              ),
+            );
           },
         );
       },
@@ -271,7 +266,16 @@ class _HomeScreenState extends State<HomeScreen> {
           categoryName: categoryName,
           isPremium: index == 0,
           onTap: () {
-            _showPromptDetails(context, item, categoryName);
+            final categoryId = _getThematicCategoryId(appState, item.id);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryDetailsScreen(
+                  categoryId: categoryId,
+                  categoryName: categoryName,
+                ),
+              ),
+            );
           },
         );
       },
@@ -450,91 +454,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Show bottom sheet with details of prompt
-  void _showPromptDetails(BuildContext context, VideoItem item, String category) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.mainBackground,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'AI Prompt Text:',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBackground,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Text(
-                    item.aiPrompt,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 14,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    // Copy to clipboard or trigger action
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Prompt copied to clipboard!')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: const Text('Use Prompt Template', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   // Helper to resolve specific thematic category name for a given template ID
   String _getThematicCategory(AppState appState, int itemId) {
@@ -546,5 +465,17 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return 'Latest';
+  }
+
+  // Helper to resolve specific thematic category ID for a given template ID
+  int _getThematicCategoryId(AppState appState, int itemId) {
+    for (var cat in appState.categories) {
+      if (cat.categoryName.toLowerCase() != 'latest') {
+        if (cat.items.any((item) => item.id == itemId)) {
+          return cat.categoryId;
+        }
+      }
+    }
+    return 0; // Fallback to Latest
   }
 }

@@ -44,10 +44,14 @@ class VideoItem {
 
   factory VideoItem.fromJson(Map<String, dynamic> json) {
     return VideoItem(
-      id: json['id'] ?? 0,
+      id: json['id'] is int
+          ? json['id'] as int
+          : int.tryParse(json['id']?.toString() ?? '') ?? 0,
       aiPrompt: json['ai_prompt'] ?? '',
       videoThumbnail: json['video_thumbnail'] ?? '',
-      noOfVideo: json['no_of_video'] ?? 1,
+      noOfVideo: json['no_of_video'] is int
+          ? json['no_of_video'] as int
+          : int.tryParse(json['no_of_video']?.toString() ?? '') ?? 1,
       nameChange: json['name_change'] ?? false,
       videoThumbnailFullUrl: json['video_thumbnail_full_url'] ?? '',
       categoryVideo: json['category_video'] ?? '',

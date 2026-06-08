@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
-import '../favorite/favorite_screen.dart';
+import 'favorite_screen.dart';
 import '../settings/settings_screen.dart';
 import 'home_screen.dart';
 

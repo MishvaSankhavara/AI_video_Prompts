@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:video_player/video_player.dart';
 import '../../models/video_category.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/prompt_grid_card.dart';
-import '../../widgets/shimmer_grid_card.dart';
+import '../../widgets/common_video_player.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 
 class PromptDetailsScreen extends StatefulWidget {
@@ -33,49 +32,15 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
   late VideoItem _currentItem;
   final Set<int> _unlockedItemIds = {};
 
-  late VideoPlayerController _videoController;
-  bool _isVideoInitialized = false;
-
   bool get _isUnlocked => _unlockedItemIds.contains(_currentItem.id);
 
   @override
   void initState() {
     super.initState();
     _currentItem = widget.item;
-    _initializeVideoPlayer();
-  }
-
-  void _videoPlayerListener() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _initializeVideoPlayer() {
-    final videoUrl = Uri.encodeFull(_currentItem.categoryVideoFullUrl.trim());
-    _videoController = VideoPlayerController.networkUrl(
-      Uri.parse(videoUrl),
-    );
-    _videoController.addListener(_videoPlayerListener);
-    _videoController.initialize().then((_) {
-      if (mounted) {
-        setState(() {
-          _isVideoInitialized = true;
-        });
-        _videoController.setLooping(true);
-        _videoController.play();
-      }
-    }).catchError((e) {
-      debugPrint("Error loading details video: $e");
-    });
   }
 
   void _changeCurrentItem(VideoItem newItem) {
-    if (_isVideoInitialized) {
-      _videoController.removeListener(_videoPlayerListener);
-      _videoController.dispose();
-      _isVideoInitialized = false;
-    }
     setState(() {
       _currentItem = newItem;
     });
@@ -83,8 +48,6 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
   @override
   void dispose() {
-    _videoController.removeListener(_videoPlayerListener);
-    _videoController.dispose();
     super.dispose();
   }
 
@@ -151,12 +114,30 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
     final appState = Provider.of<AppState>(context);
     final isFav = appState.isFavorite(_currentItem);
 
-    // Filter out the currently selected item from the recommended grid
-    final recommendedItems = widget.categoryItems
-        .where((element) => element.id != _currentItem.id)
+    // Get the category items: if we came from Favorites screen, find the original category of this item
+    List<VideoItem> categoryItems = widget.categoryItems;
+    if (widget.categoryName == 'Favorites') {
+      try {
+        final matchedCategory = appState.categories.firstWhere(
+          (cat) {
+            if (_currentItem.categoryId != null && _currentItem.categoryId != 0) {
+              return cat.categoryId == _currentItem.categoryId;
+            }
+            return cat.items.any((item) => item.id == _currentItem.id);
+          },
+        );
+        categoryItems = matchedCategory.items;
+      } catch (_) {
+        // Fallback to widget.categoryItems if not found
+      }
+    }
+
+    // Filter out the currently selected item and any favorited items from the recommended grid
+    final recommendedItems = categoryItems
+        .where((element) => element.id != _currentItem.id && !appState.isFavorite(element))
         .toList();
 
-    final displayPrompt = _isUnlocked 
+    final displayPrompt = (_isUnlocked || isFav) 
         ? _currentItem.aiPrompt 
         : _getTruncatedPrompt(_currentItem.aiPrompt);
 
@@ -175,7 +156,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: _isUnlocked
+        actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
                   icon: Icon(
@@ -221,75 +202,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   ],
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    if (_isVideoInitialized)
-                      FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox(
-                          width: _videoController.value.size.width > 0 ? _videoController.value.size.width : 9.0,
-                          height: _videoController.value.size.height > 0 ? _videoController.value.size.height : 16.0,
-                          child: VideoPlayer(_videoController),
-                        ),
-                      )
-                    else
-                      Image.network(
-                        Uri.encodeFull(_currentItem.videoThumbnailFullUrl.trim()),
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const ShimmerGridCard();
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: AppColors.cardBackground,
-                            child: const Center(
-                              child: Icon(
-                                Icons.broken_image_outlined,
-                                color: AppColors.textMuted,
-                                size: 48,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    
-                    // Tap overlay to play/pause on details screen
-                    if (_isVideoInitialized)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (_videoController.value.isPlaying) {
-                              _videoController.pause();
-                            } else {
-                              _videoController.play();
-                            }
-                          });
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Center(
-                            child: AnimatedOpacity(
-                              opacity: _videoController.value.isPlaying ? 0.0 : 1.0,
-                              duration: const Duration(milliseconds: 300),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.5),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.play_arrow_rounded,
-                                  color: Colors.white,
-                                  size: 40,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                child: CommonVideoPlayer(
+                  videoUrl: _currentItem.categoryVideoFullUrl,
+                  thumbnailUrl: _currentItem.videoThumbnailFullUrl,
+                  isMuted: false,
+                  isLooping: true,
+                  interactivePlayPause: true,
                 ),
               ),
             ),
@@ -316,7 +234,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             const SizedBox(height: 20),
 
             // 3. Action Button (Unlock or Copy)
-            if (!_isUnlocked)
+            if (!(_isUnlocked || isFav))
               ElevatedButton.icon(
                 onPressed: _showUnlockDialog,
                 icon: const Icon(Icons.lock_rounded, size: 20, color: Colors.white),

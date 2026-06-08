@@ -3,9 +3,9 @@ import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 
 class FeedbackScreen extends StatefulWidget {
-  final int rating;
+  final int? rating;
 
-  const FeedbackScreen({super.key, required this.rating});
+  const FeedbackScreen({super.key, this.rating});
 
   @override
   State<FeedbackScreen> createState() => _FeedbackScreenState();
@@ -79,36 +79,38 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Star display (read-only)
-            Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(5, (index) {
-                      return Icon(
-                        index < widget.rating
-                            ? Icons.star_rounded
-                            : Icons.star_outline_rounded,
-                        color: index < widget.rating
-                            ? const Color(0xFFFFC107)
-                            : AppColors.border,
-                        size: 36,
-                      );
-                    }),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'You rated us ${widget.rating} star${widget.rating == 1 ? '' : 's'}',
-                    style: const TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 14,
+            if (widget.rating != null && widget.rating! > 0) ...[
+              Center(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          index < widget.rating!
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
+                          color: index < widget.rating!
+                              ? const Color(0xFFFFC107)
+                              : AppColors.border,
+                          size: 36,
+                        );
+                      }),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      'You rated us ${widget.rating!} star${widget.rating! == 1 ? '' : 's'}',
+                      style: const TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 32),
+            ],
             const Text(
               'What can we improve?',
               style: TextStyle(

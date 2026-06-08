@@ -11,10 +11,15 @@ class VideoCategory {
 
   factory VideoCategory.fromJson(Map<String, dynamic> json) {
     final list = json['items'] as List? ?? [];
-    final itemList = list.map((i) => VideoItem.fromJson(i)).toList();
+    final categoryId = json['category_id'] ?? 0;
+    final itemList = list.map((i) {
+      final item = VideoItem.fromJson(i);
+      item.categoryId = categoryId;
+      return item;
+    }).toList();
     
     return VideoCategory(
-      categoryId: json['category_id'] ?? 0,
+      categoryId: categoryId,
       categoryName: json['category_name'] ?? '',
       items: itemList,
     );
@@ -30,6 +35,7 @@ class VideoItem {
   final String videoThumbnailFullUrl;
   final String categoryVideo;
   final String categoryVideoFullUrl;
+  int? categoryId;
 
   VideoItem({
     required this.id,
@@ -40,6 +46,7 @@ class VideoItem {
     required this.videoThumbnailFullUrl,
     required this.categoryVideo,
     required this.categoryVideoFullUrl,
+    this.categoryId,
   });
 
   factory VideoItem.fromJson(Map<String, dynamic> json) {
@@ -56,6 +63,9 @@ class VideoItem {
       videoThumbnailFullUrl: json['video_thumbnail_full_url'] ?? '',
       categoryVideo: json['category_video'] ?? '',
       categoryVideoFullUrl: json['category_video_full_url'] ?? '',
+      categoryId: json['category_id'] is int
+          ? json['category_id'] as int
+          : int.tryParse(json['category_id']?.toString() ?? ''),
     );
   }
 }

@@ -133,22 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           context: context,
           icon: Icons.star_outline_rounded,
           title: 'Rate App',
-          onTap: () async {
-            try {
-              final packageInfo = await PackageInfo.fromPlatform();
-              final appUrl = '$_playStoreBaseUrl${packageInfo.packageName}';
-              final uri = Uri.parse(appUrl);
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-              } else {
-                if (context.mounted) {
-                  _showSnackbar(context, 'Could not open rating page.');
-                }
-              }
-            } catch (e) {
-              debugPrint('Error opening rate app: $e');
-            }
-          },
+          onTap: () => _showRatingDialog(context),
         ),
         _buildSettingsItem(
           context: context,
@@ -165,7 +150,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           context: context,
           icon: Icons.feedback_outlined,
           title: 'Feedback',
-          onTap: () => _showRatingDialog(context),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FeedbackScreen()),
+            );
+          },
         ),
         _buildSettingsItem(
           context: context,

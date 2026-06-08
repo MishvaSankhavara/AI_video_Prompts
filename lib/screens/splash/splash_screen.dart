@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../home/home_screen.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -40,12 +42,23 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        // Transition to Home Screen
+        bool hasSeenOnboarding = false;
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+        } catch (e) {
+          debugPrint('Error reading onboarding status: $e');
+        }
+
+        if (!mounted) return;
+
+        Widget targetScreen = hasSeenOnboarding ? const HomeScreen() : const OnboardingScreen();
+
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+            pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
@@ -93,31 +106,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         width: 180,
                         height: 180,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Fallback in case of loading error
-                          return Container(
-                            width: 180,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              color: AppColors.splashAccent.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(
-                                color: AppColors.splashAccent.withValues(alpha: 0.5),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                '{AI}',
-                                style: TextStyle(
-                                  color: AppColors.splashAccent,
-                                  fontSize: 64,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
                       ),
                       const SizedBox(height: 1),
                       // Text Title
@@ -145,7 +133,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     width: 240,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.05), // Darker track for visibility on white
+                      color: Colors.black.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     clipBehavior: Clip.antiAlias,
@@ -161,7 +149,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                 gradient: const LinearGradient(
                                   colors: [
                                     AppColors.splashAccent,
-                                    Color(0xFF5EEAD4), // Lighter mint/teal green
+                                    Color(0xFF5EEAD4),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(10),

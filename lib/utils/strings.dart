@@ -28,4 +28,16 @@ class AppStrings {
   static const String feedbackSubmit = 'Send Feedback';
   static const String feedbackThankYou = 'Thank you for your feedback!';
   static const String feedbackEmpty = 'Please write your feedback before submitting.';
+
+  // Onboarding Screen strings
+  static const String onboardingSkip = 'Skip';
+  static const String onboardingContinue = 'Continue';
+  static const String onboardingGetStarted = 'Get Started';
+  static const String onboardingProBadge = 'PRO';
+  static const String onboardingTitle1 = 'Discover AI Video Magic';
+  static const String onboardingSubtitle1 = 'Explore a curated library of high-quality, pre-tested prompts for cutting-edge AI video generators.';
+  static const String onboardingTitle2 = 'One-Tap Copy & Go';
+  static const String onboardingSubtitle2 = 'Tap to copy elite prompts to your clipboard. Perfect for Sora, Runway, Kling, Luma, and more.';
+  static const String onboardingTitle3 = 'Unlock Premium Prompts';
+  static const String onboardingSubtitle3 = 'Get access to exclusive cinematic prompts, high-resolution guides, and secret tags to elevate your video generation.';
 }

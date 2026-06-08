@@ -41,6 +41,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
 
     try {
       final videos = await _apiService.fetchVideosByCategoryId(widget.categoryId);
+      for (var v in videos) {
+        v.categoryId = widget.categoryId;
+      }
       if (mounted) {
         setState(() {
           _videos = videos;

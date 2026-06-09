@@ -92,8 +92,8 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.70, // Standard 9:16 layout ratio
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
         ),
         itemCount: 6, // Show 6 shimmer cards while loading
         itemBuilder: (context, index) => const ShimmerGridCard(),
@@ -143,8 +143,8 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Standard 9:16 layout ratio
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: _videos.length,
       itemBuilder: (context, index) {

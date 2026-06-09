@@ -161,10 +161,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           context: context,
           icon: Icons.info_outline_rounded,
           title: 'App Version',
-          subtitle: _appVersion,
-          onTap: () {
-            _showSnackbar(context, 'You are on the latest version!');
-          },
+          trailing: Text(
+            _appVersion,
+            style: const TextStyle(
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
         ),
       ],
     );
@@ -175,7 +179,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required IconData icon,
     required String title,
     String? subtitle,
-    required VoidCallback onTap,
+    Widget? trailing,
+    VoidCallback? onTap,
   }) {
     return Card(
       elevation: 0,
@@ -192,7 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(color: AppColors.textMuted)) : null,
-        trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
+        trailing: trailing ?? const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
         onTap: onTap,
       ),
     );

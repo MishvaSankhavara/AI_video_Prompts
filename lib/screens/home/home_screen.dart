@@ -24,6 +24,19 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  String _getAppBarTitle(int tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        return AppStrings.homeTitle;
+      case 1:
+        return AppStrings.tabFavorite;
+      case 2:
+        return AppStrings.tabSettings;
+      default:
+        return AppStrings.homeTitle;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
@@ -31,9 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
       appBar: AppBar(
-        title: const Text(
-          AppStrings.homeTitle,
-          style: TextStyle(
+        title: Text(
+          _getAppBarTitle(appState.currentTabIndex),
+          style: const TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -62,8 +75,8 @@ class HomeTabBody extends StatelessWidget {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.70, // Matches 9:16 layout ratio
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
         ),
         itemCount: 6,
         itemBuilder: (context, index) => const ShimmerGridCard(),
@@ -113,8 +126,8 @@ class HomeTabBody extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: appState.categories.length,
       itemBuilder: (context, index) {

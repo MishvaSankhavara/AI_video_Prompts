@@ -40,4 +40,27 @@ class AppStrings {
   static const String onboardingSubtitle2 = 'Tap to copy elite prompts to your clipboard. Perfect for Sora, Runway, Kling, Luma, and more.';
   static const String onboardingTitle3 = 'Unlock Premium Prompts';
   static const String onboardingSubtitle3 = 'Get access to exclusive cinematic prompts, high-resolution guides, and secret tags to elevate your video generation.';
+
+  // Welcome Back Screen strings
+  static const String welcomeBackTitle = 'Welcome Back';
+
+  // Screen/Tab titles
+  static const String tabFavorite = 'Favorite';
+  static const String tabSettings = 'Settings';
+
+  // Prompt Guidance strings
+  static const String guidanceHeaderTitle = 'How to Use Prompt';
+  static const String guidanceHeaderSubtitle = 'Follow these simple guidelines';
+  
+  static const String guidanceStep1Title = 'Copy the Prompt';
+  static const String guidanceStep1Desc = 'Press the "Copy Prompt" button above to save the full template to your clipboard.';
+  
+  static const String guidanceStep2Title = 'Choose AI Video Tool';
+  static const String guidanceStep2Desc = 'Open your favorite AI generator—such as Sora, Runway Gen-2, Kling, or ChatGPT.';
+  
+  static const String guidanceStep3Title = 'Paste & Create';
+  static const String guidanceStep3Desc = 'Paste the prompt into the engine, tweak any parameters, and generate your masterwork.';
+  
+  static const String guidanceTipTitle = 'Creator Tip';
+  static const String guidanceTipDesc = 'Customize the prompt by replacing names, actions, or lighting style to make it unique!';
 }

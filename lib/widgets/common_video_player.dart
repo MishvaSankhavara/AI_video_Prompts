@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../utils/colors.dart';
 import 'shimmer_grid_card.dart';
+import 'video_loading_indicator.dart';
 
 class CommonVideoPlayer extends StatefulWidget {
   final String videoUrl;
@@ -88,8 +89,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showLoading = !_isInitialized || (_controller != null && _controller!.value.isBuffering);
+
+    Widget content;
     if (_isInitialized && _controller != null) {
-      return Stack(
+      content = Stack(
         fit: StackFit.expand,
         children: [
           FittedBox(
@@ -136,7 +140,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         ],
       );
     } else {
-      return Image.network(
+      content = Image.network(
         Uri.encodeFull(widget.thumbnailUrl.trim()),
         fit: widget.fit,
         loadingBuilder: (context, child, loadingProgress) {
@@ -157,5 +161,21 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         },
       );
     }
+
+    if (showLoading) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          content,
+          const Positioned(
+            left: 0,
+            top: 0,
+            child: VideoLoadingIndicator(),
+          ),
+        ],
+      );
+    }
+
+    return content;
   }
 }

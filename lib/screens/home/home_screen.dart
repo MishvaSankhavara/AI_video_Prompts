@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
@@ -133,12 +134,12 @@ class HomeTabBody extends StatelessWidget {
 
     if (appState.isLoadingCategories) {
       return GridView.builder(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 80),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 1.5.h, bottom: 10.h),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.70, // Matches 9:16 layout ratio
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+          crossAxisSpacing: 2.5.w,
+          mainAxisSpacing: 2.5.w,
         ),
         itemCount: 6,
         itemBuilder: (context, index) => const ShimmerGridCard(),
@@ -148,18 +149,18 @@ class HomeTabBody extends StatelessWidget {
     if (appState.apiError.isNotEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(6.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 64, color: AppColors.textMuted),
-              const SizedBox(height: 16),
+              Icon(Icons.cloud_off_rounded, size: 16.w, color: AppColors.textMuted),
+              SizedBox(height: 2.h),
               Text(
                 appState.apiError,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.getStyle(color: AppColors.textPrimary, fontSize: 16),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 3.h),
               ElevatedButton(
                 onPressed: () => appState.loadCategories(),
                 style: ElevatedButton.styleFrom(
@@ -184,12 +185,12 @@ class HomeTabBody extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 80),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 1.5.h, bottom: 10.h),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 2.5.w,
+        mainAxisSpacing: 2.5.w,
       ),
       itemCount: appState.categories.length,
       itemBuilder: (context, index) {

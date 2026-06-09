@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -78,6 +79,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final logoSize = isLandscape ? 25.h : 45.w;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -98,41 +102,44 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 alignment: const Alignment(0.0, -0.25),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Light-optimized Image Logo from assets
-                      Image.asset(
-                        'assets/images/logo_light.png',
-                        width: 180,
-                        height: 180,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 1),
-                      // Text Title
-                      Text(
-                        AppStrings.appName,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Light-optimized Image Logo from assets
+                        Image.asset(
+                          'assets/images/logo_light.png',
+                          width: logoSize,
+                          height: logoSize,
+                          fit: BoxFit.contain,
                         ),
-                      ),
-                    ],
+                        SizedBox(height: isLandscape ? 1.h : 2.h),
+                        // Text Title
+                        Text(
+                          AppStrings.appName,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.getStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               
               // Bottom Progress Bar
               Positioned(
-                bottom: 100,
+                bottom: isLandscape ? 8.h : 12.h,
                 left: 0,
                 right: 0,
                 child: Center(
                   child: Container(
-                    width: 240,
-                    height: 6,
+                    width: 60.w,
+                    height: 0.8.h,
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),

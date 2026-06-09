@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -71,82 +72,99 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final logoSize = isLandscape ? 25.h : 45.w;
+
     return Scaffold(
-      backgroundColor: Colors.white, // Pure black background as in screenshot
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Center Logo and "Welcome Back" text
-            Align(
-              alignment: const Alignment(0.0, -0.2),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Dark-optimized image logo with blue/cyan sparkles
-                    Image.asset(
-                      'assets/images/logo.png',
-                      width: 180,
-                      height: 180,
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(height: 24),
-                    // "Welcome Back" text
-                    Text(
-                      AppStrings.welcomeBackTitle,
-                      style: AppTextStyles.getStyle(
-                        color: Colors.black,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            // Bottom Progress Bar
-            Positioned(
-              bottom: 120,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  width: 250,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: Colors.white10, // Dark grey track
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: AnimatedBuilder(
-                    animation: _progressAnimation,
-                    builder: (context, child) {
-                      return Align(
-                        alignment: Alignment.centerLeft,
-                        child: FractionallySizedBox(
-                          widthFactor: _progressAnimation.value,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  AppColors.primary,
-                                  Color(0xFF5EEAD4),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.splashBackgroundStart,
+              AppColors.splashBackgroundEnd,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Center Logo and "Welcome Back" text
+              Align(
+                alignment: const Alignment(0.0, -0.2),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Light-optimized image logo matching splash screen
+                        Image.asset(
+                          'assets/images/logo_light.png',
+                          width: logoSize,
+                          height: logoSize,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(height: isLandscape ? 1.h : 2.5.h),
+                        // "Welcome Back" text styled cleanly and responsively
+                        Text(
+                          AppStrings.welcomeBackTitle,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.getStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                      );
-                    },
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              
+              // Bottom Progress Bar
+              Positioned(
+                bottom: isLandscape ? 8.h : 15.h,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    width: 60.w,
+                    height: 0.8.h,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.05), // Light grey track matching splash screen
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: AnimatedBuilder(
+                      animation: _progressAnimation,
+                      builder: (context, child) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: FractionallySizedBox(
+                            widthFactor: _progressAnimation.value,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    AppColors.primary,
+                                    Color(0xFF5EEAD4),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

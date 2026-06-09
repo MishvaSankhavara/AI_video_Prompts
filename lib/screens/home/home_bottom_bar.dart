@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
@@ -28,6 +29,7 @@ class CustomBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
     final activeIndex = appState.currentTabIndex;
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Container(
       decoration: BoxDecoration(
@@ -43,8 +45,11 @@ class CustomBottomBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Container(
-          height: 65,
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+          height: isLandscape ? 56.0 : 66.0,
+          padding: EdgeInsets.symmetric(
+            horizontal: isLandscape ? 8.w : 5.w,
+            vertical: isLandscape ? 4.0 : 6.0,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -54,6 +59,7 @@ class CustomBottomBar extends StatelessWidget {
                 isActive: activeIndex == 0,
                 activeColor: const Color(0xFF0D9488), // Vibrant Teal
                 onTap: () => appState.changeTab(0),
+                isLandscape: isLandscape,
               ),
               _buildTabItem(
                 icon: Icons.favorite_rounded,
@@ -61,6 +67,7 @@ class CustomBottomBar extends StatelessWidget {
                 isActive: activeIndex == 1,
                 activeColor: const Color(0xFF232F72), // Vibrant Rose/Red
                 onTap: () => appState.changeTab(1),
+                isLandscape: isLandscape,
               ),
               _buildTabItem(
                 icon: Icons.settings_rounded,
@@ -68,6 +75,7 @@ class CustomBottomBar extends StatelessWidget {
                 isActive: activeIndex == 2,
                 activeColor: const Color(0xFF4F46E5), // Vibrant Indigo
                 onTap: () => appState.changeTab(2),
+                isLandscape: isLandscape,
               ),
             ],
           ),
@@ -82,6 +90,7 @@ class CustomBottomBar extends StatelessWidget {
     required bool isActive,
     required Color activeColor,
     required VoidCallback onTap,
+    required bool isLandscape,
   }) {
     final Color inactiveColor = AppColors.textMuted.withValues(alpha: 0.6);
 
@@ -94,8 +103,8 @@ class CustomBottomBar extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         padding: EdgeInsets.symmetric(
-          horizontal: isActive ? 16.0 : 12.0,
-          vertical: 8.0,
+          horizontal: isActive ? 12.0 : 10.0,
+          vertical: isLandscape ? 6.0 : 8.0,
         ),
         decoration: BoxDecoration(
           color: isActive ? activeColor.withValues(alpha: 0.12) : Colors.transparent,
@@ -107,7 +116,7 @@ class CustomBottomBar extends StatelessWidget {
             Icon(
               icon,
               color: isActive ? activeColor : inactiveColor,
-              size: 22,
+              size: isLandscape ? 20.0 : 22.0,
             ),
             // Animate label width and display state smoothly
             AnimatedSize(
@@ -117,7 +126,7 @@ class CustomBottomBar extends StatelessWidget {
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6.0),
                         Text(
                           label,
                           style: AppTextStyles.getStyle(

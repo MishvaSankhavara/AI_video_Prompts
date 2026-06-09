@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/splash/welcome_back_screen.dart';
 import 'services/app_state.dart';
@@ -80,23 +81,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: AppColors.primary,
-        scaffoldBackgroundColor: AppColors.mainBackground,
-        colorScheme: const ColorScheme.light(
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-          surface: AppColors.cardBackground,
-        ),
-        textTheme: AppTextStyles.getTextTheme(ThemeData.light().textTheme),
-        useMaterial3: true,
-      ),
-      home: const SplashScreen(),
+    return ResponsiveSizer(
+      builder: (context, orientation, screenType) {
+        return MaterialApp(
+          title: AppStrings.appName,
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primaryColor: AppColors.primary,
+            scaffoldBackgroundColor: AppColors.mainBackground,
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              secondary: AppColors.secondary,
+              surface: AppColors.cardBackground,
+            ),
+            textTheme: AppTextStyles.getTextTheme(ThemeData.light().textTheme),
+            useMaterial3: true,
+          ),
+          home: const SplashScreen(),
+        );
+      },
     );
   }
 }

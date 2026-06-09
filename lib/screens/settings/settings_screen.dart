@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../utils/strings.dart';
@@ -104,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.all(6.w),
       children: [
         _buildSettingsItem(
           context: context,
@@ -186,8 +187,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Card(
       elevation: 0,
       color: AppColors.cardBackground,
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: EdgeInsets.only(bottom: 1.5.h),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary),
         title: Text(

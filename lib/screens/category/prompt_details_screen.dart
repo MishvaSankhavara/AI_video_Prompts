@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../models/video_category.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
@@ -108,13 +109,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
   Widget _buildPromptGuidance() {
     return Container(
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(5.5.w),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(6.w),
         border: Border.all(
           color: AppColors.border.withValues(alpha: 0.8),
-          width: 1.5,
+          width: 0.3.w,
         ),
         boxShadow: [
           BoxShadow(
@@ -131,18 +132,18 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(2.w),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(3.w),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.auto_awesome_rounded,
                   color: AppColors.primary,
-                  size: 24,
+                  size: 6.w,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 3.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +157,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                         letterSpacing: 0.2,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    SizedBox(height: 0.2.h),
                     Text(
                       AppStrings.guidanceHeaderSubtitle,
                       style: AppTextStyles.getStyle(
@@ -169,9 +170,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 2.h),
           Divider(color: AppColors.border.withValues(alpha: 0.6), height: 1, thickness: 1.2),
-          const SizedBox(height: 15),
+          SizedBox(height: 2.h),
 
           // Step 1: Copy
           _buildStepRow(
@@ -180,7 +181,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             description: AppStrings.guidanceStep1Desc,
             gradientColors: [const Color(0xFF0D9488), const Color(0xFF14B8A6)], // Vibrant Teal
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 2.h),
 
           // Step 2: Choose AI tool
           _buildStepRow(
@@ -189,7 +190,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             description: AppStrings.guidanceStep2Desc,
             gradientColors: [const Color(0xFF4F46E5), const Color(0xFF6366F1)], // Vibrant Indigo
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 2.h),
 
           // Step 3: Paste and generate
           _buildStepRow(
@@ -198,11 +199,11 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             description: AppStrings.guidanceStep3Desc,
             gradientColors: [const Color(0xFF8B5CF6), const Color(0xFFA78BFA)], // Vibrant Purple
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 2.h),
 
           // Beautiful Pro Tip Box
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -212,10 +213,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4.w),
               border: Border.all(
                 color: AppColors.primary.withValues(alpha: 0.15),
-                width: 1,
+                width: 0.25.w,
               ),
             ),
             child: Row(
@@ -223,10 +224,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               children: [
                 Icon(
                   Icons.tips_and_updates_rounded,
-                  color: Color(0xFFF59E0B), // Warm Gold color
-                  size: 22,
+                  color: const Color(0xFFF59E0B), // Warm Gold color
+                  size: 5.5.w,
                 ),
-                SizedBox(width: 12),
+                SizedBox(width: 3.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +240,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 0.5.h),
                       Text(
                         AppStrings.guidanceTipDesc,
                         style: AppTextStyles.getStyle(
@@ -271,8 +272,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
       children: [
         // Number badge with a glowing shadow
         Container(
-          width: 28,
-          height: 28,
+          width: 7.w,
+          height: 7.w,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: gradientColors,
@@ -299,7 +300,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             ),
           ),
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 3.5.w),
         // Step details
         Expanded(
           child: Column(
@@ -313,7 +314,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 0.5.h),
               Text(
                 description,
                 style: AppTextStyles.getStyle(
@@ -388,17 +389,17 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             : null,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 1. Large Vertical Preview Image/Video Player (9:16 layout)
             Center(
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: 380,
+                width: 85.w,
+                height: 42.h,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4.w),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.08),
@@ -417,15 +418,15 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 3.h),
 
             // 2. Prompt Text Card Description
             Container(
-              padding: const EdgeInsets.all(18),
+              padding: EdgeInsets.all(4.5.w),
               decoration: BoxDecoration(
                 color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border, width: 1),
+                borderRadius: BorderRadius.circular(3.w),
+                border: Border.all(color: AppColors.border, width: 0.25.w),
               ),
               child: Text(
                 displayPrompt,
@@ -437,13 +438,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 2.5.h),
 
             // 3. Action Button (Unlock or Copy)
             if (!(_isUnlocked || isFav))
               ElevatedButton.icon(
                 onPressed: _showUnlockDialog,
-                icon: const Icon(Icons.lock_rounded, size: 20, color: Colors.white),
+                icon: Icon(Icons.lock_rounded, size: 5.w, color: Colors.white),
                 label: Text(
                   'Unlock Prompt',
                   style: AppTextStyles.getStyle(
@@ -454,9 +455,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(3.w),
                   ),
                   elevation: 0,
                 ),
@@ -472,7 +473,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                     ),
                   );
                 },
-                icon: const Icon(Icons.content_copy_rounded, size: 20, color: Colors.white),
+                icon: Icon(Icons.content_copy_rounded, size: 5.w, color: Colors.white),
                 label: Text(
                   'Copy Prompt',
                   style: AppTextStyles.getStyle(
@@ -483,19 +484,19 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(3.w),
                   ),
                   elevation: 0,
                 ),
               ),
             if (_isUnlocked || isFav) ...[
-              const SizedBox(height: 24),
+              SizedBox(height: 3.h),
               _buildPromptGuidance(),
-              const SizedBox(height: 16),
+              SizedBox(height: 2.h),
             ] else ...[
-              const SizedBox(height: 32),
+              SizedBox(height: 4.h),
             ],
 
             // 4. Recommended Section Header
@@ -559,12 +560,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 1.h),
 
             // 5. Recommended Grids
             if (recommendedItems.isEmpty)
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.0),
+                padding: EdgeInsets.symmetric(vertical: 3.h),
                 child: Center(
                   child: Text(
                     'No recommendations available.',
@@ -576,11 +577,11 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.70,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 2.5.w,
+                  mainAxisSpacing: 2.5.w,
                 ),
                 itemCount: recommendedItems.length,
                 itemBuilder: (context, index) {
@@ -596,7 +597,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   );
                 },
               ),
-            const SizedBox(height: 40),
+            SizedBox(height: 5.h),
           ],
         ),
       ),

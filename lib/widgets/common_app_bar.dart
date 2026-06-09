@@ -28,7 +28,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: AppTextStyles.getStyle(
           color: AppColors.textPrimary,
           fontWeight: FontWeight.bold,
-          fontSize: 22,
+          fontSize: 18,
         ),
       ),
       leading: showBackButton

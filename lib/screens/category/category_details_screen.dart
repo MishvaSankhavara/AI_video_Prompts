@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../models/video_category.dart';
 import '../../services/api_service.dart';
 import '../../utils/colors.dart';
@@ -76,12 +77,12 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   Widget _buildBody() {
     if (_isLoading) {
       return GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        padding: EdgeInsets.all(4.w),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 0.70, // Standard 9:16 layout ratio
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+          crossAxisSpacing: 2.5.w,
+          mainAxisSpacing: 2.5.w,
         ),
         itemCount: 6, // Show 6 shimmer cards while loading
         itemBuilder: (context, index) => const ShimmerGridCard(),
@@ -91,18 +92,18 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     if (_errorMessage.isNotEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(6.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 64, color: AppColors.textMuted),
-              const SizedBox(height: 16),
+              Icon(Icons.cloud_off_rounded, size: 16.w, color: AppColors.textMuted),
+              SizedBox(height: 2.h),
               Text(
                 _errorMessage,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.getStyle(color: AppColors.textPrimary, fontSize: 16),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 3.h),
               ElevatedButton(
                 onPressed: _fetchCategoryVideos,
                 style: ElevatedButton.styleFrom(
@@ -127,12 +128,12 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      padding: EdgeInsets.all(4.w),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Standard 9:16 layout ratio
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 2.5.w,
+        mainAxisSpacing: 2.5.w,
       ),
       itemCount: _videos.length,
       itemBuilder: (context, index) {

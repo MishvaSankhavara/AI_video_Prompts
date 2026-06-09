@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 import '../utils/colors.dart';
 import 'shimmer_grid_card.dart';
@@ -125,15 +126,15 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                     opacity: _controller!.value.isPlaying ? 0.0 : 1.0,
                     duration: const Duration(milliseconds: 300),
                     child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
+                      padding: EdgeInsets.all(4.w),
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.play_arrow_rounded,
                         color: Colors.white,
-                        size: 40,
+                        size: 10.w,
                       ),
                     ),
                   ),
@@ -153,11 +154,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         errorBuilder: (context, error, stackTrace) {
           return Container(
             color: AppColors.cardBackground,
-            child: const Center(
+            child: Center(
               child: Icon(
                 Icons.broken_image_outlined,
                 color: AppColors.textMuted,
-                size: 48,
+                size: 12.w,
               ),
             ),
           );

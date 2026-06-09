@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../utils/text_app.dart';
 
 class VideoLoadingIndicator extends StatelessWidget {
@@ -7,14 +8,14 @@ class VideoLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 0.75.h),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.45),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(22),
-          bottomRight: Radius.circular(15),
-          topRight: Radius.circular(2),
-          bottomLeft: Radius.circular(2),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(5.5.w),
+          bottomRight: Radius.circular(3.75.w),
+          topRight: const Radius.circular(2),
+          bottomLeft: const Radius.circular(2),
         ),
       ),
       child: Text(

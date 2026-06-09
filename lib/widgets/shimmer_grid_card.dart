@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import '../utils/colors.dart';
 import '../utils/text_app.dart';
 
@@ -53,15 +54,15 @@ class _ShimmerGridCardState extends State<ShimmerGridCard>
                   ).createShader(bounds);
                 },
                 child: child,
-              );
+               );
             },
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(6.w),
                 border: Border.all(
                   color: AppColors.border.withValues(alpha: 0.5),
-                  width: 1,
+                  width: 0.25.w,
                 ),
               ),
             ),
@@ -70,7 +71,7 @@ class _ShimmerGridCardState extends State<ShimmerGridCard>
         // Static un-shimmered bold text overlay on top for perfect legibility
         Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
             child: Text(
               'AI Video Prompts',
               textAlign: TextAlign.center,

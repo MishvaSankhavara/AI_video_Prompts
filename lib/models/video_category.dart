@@ -59,7 +59,11 @@ class VideoItem {
       noOfVideo: json['no_of_video'] is int
           ? json['no_of_video'] as int
           : int.tryParse(json['no_of_video']?.toString() ?? '') ?? 1,
-      nameChange: json['name_change'] ?? false,
+      nameChange: json['name_change'] is bool
+          ? json['name_change'] as bool
+          : (json['name_change'] == 1 ||
+              json['name_change']?.toString() == '1' ||
+              json['name_change']?.toString() == 'true'),
       videoThumbnailFullUrl: json['video_thumbnail_full_url'] ?? '',
       categoryVideo: json['category_video'] ?? '',
       categoryVideoFullUrl: json['category_video_full_url'] ?? '',

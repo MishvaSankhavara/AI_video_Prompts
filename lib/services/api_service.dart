@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/video_category.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://aiphotomaker.aivibecode.in/api/v1/ngd';
-  static const String authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9fe5re84gf56gre48d1re4dsg15er48dgf1re56re21reg65';
+  static const String baseUrl = 'https://ai-prompt.aivibecode.in/api/v1/ngd';
+  static const String authToken = r'x.NF#f25G),Ew55J8HnwsXGQ}2j%N4F5[.DHyJkG4R$HP@;2LOF5kz!Ovex,X.X6)dr6s3fniU}o@3)zFVyNN$2Akx)2=t+qlEbk';
 
   final http.Client _client;
 
@@ -39,7 +39,7 @@ class ApiService {
   }
 
   Future<List<VideoItem>> fetchVideosByCategoryId(int categoryId) async {
-    final url = Uri.parse('https://aiphotomaker.3ftechnolabs.com/api/v1/ngd/getAiVideoByCategoryId');
+    final url = Uri.parse('$baseUrl/getAiVideoByCategoryId');
     
     try {
       final response = await _client.post(

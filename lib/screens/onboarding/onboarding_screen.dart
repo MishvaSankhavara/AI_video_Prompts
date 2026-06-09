@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
+import '../../utils/text_app.dart';
 import '../home/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -91,9 +92,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           foregroundColor: AppColors.textMuted,
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
-                        child: const Text(
+                        child: Text(
                           AppStrings.onboardingSkip,
-                          style: TextStyle(
+                          style: AppTextStyles.getStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -138,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               Text(
                                 page.title,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
+                                style: AppTextStyles.getStyle(
                                   color: AppColors.textPrimary,
                                   fontSize: 26,
                                   fontWeight: FontWeight.bold,
@@ -149,7 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               Text(
                                 page.subtitle,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
+                                style: AppTextStyles.getStyle(
                                   color: AppColors.textMuted,
                                   fontSize: 15,
                                   height: 1.5,
@@ -224,7 +225,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Text(
                           _currentPage == 2 ? AppStrings.onboardingGetStarted : AppStrings.onboardingContinue,
                           key: ValueKey<int>(_currentPage),
-                          style: const TextStyle(
+                          style: AppTextStyles.getStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -657,15 +658,15 @@ class OnboardingVisualThree extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 14),
-                  SizedBox(width: 4),
+                  const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 14),
+                  const SizedBox(width: 4),
                   Text(
                     AppStrings.onboardingProBadge,
-                    style: TextStyle(
-                      color: Color(0xFFD97706),
+                    style: AppTextStyles.getStyle(
+                      color: const Color(0xFFD97706),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),

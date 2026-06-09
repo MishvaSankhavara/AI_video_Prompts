@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/shimmer_grid_card.dart';
+import '../../widgets/dialog/custom_app_dialog.dart';
 import '../category/category_details_screen.dart';
+import '../../widgets/common_app_bar.dart';
+import '../../utils/text_app.dart';
 import 'home_bottom_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,8 +25,74 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       Provider.of<AppState>(context, listen: false).loadCategories();
+      _checkForUpdates();
     });
+  }
+
+  Future<void> _checkForUpdates() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersion = packageInfo.version;
+      
+      // Let's assume the latest version is '1.1.0' (or a remote value).
+      // Since local version will usually be '1.0.0' or '1.0.0+1', this will trigger the dialog.
+      // This is perfect for demonstration and testing of update flow!
+      const String latestVersion = '1.1.0';
+      
+      if (_isVersionOlder(currentVersion, latestVersion)) {
+        if (!mounted) return;
+        _showUpdateDialog();
+      }
+    } catch (e) {
+      debugPrint('Error checking for app updates: $e');
+    }
+  }
+
+  bool _isVersionOlder(String current, String latest) {
+    try {
+      final currentParts = current.split('.').map(int.parse).toList();
+      final latestParts = latest.split('.').map(int.parse).toList();
+      
+      for (int i = 0; i < latestParts.length; i++) {
+        final currentVal = i < currentParts.length ? currentParts[i] : 0;
+        final latestVal = latestParts[i];
+        if (latestVal > currentVal) return true;
+        if (latestVal < currentVal) return false;
+      }
+    } catch (_) {
+      return current != latest;
+    }
+    return false;
+  }
+
+  void _showUpdateDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => CustomAppDialog(
+        title: AppStrings.updateDialogTitle,
+        subtitle: AppStrings.updateDialogSubtitle,
+        icon: Icons.system_update_rounded,
+        primaryButtonText: AppStrings.updateDialogPrimary,
+        secondaryButtonText: AppStrings.updateDialogSecondary,
+        showCloseButton: true,
+        onPrimaryPressed: () async {
+          Navigator.pop(context);
+          try {
+            final packageInfo = await PackageInfo.fromPlatform();
+            final uri = Uri.parse('${AppStrings.playStoreBaseUrl}${packageInfo.packageName}');
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          } catch (e) {
+            debugPrint('Error launching play store: $e');
+          }
+        },
+        onSecondaryPressed: () => Navigator.pop(context),
+      ),
+    );
   }
 
   String _getAppBarTitle(int tabIndex) {
@@ -43,18 +114,9 @@ class _HomeScreenState extends State<HomeScreen> {
     
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: AppBar(
-        title: Text(
-          _getAppBarTitle(appState.currentTabIndex),
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+      appBar: CommonAppBar(
+        title: _getAppBarTitle(appState.currentTabIndex),
+        showBackButton: false,
       ),
       body: CustomBottomBar.getBody(appState),
       bottomNavigationBar: const CustomBottomBar(),
@@ -95,7 +157,7 @@ class HomeTabBody extends StatelessWidget {
               Text(
                 appState.apiError,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.textPrimary, fontSize: 16),
+                style: AppTextStyles.getStyle(color: AppColors.textPrimary, fontSize: 16),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -113,10 +175,10 @@ class HomeTabBody extends StatelessWidget {
     }
 
     if (appState.categories.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No categories available.',
-          style: TextStyle(color: AppColors.textMuted),
+          style: AppTextStyles.getStyle(color: AppColors.textMuted),
         ),
       );
     }

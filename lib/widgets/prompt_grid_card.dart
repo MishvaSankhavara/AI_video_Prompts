@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/video_category.dart';
 import '../utils/colors.dart';
+import '../utils/text_app.dart';
 import 'common_video_player.dart';
 
 class PromptGridCard extends StatelessWidget {
@@ -8,6 +9,7 @@ class PromptGridCard extends StatelessWidget {
   final String categoryName;
   final bool isPremium;
   final VoidCallback onTap;
+  final bool showLoadingIndicator;
 
   const PromptGridCard({
     super.key,
@@ -15,6 +17,7 @@ class PromptGridCard extends StatelessWidget {
     required this.categoryName,
     this.isPremium = false,
     required this.onTap,
+    this.showLoadingIndicator = true,
   });
 
   @override
@@ -48,6 +51,7 @@ class PromptGridCard extends StatelessWidget {
               isMuted: true,
               isLooping: true,
               interactivePlayPause: false,
+              showLoadingIndicator: showLoadingIndicator,
             ),
 
             // Bottom Gradient Overlay for text readability
@@ -78,7 +82,7 @@ class PromptGridCard extends StatelessWidget {
                 child: Text(
                   categoryName,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: AppTextStyles.getStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

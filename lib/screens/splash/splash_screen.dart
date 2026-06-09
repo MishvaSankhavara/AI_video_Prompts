@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
+import '../../utils/text_app.dart';
 import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 
@@ -109,9 +110,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                       const SizedBox(height: 1),
                       // Text Title
-                      const Text(
+                      Text(
                         AppStrings.appName,
-                        style: TextStyle(
+                        style: AppTextStyles.getStyle(
                           color: AppColors.textPrimary,
                           fontSize: 26,
                           fontWeight: FontWeight.bold,

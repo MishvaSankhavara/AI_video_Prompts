@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../utils/text_app.dart';
 
 class ShimmerGridCard extends StatefulWidget {
   const ShimmerGridCard({super.key});
@@ -73,7 +74,7 @@ class _ShimmerGridCardState extends State<ShimmerGridCard>
             child: Text(
               'AI Video Prompts',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: AppTextStyles.getStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textMuted.withValues(alpha: 0.8),

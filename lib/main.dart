@@ -6,6 +6,7 @@ import 'screens/splash/welcome_back_screen.dart';
 import 'services/app_state.dart';
 import 'utils/colors.dart';
 import 'utils/strings.dart';
+import 'utils/text_app.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -92,6 +93,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           secondary: AppColors.secondary,
           surface: AppColors.cardBackground,
         ),
+        textTheme: AppTextStyles.getTextTheme(ThemeData.light().textTheme),
         useMaterial3: true,
       ),
       home: const SplashScreen(),

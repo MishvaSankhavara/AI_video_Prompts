@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
+import '../../widgets/common_app_bar.dart';
+import '../../utils/text_app.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final int? rating;
@@ -56,22 +58,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: AppBar(
-        title: Text(
-          AppStrings.feedbackScreenTitle,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+      appBar: CommonAppBar(
+        title: AppStrings.feedbackScreenTitle,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -101,7 +89,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'You rated us ${widget.rating!} star${widget.rating! == 1 ? '' : 's'}',
-                      style: const TextStyle(
+                      style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
                         fontSize: 14,
                       ),
@@ -111,9 +99,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               ),
               const SizedBox(height: 32),
             ],
-            const Text(
+            Text(
               'What can we improve?',
-              style: TextStyle(
+              style: AppTextStyles.getStyle(
                 color: AppColors.textPrimary,
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
@@ -130,19 +118,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 controller: _controller,
                 maxLines: 7,
                 maxLength: 500,
-                style: const TextStyle(
+                style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
                   hintText: AppStrings.feedbackHint,
-                  hintStyle: TextStyle(
+                  hintStyle: AppTextStyles.getStyle(
                     color: AppColors.textMuted.withValues(alpha: 0.6),
                     fontSize: 15,
                   ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(16),
-                  counterStyle: const TextStyle(
+                  counterStyle: AppTextStyles.getStyle(
                     color: AppColors.textMuted,
                     fontSize: 12,
                   ),
@@ -176,7 +164,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       )
                     : Text(
                         AppStrings.feedbackSubmit,
-                        style: const TextStyle(
+                        style: AppTextStyles.getStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

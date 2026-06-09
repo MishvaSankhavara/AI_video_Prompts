@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
+import '../../utils/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../category/prompt_details_screen.dart';
 
@@ -14,15 +15,15 @@ class FavoriteScreen extends StatelessWidget {
     final favorites = appState.favorites;
 
     if (favorites.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.favorite_border_rounded, size: 64, color: AppColors.textMuted),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'No Favorites Yet',
-              style: TextStyle(
+              style: AppTextStyles.getStyle(
                 color: AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -31,7 +32,7 @@ class FavoriteScreen extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               'Saved templates will appear here.',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+              style: AppTextStyles.getStyle(color: AppColors.textMuted, fontSize: 13),
             ),
           ],
         ),

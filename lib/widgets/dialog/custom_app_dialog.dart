@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
+import '../../utils/text_app.dart';
 
 class CustomAppDialog extends StatefulWidget {
   final String title;
@@ -111,7 +112,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                 // Title
                 Text(
                   widget.title,
-                  style: const TextStyle(
+                  style: AppTextStyles.getStyle(
                     color: AppColors.textPrimary,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -122,7 +123,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                 Text(
                   widget.subtitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: AppTextStyles.getStyle(
                     color: AppColors.textMuted,
                     fontSize: 14,
                     height: 1.4,
@@ -176,7 +177,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                     ),
                     child: Text(
                       widget.primaryButtonText,
-                      style: const TextStyle(
+                      style: AppTextStyles.getStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -200,7 +201,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                       ),
                       child: Text(
                         widget.secondaryButtonText!,
-                        style: const TextStyle(
+                        style: AppTextStyles.getStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

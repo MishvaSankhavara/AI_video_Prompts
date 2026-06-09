@@ -4,6 +4,8 @@ import '../../services/api_service.dart';
 import '../../utils/colors.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/shimmer_grid_card.dart';
+import '../../utils/text_app.dart';
+import '../../widgets/common_app_bar.dart';
 import 'prompt_details_screen.dart';
 
 class CategoryDetailsScreen extends StatefulWidget {
@@ -64,22 +66,8 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: AppBar(
-        title: Text(
-          widget.categoryName,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+      appBar: CommonAppBar(
+        title: widget.categoryName,
       ),
       body: _buildBody(),
     );
@@ -112,7 +100,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               Text(
                 _errorMessage,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.textPrimary, fontSize: 16),
+                style: AppTextStyles.getStyle(color: AppColors.textPrimary, fontSize: 16),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -130,10 +118,10 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     }
 
     if (_videos.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No templates found in this category.',
-          style: TextStyle(color: AppColors.textMuted),
+          style: AppTextStyles.getStyle(color: AppColors.textMuted),
         ),
       );
     }
@@ -153,6 +141,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
           item: item,
           categoryName: '',
           isPremium: index < 1, // Mark first item as premium for representation
+          showLoadingIndicator: false,
           onTap: () {
             Navigator.push(
               context,

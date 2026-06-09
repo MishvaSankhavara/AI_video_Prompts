@@ -63,4 +63,11 @@ class AppStrings {
   
   static const String guidanceTipTitle = 'Creator Tip';
   static const String guidanceTipDesc = 'Customize the prompt by replacing names, actions, or lighting style to make it unique!';
+
+  // App Update dialog strings
+  static const String updateDialogTitle = 'Update Available';
+  static const String updateDialogSubtitle = 'A new version of the app is available. Please update to get the latest prompts, templates, and performance improvements.';
+  static const String updateDialogPrimary = 'Update Now';
+  static const String updateDialogSecondary = 'Later';
+  static const String playStoreBaseUrl = 'https://play.google.com/store/apps/details?id=';
 }

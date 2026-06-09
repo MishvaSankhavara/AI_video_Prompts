@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../utils/colors.dart';
+import '../../utils/text_app.dart';
+import '../../widgets/common_app_bar.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
   const PrivacyPolicyScreen({super.key});
@@ -84,22 +86,8 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: AppBar(
-        title: const Text(
-          'Privacy Policy',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+      appBar: const CommonAppBar(
+        title: 'Privacy Policy',
       ),
       body: _privacyPolicyUrl.isEmpty
           // No URL set yet — show coming soon placeholder
@@ -123,19 +111,19 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'Privacy Policy',
-                      style: TextStyle(
+                      style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       'Our privacy policy will be available here soon. Thank you for your patience!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
                         fontSize: 14,
                         height: 1.5,
@@ -169,20 +157,20 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                           color: AppColors.textMuted,
                         ),
                         const SizedBox(height: 24),
-                        const Text(
+                        Text(
                           'View Privacy Policy Online',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: AppTextStyles.getStyle(
                             color: AppColors.textPrimary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 12),
-                        const Text(
+                        Text(
                           'This device or platform does not support inline web browsing. Tapping the button below will open our privacy policy website in your system browser.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: AppTextStyles.getStyle(
                             color: AppColors.textMuted,
                             fontSize: 14,
                             height: 1.5,
@@ -192,9 +180,9 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         ElevatedButton.icon(
                           onPressed: _launchUrl,
                           icon: const Icon(Icons.open_in_browser_rounded, color: Colors.white),
-                          label: const Text(
+                          label: Text(
                             'Open Policy Website',
-                            style: TextStyle(
+                            style: AppTextStyles.getStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,

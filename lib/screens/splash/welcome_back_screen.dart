@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
+import '../../utils/text_app.dart';
 import '../home/home_screen.dart';
 
 class WelcomeBackScreen extends StatefulWidget {
@@ -92,9 +93,9 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
                     ),
                     const SizedBox(height: 24),
                     // "Welcome Back" text
-                    const Text(
+                    Text(
                       AppStrings.welcomeBackTitle,
-                      style: TextStyle(
+                      style: AppTextStyles.getStyle(
                         color: Colors.black,
                         fontSize: 32,
                         fontWeight: FontWeight.w600,

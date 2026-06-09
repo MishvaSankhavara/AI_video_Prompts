@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../utils/colors.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../utils/strings.dart';
+import '../../utils/text_app.dart';
 import 'feedback_screen.dart';
 import 'privacy_policy_screen.dart';
 
@@ -163,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: 'App Version',
           trailing: Text(
             _appVersion,
-            style: const TextStyle(
+            style: AppTextStyles.getStyle(
               color: AppColors.textMuted,
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -191,12 +192,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         leading: Icon(icon, color: AppColors.primary),
         title: Text(
           title,
-          style: const TextStyle(
+          style: AppTextStyles.getStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
-        subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(color: AppColors.textMuted)) : null,
+        subtitle: subtitle != null ? Text(subtitle, style: AppTextStyles.getStyle(color: AppColors.textMuted)) : null,
         trailing: trailing ?? const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
         onTap: onTap,
       ),

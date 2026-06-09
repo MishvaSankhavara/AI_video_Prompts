@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/video_category.dart';
 import '../services/api_service.dart';
+import 'database_helper.dart';
 
 class AppState extends ChangeNotifier {
+  AppState() {
+    _loadFavorites();
+  }
+
+  final DatabaseHelper _dbHelper = DatabaseHelper();
   String _currentPrompt = '';
   bool _isGenerating = false;
   final List<String> _promptHistory = [];
@@ -54,13 +60,28 @@ class AppState extends ChangeNotifier {
   }
 
   // Favorites Actions
-  void toggleFavorite(VideoItem item) {
-    if (_favorites.any((fav) => fav.id == item.id)) {
+  Future<void> toggleFavorite(VideoItem item) async {
+    final isAlreadyFav = _favorites.any((fav) => fav.id == item.id);
+    if (isAlreadyFav) {
       _favorites.removeWhere((fav) => fav.id == item.id);
+      notifyListeners();
+      await _dbHelper.deleteFavorite(item.id);
     } else {
       _favorites.add(item);
+      notifyListeners();
+      await _dbHelper.insertFavorite(item);
     }
-    notifyListeners();
+  }
+
+  Future<void> _loadFavorites() async {
+    try {
+      final dbFavs = await _dbHelper.getFavorites();
+      _favorites.clear();
+      _favorites.addAll(dbFavs);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading favorites: $e');
+    }
   }
 
   bool isFavorite(VideoItem item) {

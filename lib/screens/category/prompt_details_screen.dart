@@ -6,9 +6,12 @@ import '../../models/video_category.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
+import '../../utils/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/common_video_player.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
+import '../../widgets/common_app_bar.dart';
+import 'category_details_screen.dart';
 
 class PromptDetailsScreen extends StatefulWidget {
   final VideoItem item;
@@ -71,12 +74,6 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
           primaryButtonText: AppStrings.unlockDialogBuyPro,
           onPrimaryPressed: () {
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Pro subscription settings coming soon!'),
-                backgroundColor: AppColors.primary,
-              ),
-            );
           },
           secondaryButtonText: AppStrings.unlockDialogWatchAd,
           onSecondaryPressed: () {
@@ -146,13 +143,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       AppStrings.guidanceHeaderTitle,
-                      style: TextStyle(
+                      style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -162,7 +159,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                     SizedBox(height: 2),
                     Text(
                       AppStrings.guidanceHeaderSubtitle,
-                      style: TextStyle(
+                      style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
                         fontSize: 12,
                       ),
@@ -221,7 +218,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 width: 1,
               ),
             ),
-            child: const Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
@@ -236,7 +233,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                     children: [
                       Text(
                         AppStrings.guidanceTipTitle,
-                        style: TextStyle(
+                        style: AppTextStyles.getStyle(
                           color: AppColors.textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -245,7 +242,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                       SizedBox(height: 4),
                       Text(
                         AppStrings.guidanceTipDesc,
-                        style: TextStyle(
+                        style: AppTextStyles.getStyle(
                           color: AppColors.textMuted,
                           fontSize: 12,
                           height: 1.4,
@@ -294,7 +291,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
           child: Center(
             child: Text(
               stepNumber,
-              style: const TextStyle(
+              style: AppTextStyles.getStyle(
                 color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -310,7 +307,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -319,7 +316,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               const SizedBox(height: 4),
               Text(
                 description,
-                style: const TextStyle(
+                style: AppTextStyles.getStyle(
                   color: AppColors.textMuted,
                   fontSize: 13,
                   height: 1.4,
@@ -366,11 +363,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
+      appBar: CommonAppBar(
+        title: '',
         actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
@@ -392,9 +386,6 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
               ]
             : null,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
@@ -407,7 +398,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 width: MediaQuery.of(context).size.width * 0.85,
                 height: 380,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.08),
@@ -433,12 +424,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border, width: 1),
               ),
               child: Text(
                 displayPrompt,
-                style: const TextStyle(
+                style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
                   fontSize: 15,
                   height: 1.45,
@@ -453,9 +444,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               ElevatedButton.icon(
                 onPressed: _showUnlockDialog,
                 icon: const Icon(Icons.lock_rounded, size: 20, color: Colors.white),
-                label: const Text(
+                label: Text(
                   'Unlock Prompt',
-                  style: TextStyle(
+                  style: AppTextStyles.getStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -465,7 +456,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
@@ -482,9 +473,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   );
                 },
                 icon: const Icon(Icons.content_copy_rounded, size: 20, color: Colors.white),
-                label: const Text(
+                label: Text(
                   'Copy Prompt',
-                  style: TextStyle(
+                  style: AppTextStyles.getStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -494,7 +485,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
@@ -511,9 +502,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Recommended',
-                  style: TextStyle(
+                  style: AppTextStyles.getStyle(
                     color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -521,11 +512,46 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    if (widget.categoryId == 999 || widget.categoryName == 'Favorites') {
+                      final appState = Provider.of<AppState>(context, listen: false);
+                      int? targetCategoryId = _currentItem.categoryId;
+                      
+                      VideoCategory? matchedCategory;
+                      try {
+                        matchedCategory = appState.categories.firstWhere(
+                          (cat) {
+                            if (targetCategoryId != null && targetCategoryId != 0) {
+                              return cat.categoryId == targetCategoryId;
+                            }
+                            return cat.items.any((item) => item.id == _currentItem.id);
+                          },
+                        );
+                        targetCategoryId = matchedCategory.categoryId;
+                      } catch (_) {
+                        // Fallback
+                      }
+
+                      if (targetCategoryId != null && targetCategoryId != 0) {
+                        final catName = matchedCategory?.categoryName ?? 'Category';
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoryDetailsScreen(
+                              categoryId: targetCategoryId!,
+                              categoryName: catName,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    } else {
+                      Navigator.pop(context);
+                    }
                   },
-                  child: const Text(
+                  child: Text(
                     'View More',
-                    style: TextStyle(
+                    style: AppTextStyles.getStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
@@ -537,12 +563,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
             // 5. Recommended Grids
             if (recommendedItems.isEmpty)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 24.0),
                 child: Center(
                   child: Text(
                     'No recommendations available.',
-                    style: TextStyle(color: AppColors.textMuted),
+                    style: AppTextStyles.getStyle(color: AppColors.textMuted),
                   ),
                 ),
               )

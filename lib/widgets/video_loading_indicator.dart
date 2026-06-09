@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/text_app.dart';
 
 class VideoLoadingIndicator extends StatelessWidget {
   const VideoLoadingIndicator({super.key});
@@ -16,9 +17,9 @@ class VideoLoadingIndicator extends StatelessWidget {
           bottomLeft: Radius.circular(2),
         ),
       ),
-      child: const Text(
+      child: Text(
         'Loading..',
-        style: TextStyle(
+        style: AppTextStyles.getStyle(
           color: Colors.white,
           fontSize: 11,
           fontWeight: FontWeight.bold,

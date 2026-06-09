@@ -11,6 +11,7 @@ class CommonVideoPlayer extends StatefulWidget {
   final bool isLooping;
   final bool interactivePlayPause;
   final BoxFit fit;
+  final bool showLoadingIndicator;
 
   const CommonVideoPlayer({
     super.key,
@@ -20,6 +21,7 @@ class CommonVideoPlayer extends StatefulWidget {
     this.isLooping = true,
     this.interactivePlayPause = false,
     this.fit = BoxFit.cover,
+    this.showLoadingIndicator = true,
   });
 
   @override
@@ -89,7 +91,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showLoading = !_isInitialized || (_controller != null && _controller!.value.isBuffering);
+    final bool showLoading = widget.showLoadingIndicator &&
+        (!_isInitialized || (_controller != null && _controller!.value.isBuffering));
 
     Widget content;
     if (_isInitialized && _controller != null) {

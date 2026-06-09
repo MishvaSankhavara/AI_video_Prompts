@@ -68,4 +68,34 @@ class VideoItem {
           : int.tryParse(json['category_id']?.toString() ?? ''),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'ai_prompt': aiPrompt,
+      'video_thumbnail': videoThumbnail,
+      'no_of_video': noOfVideo,
+      'name_change': nameChange ? 1 : 0,
+      'video_thumbnail_full_url': videoThumbnailFullUrl,
+      'category_video': categoryVideo,
+      'category_video_full_url': categoryVideoFullUrl,
+      'category_id': categoryId,
+    };
+  }
+
+  factory VideoItem.fromMap(Map<String, dynamic> map) {
+    return VideoItem(
+      id: map['id'] is int ? map['id'] as int : int.parse(map['id'].toString()),
+      aiPrompt: map['ai_prompt'] ?? '',
+      videoThumbnail: map['video_thumbnail'] ?? '',
+      noOfVideo: map['no_of_video'] is int ? map['no_of_video'] as int : int.parse(map['no_of_video'].toString()),
+      nameChange: (map['name_change'] ?? 0) == 1,
+      videoThumbnailFullUrl: map['video_thumbnail_full_url'] ?? '',
+      categoryVideo: map['category_video'] ?? '',
+      categoryVideoFullUrl: map['category_video_full_url'] ?? '',
+      categoryId: map['category_id'] is int
+          ? map['category_id'] as int
+          : (map['category_id'] != null ? int.tryParse(map['category_id'].toString()) : null),
+    );
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
 import '../../utils/text_app.dart';
@@ -20,8 +19,8 @@ class FavoriteScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.favorite_border_rounded, size: 16.w, color: AppColors.textMuted),
-            SizedBox(height: 2.h),
+            Icon(Icons.favorite_border_rounded, size: 64, color: AppColors.textMuted),
+            const SizedBox(height: 16),
             Text(
               'No Favorites Yet',
               style: AppTextStyles.getStyle(
@@ -30,7 +29,7 @@ class FavoriteScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 1.h),
+            SizedBox(height: 8),
             Text(
               'Saved templates will appear here.',
               style: AppTextStyles.getStyle(color: AppColors.textMuted, fontSize: 13),
@@ -41,12 +40,12 @@ class FavoriteScreen extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 1.5.h, bottom: 10.h),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 150),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio
-        crossAxisSpacing: 2.5.w,
-        mainAxisSpacing: 2.5.w,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: favorites.length,
       itemBuilder: (context, index) {

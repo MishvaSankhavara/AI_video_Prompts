@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class AppTextStyles {
   // Base TextStyle helper using Google Fonts (Plus Jakarta Sans)
@@ -12,7 +11,7 @@ class AppTextStyles {
     double? letterSpacing,
   }) {
     return GoogleFonts.poppins(
-      fontSize: fontSize?.sp,
+      fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
       height: height,

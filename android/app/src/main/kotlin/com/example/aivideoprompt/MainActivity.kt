@@ -1,4 +1,4 @@
-package com.example.aivideoprompt
+package com.example.aivideoprompts
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "276674953512",
+    "project_id": "ai-video-prompt",
+    "storage_bucket": "ai-video-prompt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276674953512:android:dd35265167bd6f650cd01d",
+        "android_client_info": {
+          "package_name": "com.example.aivideoprompts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCumlQ6EaWNvsqhbdFLcBolZt0v1X_mxd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

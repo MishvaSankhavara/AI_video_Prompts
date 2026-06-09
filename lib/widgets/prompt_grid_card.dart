@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../models/video_category.dart';
 import '../utils/colors.dart';
 import '../utils/text_app.dart';
-import 'common_video_player.dart';
+import 'video_player.dart';
 
 class PromptGridCard extends StatelessWidget {
   final VideoItem item;
@@ -28,10 +27,10 @@ class PromptGridCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(6.w),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: AppColors.border,
-            width: 0.25.w,
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -77,9 +76,9 @@ class PromptGridCard extends StatelessWidget {
             // Text Title (Category Name / Prompt Tag)
             if (categoryName.isNotEmpty)
               Positioned(
-                bottom: 4.w,
-                left: 3.w,
-                right: 3.w,
+                bottom: 16,
+                left: 12,
+                right: 12,
                 child: Text(
                   categoryName,
                   textAlign: TextAlign.center,

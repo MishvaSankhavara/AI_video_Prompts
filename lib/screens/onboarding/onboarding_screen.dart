@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -70,8 +69,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
       body: SafeArea(
@@ -79,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // Top Bar (Skip Button)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: isLandscape ? 0.5.h : 1.h),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: _currentPage < 2
@@ -93,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         },
                         style: TextButton.styleFrom(
                           foregroundColor: AppColors.textMuted,
-                          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: isLandscape ? 0.5.h : 1.h),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: Text(
                           AppStrings.onboardingSkip,
@@ -103,7 +100,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                         ),
                       )
-                    : SizedBox(height: isLandscape ? 20.0 : 4.5.h), // placeholder to maintain layout stability
+                    : const SizedBox(height: 38), // placeholder to maintain layout stability
               ),
             ),
 
@@ -119,62 +116,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 itemBuilder: (context, index) {
                   final page = _pages[index];
-                  
-                  if (isLandscape) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: Row(
-                        children: [
-                          // Left side: Visual Graphics Container
-                          Expanded(
-                            flex: 5,
-                            child: Center(
-                              child: page.visualWidget,
-                            ),
-                          ),
-                          SizedBox(width: 4.w),
-                          // Right side: Text Content
-                          Expanded(
-                            flex: 5,
-                            child: Center(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      page.title,
-                                      textAlign: TextAlign.center,
-                                      style: AppTextStyles.getStyle(
-                                        color: AppColors.textPrimary,
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: -0.5,
-                                      ),
-                                    ),
-                                    SizedBox(height: 1.h),
-                                    Text(
-                                      page.subtitle,
-                                      textAlign: TextAlign.center,
-                                      style: AppTextStyles.getStyle(
-                                        color: AppColors.textMuted,
-                                        fontSize: 14,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  // Portrait mode layout
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 7.w),
+                    padding: const EdgeInsets.symmetric(horizontal: 28.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -189,35 +132,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         // Text Content
                         Expanded(
                           flex: 4,
-                          child: Center(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 1.h),
-                                  Text(
-                                    page.title,
-                                    textAlign: TextAlign.center,
-                                    style: AppTextStyles.getStyle(
-                                      color: AppColors.textPrimary,
-                                      fontSize: 21,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: -0.5,
-                                    ),
-                                  ),
-                                  SizedBox(height: 1.5.h),
-                                  Text(
-                                    page.subtitle,
-                                    textAlign: TextAlign.center,
-                                    style: AppTextStyles.getStyle(
-                                      color: AppColors.textMuted,
-                                      fontSize: 14,
-                                      height: 1.5,
-                                    ),
-                                  ),
-                                ],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              Text(
+                                page.title,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.getStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.5,
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 14),
+                              Text(
+                                page.subtitle,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.getStyle(
+                                  color: AppColors.textMuted,
+                                  fontSize: 15,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -229,7 +168,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Bottom Navigation (Dots and Buttons)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: isLandscape ? 1.h : 3.h),
+              padding: const EdgeInsets.all(28.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -240,9 +179,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       final isActive = index == _currentPage;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        margin: EdgeInsets.symmetric(horizontal: 1.w),
-                        height: isLandscape ? 6.0 : 1.h,
-                        width: isActive ? 6.w : 2.w,
+                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                        height: 8.0,
+                        width: isActive ? 24.0 : 8.0,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
                           gradient: isActive
@@ -256,12 +195,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       );
                     }),
                   ),
-                  SizedBox(height: isLandscape ? 12.0 : 3.h),
+                  const SizedBox(height: 36),
 
                   // Action Button
                   SizedBox(
                     width: double.infinity,
-                    height: isLandscape ? 44.0 : 7.h,
+                    height: 56,
                     child: ElevatedButton(
                       onPressed: () {
                         if (_currentPage < 2) {
@@ -329,18 +268,18 @@ class OnboardingVisualOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 28.h,
-      width: 28.h,
+      height: 240,
+      width: 240,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Background soft glowing blob 1
           Positioned(
-            right: 2.3.h,
-            bottom: 2.3.h,
+            right: 20,
+            bottom: 20,
             child: Container(
-              width: 16.5.h,
-              height: 16.5.h,
+              width: 140,
+              height: 140,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
@@ -355,11 +294,11 @@ class OnboardingVisualOne extends StatelessWidget {
           ),
           // Background soft glowing blob 2
           Positioned(
-            left: 2.3.h,
-            top: 2.3.h,
+            left: 20,
+            top: 20,
             child: Container(
-              width: 14.h,
-              height: 14.h,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 boxShadow: [
@@ -375,8 +314,8 @@ class OnboardingVisualOne extends StatelessWidget {
           
           // Outer revolving-looking dotted circle
           Container(
-            width: 23.h,
-            height: 23.h,
+            width: 200,
+            height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -389,8 +328,8 @@ class OnboardingVisualOne extends StatelessWidget {
 
           // Middle decorative circle
           Container(
-            width: 17.5.h,
-            height: 17.5.h,
+            width: 150,
+            height: 150,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -402,11 +341,11 @@ class OnboardingVisualOne extends StatelessWidget {
 
           // Central Glassmorphic Hexagonal / Rounded Card
           Container(
-            width: 13.h,
-            height: 13.h,
+            width: 110,
+            height: 110,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.85),
-              borderRadius: BorderRadius.circular(3.3.h),
+              borderRadius: BorderRadius.circular(28),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.6),
                 width: 1.5,
@@ -419,30 +358,30 @@ class OnboardingVisualOne extends StatelessWidget {
                 ),
               ],
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.auto_awesome_rounded,
-                color: const Color(0xFF4F46E5),
-                size: 6.h,
+                color: Color(0xFF4F46E5),
+                size: 52,
               ),
             ),
           ),
 
           // Tiny Floating Planet/Stars around the center
           Positioned(
-            top: 4.7.h,
-            right: 4.7.h,
-            child: _buildFloatingParticle(1.8.h, const Color(0xFF818CF8)),
+            top: 40,
+            right: 40,
+            child: _buildFloatingParticle(16, const Color(0xFF818CF8)),
           ),
           Positioned(
-            bottom: 5.8.h,
-            left: 5.3.h,
-            child: _buildFloatingParticle(1.2.h, const Color(0xFF312E81)),
+            bottom: 50,
+            left: 45,
+            child: _buildFloatingParticle(10, const Color(0xFF312E81)),
           ),
           Positioned(
-            top: 15.h,
-            left: 2.9.h,
-            child: _buildFloatingParticle(1.6.h, const Color(0xFFC7D2FE)),
+            top: 130,
+            left: 25,
+            child: _buildFloatingParticle(14, const Color(0xFFC7D2FE)),
           ),
         ],
       ),
@@ -477,15 +416,15 @@ class OnboardingVisualTwo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 28.h,
-      width: 28.h,
+      height: 240,
+      width: 240,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Background soft glowing blob
           Container(
-            width: 17.5.h,
-            height: 17.5.h,
+            width: 150,
+            height: 150,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
@@ -501,16 +440,16 @@ class OnboardingVisualTwo extends StatelessWidget {
           // Cascading Cards Mocking prompt lists and copy action
           // Under card
           Positioned(
-            top: 6.4.h,
-            left: 4.7.h,
+            top: 55,
+            left: 40,
             child: Transform.rotate(
               angle: -0.1,
               child: Container(
-                width: 15.h,
-                height: 10.5.h,
+                width: 130,
+                height: 90,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(1.8.h),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.3),
                     width: 1,
@@ -522,14 +461,14 @@ class OnboardingVisualTwo extends StatelessWidget {
 
           // Main top card showing prompt details
           Positioned(
-            top: 8.2.h,
+            top: 70,
             child: Container(
-              width: 18.5.h,
-              height: 11.6.h,
-              padding: EdgeInsets.all(1.4.h),
+              width: 160,
+              height: 100,
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(2.3.h),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: const Color(0xFFE2E8F0),
                   width: 1.5,
@@ -548,26 +487,26 @@ class OnboardingVisualTwo extends StatelessWidget {
                 children: [
                   // Fake prompt text lines
                   Container(
-                    width: 12.8.h,
-                    height: 0.9.h,
+                    width: 110,
+                    height: 8,
                     decoration: BoxDecoration(
                       color: const Color(0xFF0891B2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  SizedBox(height: 0.7.h),
+                  const SizedBox(height: 6),
                   Container(
-                    width: 15.h,
-                    height: 0.9.h,
+                    width: 130,
+                    height: 8,
                     decoration: BoxDecoration(
                       color: const Color(0xFFE2E8F0),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  SizedBox(height: 0.7.h),
+                  const SizedBox(height: 6),
                   Container(
-                    width: 9.3.h,
-                    height: 0.9.h,
+                    width: 80,
+                    height: 8,
                     decoration: BoxDecoration(
                       color: const Color(0xFFE2E8F0),
                       borderRadius: BorderRadius.circular(4),
@@ -580,11 +519,11 @@ class OnboardingVisualTwo extends StatelessWidget {
 
           // Floating Clipboard Icon with Check mark/Success indicator
           Positioned(
-            bottom: 5.3.h,
-            right: 4.h,
+            bottom: 45,
+            right: 35,
             child: Container(
-              width: 6.h,
-              height: 6.h,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
@@ -600,22 +539,22 @@ class OnboardingVisualTwo extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.check_rounded,
                 color: Colors.white,
-                size: 3.2.h,
+                size: 28,
               ),
             ),
           ),
 
           // Dotted connection line representations
           Positioned(
-            top: 4.7.h,
-            right: 5.3.h,
-            child: Icon(
+            top: 40,
+            right: 45,
+            child: const Icon(
               Icons.content_paste_rounded,
-              color: const Color(0xFF0891B2),
-              size: 3.h,
+              color: Color(0xFF0891B2),
+              size: 26,
             ),
           ),
         ],
@@ -633,15 +572,15 @@ class OnboardingVisualThree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 28.h,
-      width: 28.h,
+      height: 240,
+      width: 240,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Background soft glowing blob (Amber/Orange)
           Container(
-            width: 18.5.h,
-            height: 18.5.h,
+            width: 160,
+            height: 160,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
@@ -656,8 +595,8 @@ class OnboardingVisualThree extends StatelessWidget {
 
           // Multi-layer rotating star background design
           Container(
-            width: 20.h,
-            height: 20.h,
+            width: 170,
+            height: 170,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -669,8 +608,8 @@ class OnboardingVisualThree extends StatelessWidget {
 
           // Premium Shield/Card
           Container(
-            width: 11.6.h,
-            height: 14.h,
+            width: 100,
+            height: 120,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
@@ -678,10 +617,10 @@ class OnboardingVisualThree extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(2.3.h),
-                topRight: Radius.circular(2.3.h),
-                bottomLeft: Radius.circular(100.w),
-                bottomRight: Radius.circular(100.w),
+                topLeft: const Radius.circular(20),
+                topRight: const Radius.circular(20),
+                bottomLeft: Radius.circular(MediaQuery.of(context).size.width),
+                bottomRight: Radius.circular(MediaQuery.of(context).size.width),
               ),
               boxShadow: [
                 BoxShadow(
@@ -691,23 +630,23 @@ class OnboardingVisualThree extends StatelessWidget {
                 ),
               ],
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.workspace_premium_rounded,
                 color: Colors.white,
-                size: 6.3.h,
+                size: 54,
               ),
             ),
           ),
 
           // Floating Sparkles/Crown details
           Positioned(
-            top: 4.h,
+            top: 35,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 1.2.h, vertical: 0.5.h),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(1.4.h),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: const Color(0xFFF59E0B),
                   width: 1,
@@ -722,8 +661,8 @@ class OnboardingVisualThree extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.star_rounded, color: const Color(0xFFF59E0B), size: 1.6.h),
-                  SizedBox(width: 0.5.h),
+                  const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 14),
+                  const SizedBox(width: 4),
                   Text(
                     AppStrings.onboardingProBadge,
                     style: AppTextStyles.getStyle(
@@ -739,14 +678,14 @@ class OnboardingVisualThree extends StatelessWidget {
           
           // Little floating items
           Positioned(
-            top: 9.3.h,
-            left: 3.5.h,
-            child: Icon(Icons.star_rounded, color: const Color(0xFFF59E0B), size: 2.3.h),
+            top: 80,
+            left: 30,
+            child: const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 20),
           ),
           Positioned(
-            bottom: 9.3.h,
-            right: 3.5.h,
-            child: Icon(Icons.star_rounded, color: const Color(0xFFF59E0B), size: 1.8.h),
+            bottom: 80,
+            right: 30,
+            child: const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 16),
           ),
         ],
       ),

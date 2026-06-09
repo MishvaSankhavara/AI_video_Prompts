@@ -1,5 +1,5 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -17,6 +17,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
   late AnimationController _controller;
   late Animation<double> _progressAnimation;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -37,7 +38,14 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeIn),
+        curve: const Interval(0.2, 0.6, curve: Curves.easeIn),
+      ),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
       ),
     );
 
@@ -72,9 +80,6 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    final logoSize = isLandscape ? 25.h : 45.w;
-
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -82,91 +87,171 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              AppColors.splashBackgroundStart,
-              AppColors.splashBackgroundEnd,
+              AppColors.white,
+              Color(0xFFFBF2FA), // Premium soft lavender-pink tint
             ],
           ),
         ),
-        child: SafeArea(
-          child: Stack(
-            children: [
-              // Center Logo and "Welcome Back" text
-              Align(
-                alignment: const Alignment(0.0, -0.2),
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Light-optimized image logo matching splash screen
-                        Image.asset(
-                          'assets/images/logo_light.png',
-                          width: logoSize,
-                          height: logoSize,
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(height: isLandscape ? 1.h : 2.5.h),
-                        // "Welcome Back" text styled cleanly and responsively
-                        Text(
-                          AppStrings.welcomeBackTitle,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
+        child: Stack(
+          children: [
+            // Soft Light Aurora Glow 1 (Top Left)
+            Positioned(
+              top: -100,
+              left: -50,
+              child: Container(
+                width: 320,
+                height: 320,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.primary.withValues(alpha: 0.08),
+                      AppColors.primary.withValues(alpha: 0.0),
+                    ],
                   ),
                 ),
               ),
-              
-              // Bottom Progress Bar
-              Positioned(
-                bottom: isLandscape ? 8.h : 15.h,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Container(
-                    width: 60.w,
-                    height: 0.8.h,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.05), // Light grey track matching splash screen
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: AnimatedBuilder(
-                      animation: _progressAnimation,
-                      builder: (context, child) {
-                        return Align(
-                          alignment: Alignment.centerLeft,
-                          child: FractionallySizedBox(
-                            widthFactor: _progressAnimation.value,
+            ),
+            
+            // Soft Light Aurora Glow 2 (Bottom Right)
+            Positioned(
+              bottom: -50,
+              right: -50,
+              child: Container(
+                width: 280,
+                height: 280,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.secondary.withValues(alpha: 0.06),
+                      AppColors.secondary.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+          // Main Layout Content
+          SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Glassmorphic Center Card
+                    ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                             child: Container(
+                              padding: const EdgeInsets.all(32.0),
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    AppColors.primary,
-                                    Color(0xFF5EEAD4),
-                                  ],
+                                color: AppColors.white.withValues(alpha: 0.45),
+                                borderRadius: BorderRadius.circular(32),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(alpha: 0.08),
+                                  width: 1.5,
                                 ),
-                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.03),
+                                    blurRadius: 20,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // App Logo with soft glowing shadow
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primary.withValues(alpha: 0.06),
+                                          blurRadius: 30,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/logo.png',
+                                      width: 130,
+                                      height: 130,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 28),
+                                  // Welcome Text
+                                  Text(
+                                    AppStrings.welcomeBackTitle,
+                                    textAlign: TextAlign.center,
+                                    style: AppTextStyles.getStyle(
+                                      color: AppColors.textPrimary,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 70),
+
+                    // Sleek glowing progress indicator
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Container(
+                        width: 200,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: AnimatedBuilder(
+                          animation: _progressAnimation,
+                          builder: (context, child) {
+                            return Align(
+                              alignment: Alignment.centerLeft,
+                              child: FractionallySizedBox(
+                                widthFactor: _progressAnimation.value,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        AppColors.secondary,
+                                        AppColors.primary,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
+    ),
     );
   }
 }

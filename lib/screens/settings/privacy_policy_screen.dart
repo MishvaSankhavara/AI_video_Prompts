@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
@@ -60,7 +59,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               }
             },
             onWebResourceError: (WebResourceError error) {
-              debugPrint('WebView Error: ${error.description}');
+              debugPrint('WebView Error: \${error.description}');
             },
           ),
         )
@@ -94,24 +93,24 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           // No URL set yet — show coming soon placeholder
           ? Center(
               child: Padding(
-                padding: EdgeInsets.all(8.w),
+                padding: const EdgeInsets.all(32.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 20.w,
-                      height: 20.w,
+                      width: 80,
+                      height: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.cardBackground,
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.lock_outline_rounded,
-                        size: 10.w,
+                        size: 40,
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: 24),
                     Text(
                       'Privacy Policy',
                       style: AppTextStyles.getStyle(
@@ -120,7 +119,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: 12),
                     Text(
                       'Our privacy policy will be available here soon. Thank you for your patience!',
                       textAlign: TextAlign.center,
@@ -148,16 +147,16 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                 )
               : Center(
                   child: Padding(
-                    padding: EdgeInsets.all(8.w),
+                    padding: const EdgeInsets.all(32.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.language_rounded,
-                          size: 18.w,
+                          size: 72,
                           color: AppColors.textMuted,
                         ),
-                        SizedBox(height: 3.h),
+                        const SizedBox(height: 24),
                         Text(
                           'View Privacy Policy Online',
                           textAlign: TextAlign.center,
@@ -167,7 +166,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 1.5.h),
+                        const SizedBox(height: 12),
                         Text(
                           'This device or platform does not support inline web browsing. Tapping the button below will open our privacy policy website in your system browser.',
                           textAlign: TextAlign.center,
@@ -177,7 +176,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                             height: 1.5,
                           ),
                         ),
-                        SizedBox(height: 4.h),
+                        const SizedBox(height: 32),
                         ElevatedButton.icon(
                           onPressed: _launchUrl,
                           icon: const Icon(Icons.open_in_browser_rounded, color: Colors.white),
@@ -191,9 +190,9 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
-                            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.5.h),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.w),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             elevation: 0,
                           ),

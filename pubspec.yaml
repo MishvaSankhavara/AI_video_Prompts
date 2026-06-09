@@ -33,7 +33,6 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
-  responsive_sizer: ^3.3.1
   http: ^1.2.1
   video_player: ^2.11.1
   webview_flutter: ^4.13.1
@@ -44,6 +43,11 @@ dependencies:
   sqflite: ^2.3.0
   path: ^1.9.0
   google_fonts: ^6.2.1
+  firebase_core: ^4.10.0
+  curved_navigation_bar: ^1.0.6
+  cached_network_image: ^3.4.1
+  responsive_sizer: ^3.3.1
+  visibility_detector: ^0.4.0+2
 
 dev_dependencies:
   flutter_test:

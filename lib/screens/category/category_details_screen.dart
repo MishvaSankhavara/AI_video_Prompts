@@ -1,10 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../models/video_category.dart';
 import '../../services/api_service.dart';
 import '../../utils/colors.dart';
-import '../../widgets/prompt_grid_card.dart';
-import '../../widgets/shimmer_grid_card.dart';
+
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 import 'prompt_details_screen.dart';
@@ -75,35 +74,31 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   }
 
   Widget _buildBody() {
+    // Loading state
     if (_isLoading) {
-      return GridView.builder(
-        padding: EdgeInsets.all(4.w),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.70, // Standard 9:16 layout ratio
-          crossAxisSpacing: 2.5.w,
-          mainAxisSpacing: 2.5.w,
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
         ),
-        itemCount: 6, // Show 6 shimmer cards while loading
-        itemBuilder: (context, index) => const ShimmerGridCard(),
       );
     }
 
+    // Error state
     if (_errorMessage.isNotEmpty) {
       return Center(
         child: Padding(
-          padding: EdgeInsets.all(6.w),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.cloud_off_rounded, size: 16.w, color: AppColors.textMuted),
-              SizedBox(height: 2.h),
+              const Icon(Icons.cloud_off_rounded, size: 64, color: AppColors.textMuted),
+              const SizedBox(height: 16),
               Text(
                 _errorMessage,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.getStyle(color: AppColors.textPrimary, fontSize: 16),
               ),
-              SizedBox(height: 3.h),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _fetchCategoryVideos,
                 style: ElevatedButton.styleFrom(
@@ -118,6 +113,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       );
     }
 
+    // Empty state
     if (_videos.isEmpty) {
       return Center(
         child: Text(
@@ -127,22 +123,19 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       );
     }
 
+    // Thumbnail-only grid
     return GridView.builder(
-      padding: EdgeInsets.all(4.w),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.70, // Standard 9:16 layout ratio
-        crossAxisSpacing: 2.5.w,
-        mainAxisSpacing: 2.5.w,
+        childAspectRatio: 0.70,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: _videos.length,
       itemBuilder: (context, index) {
         final item = _videos[index];
-        return PromptGridCard(
-          item: item,
-          categoryName: '',
-          isPremium: index < 1, // Mark first item as premium for representation
-          showLoadingIndicator: false,
+        return GestureDetector(
           onTap: () {
             Navigator.push(
               context,
@@ -156,6 +149,37 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               ),
             );
           },
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.border, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: CachedNetworkImage(
+              imageUrl: item.videoThumbnailFullUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                color: AppColors.cardBackground,
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: AppColors.cardBackground,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.image_not_supported_rounded,
+                  color: AppColors.textMuted,
+                  size: 32,
+                ),
+              ),
+            ),
+          ),
         );
       },
     );

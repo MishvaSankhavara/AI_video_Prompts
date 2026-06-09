@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Palette A: Premium Navy & Teal Light Theme
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
+
+  // Palette: Premium Crane Purple Theme
   static const Color mainBackground = Color(0xFFFFFFFF); // Pure White
-  static const Color cardBackground = Color(0xFFF0F4F8); // Very soft Slate Navy-Grey for cards
+  static const Color cardBackground = Color(0xFFFBF4FA); // Very soft Crane Purple-tint for cards
 
-  static const Color primary = Color(0xFF121358); // Vibrant Teal (Active Accent) 0xFF121358
-  static const Color secondary = Color(0xFF232F72); // Deep Navy (Bold Accents/Headers)
-  static const Color border = Color(0xFFD1DBE5); // Muted Slate-Grey Border
+  static const Color primary = Color(0xFF5D1049); // Crane Purple 800 (Primary Brand Color)
+  static const Color secondary = Color(0xFF720D5D); // Crane Purple 700 (Active Accent)
+  static const Color border = Color(0xFFEBDCE7); // Muted Purple-Grey Border
 
-  static const Color textPrimary = Color(0xFF121358); // Dark Navy (Primary text, replacing black) 0xFF36ADA3
-  static const Color textMuted = Color(0xFF2F578A); // Slate Blue (Subtitles and secondary text)
+  static const Color textPrimary = Color(0xFF4E0D3A); // Crane Purple 900 (Deep Plum text)
+  static const Color textMuted = Color(0xFF86687F); // Soft Plum-Grey (Subtitles and secondary text)
 
-  // Splash Screen specific colors (White background with Teal progress)
+  // Splash Screen specific colors
   static const Color splashBackgroundStart = Color(0xFFFFFFFF);
-  static const Color splashBackgroundEnd = Color(0xFFF8FAFC);
-  static const Color splashAccent = Color(0xFF121358); // Teal loader 0xFF36ADA3
+  static const Color splashBackgroundEnd = Color(0xFFFCF9FC);
+  static const Color splashAccent = Color(0xFF5D1049); // Crane Purple loader
+
+
+
+  static const Color homeBottomBar = Color(0xFF7A3969); // Crane Purple 800 (Primary Brand Color)
 }

@@ -45,6 +45,7 @@ class AppStrings {
   static const String welcomeBackTitle = 'Welcome Back';
 
   // Screen/Tab titles
+  static const String tabHome = 'Home';
   static const String tabFavorite = 'Favorite';
   static const String tabSettings = 'Settings';
 
@@ -70,4 +71,16 @@ class AppStrings {
   static const String updateDialogPrimary = 'Update Now';
   static const String updateDialogSecondary = 'Later';
   static const String playStoreBaseUrl = 'https://play.google.com/store/apps/details?id=';
+
+  // Settings Screen strings
+  static const String settingsShareApp = 'Share App';
+  static const String settingsRateApp = 'Rate App';
+  static const String settingsFeedback = 'Feedback';
+  static const String settingsPrivacyPolicy = 'Privacy Policy';
+  static const String settingsAppVersion = 'App Version';
+  static const String settingsHeaderSubtitle = 'Unleash Your Cinematic Creativity';
+  static const String settingsShareMessage = 'Check out this amazing AI Video Prompt app: ';
+  static const String settingsPlayStoreError = 'Could not open Play Store.';
+  static const String loading = 'Loading..';
 }
+

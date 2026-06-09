@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
@@ -63,7 +62,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         title: AppStrings.feedbackScreenTitle,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(6.w),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -72,7 +71,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               Center(
                 child: Column(
                   children: [
-                    SizedBox(height: 1.h),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(5, (index) {
@@ -83,11 +82,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           color: index < widget.rating!
                               ? const Color(0xFFFFC107)
                               : AppColors.border,
-                          size: 9.w,
+                          size: 36,
                         );
                       }),
                     ),
-                    SizedBox(height: 1.h),
+                    const SizedBox(height: 8),
                     Text(
                       'You rated us ${widget.rating!} star${widget.rating! == 1 ? '' : 's'}',
                       style: AppTextStyles.getStyle(
@@ -98,7 +97,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 4.h),
+              const SizedBox(height: 32),
             ],
             Text(
               'What can we improve?',
@@ -108,12 +107,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 1.5.h),
+            const SizedBox(height: 12),
             // Text area
             Container(
               decoration: BoxDecoration(
                 color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(4.w),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: TextField(
                 controller: _controller,
@@ -130,7 +129,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     fontSize: 15,
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(4.w),
+                  contentPadding: const EdgeInsets.all(16),
                   counterStyle: AppTextStyles.getStyle(
                     color: AppColors.textMuted,
                     fontSize: 12,
@@ -138,7 +137,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 3.5.h),
+            const SizedBox(height: 28),
             // Submit button
             SizedBox(
               width: double.infinity,
@@ -148,9 +147,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   disabledBackgroundColor: AppColors.border,
-                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.w),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   elevation: 0,
                 ),

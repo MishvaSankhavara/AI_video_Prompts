@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../adsmanager/ad_ids.dart';
 import '../../models/video_category.dart';
 import '../../services/api_service.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
-
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 import 'prompt_details_screen.dart';
+import '../../adsmanager/ad_service.dart';
 
 class CategoryDetailsScreen extends StatefulWidget {
   final int categoryId;
@@ -42,6 +43,12 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       },
     );
     _fetchCategoryVideos();
+
+    // Load Category Interstitial Ad
+    AdService.instance.loadInterstitialAd(
+      highFloorId: AdIds.interCategoryHF2,
+      lowFloorId: AdIds.interCategoryLF2,
+    );
   }
 
   Future<void> _fetchCategoryVideos() async {
@@ -147,16 +154,21 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
         final item = _videos[index];
         return GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PromptDetailsScreen(
-                  item: item,
-                  categoryItems: _videos,
-                  categoryName: widget.categoryName,
-                  categoryId: widget.categoryId,
-                ),
-              ),
+            // Show interstitial ad, then navigate to prompt details
+            AdService.instance.showInterstitialAd(
+              onAdDismissed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PromptDetailsScreen(
+                      item: item,
+                      categoryItems: _videos,
+                      categoryName: widget.categoryName,
+                      categoryId: widget.categoryId,
+                    ),
+                  ),
+                );
+              },
             );
           },
           child: Container(

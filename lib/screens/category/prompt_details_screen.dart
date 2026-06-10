@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/video_category.dart';
+import '../../adsmanager/ad_service.dart';
+import '../../adsmanager/ad_ids.dart';
 import '../../services/app_state.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
@@ -68,6 +70,11 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     ]).animate(CurvedAnimation(parent: _btnController, curve: Curves.easeInOutQuad));
 
     _logPromptView();
+    // Preload rewarded ad so it is ready when the user taps unlock
+    AdService.instance.loadRewardedAd(
+      highFloorId: AdIds.rewardedHF,
+      lowFloorId: AdIds.rewardedLF,
+    );
   }
 
   void _onScroll() {
@@ -93,11 +100,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     );
   }
 
-  void _changeCurrentItem(VideoItem newItem) {
-    setState(() {
-      _currentItem = newItem;
-    });
-    _logPromptView();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final appState = Provider.of<AppState>(context, listen: false);
+    if (appState.isFavorite(_currentItem)) {
+      _unlockedItemIds.add(_currentItem.id);
+    }
   }
 
   @override
@@ -144,7 +153,26 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
               parameters: {AppStrings.paramPromptId: _currentItem.id},
             );
             Navigator.pop(context);
-            _showRewardGrantedDialog();
+            // Show real rewarded ad – unlock only if user finishes the ad
+            AdService.instance.showRewardedAd(
+              onRewarded: () {
+                // User watched the full ad – grant the unlock
+                setState(() {
+                  _unlockedItemIds.add(_currentItem.id);
+                });
+                AnalyticsService.instance.logEvent(
+                  name: AppStrings.analyticsUnlockPromptSuccess,
+                  parameters: {AppStrings.paramPromptId: _currentItem.id},
+                );
+                _showRewardGrantedDialog();
+              },
+              onDismissed: () {
+                  AdService.instance.loadRewardedAd(
+                    highFloorId: AdIds.rewardedHF,
+                    lowFloorId: AdIds.rewardedLF,
+                  ); // Preload next
+              },
+            );
           },
           showCloseButton: true,
         );
@@ -400,7 +428,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                 IconButton(
                   icon: FaIcon(
                     isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
-                    color: isFav ? Colors.redAccent : AppColors.textPrimary,
+                    color: isFav ? AppColors.textPrimary : AppColors.textPrimary,
                   ),
                   onPressed: () {
                     appState.toggleFavorite(_currentItem);
@@ -539,7 +567,19 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                     item: recommendedItems[index],
                     categoryName: '',
                     isPremium: index % 3 == 0,
-                    onTap: () => _changeCurrentItem(recommendedItems[index]),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PromptDetailsScreen(
+                            item: recommendedItems[index],
+                            categoryItems: widget.categoryItems,
+                            categoryName: widget.categoryName,
+                            categoryId: widget.categoryId,
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

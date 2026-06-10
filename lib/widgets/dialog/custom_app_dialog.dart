@@ -171,49 +171,40 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                   ),
                 ],
                 const SizedBox(height: 28),
-                // Primary Button - Gradient with Shadow
-                Container(
-                  width: double.infinity,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    gradient: isPrimaryDisabled
-                        ? null
-                        : const LinearGradient(
-                            colors: [AppColors.primary, AppColors.secondary],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                    color: isPrimaryDisabled ? AppColors.border : null,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: isPrimaryDisabled
-                        ? null
-                        : [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.2),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                // Primary Button - Gradient with Shadow & Micro-animation
+                ScaleButton(
+                  onTap: isPrimaryDisabled
+                      ? null
+                      : (widget.showRatingStars
+                          ? () {
+                              Navigator.pop(context);
+                              widget.onRatingSubmit?.call(_selectedRating);
+                            }
+                          : widget.onPrimaryPressed),
+                  child: Container(
+                    width: double.infinity,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      gradient: isPrimaryDisabled
+                          ? null
+                          : const LinearGradient(
+                              colors: [Color(0xFFB8308F), AppColors.primary],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                          ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: widget.showRatingStars
-                        ? (_selectedRating == 0
-                            ? null
-                            : () {
-                                Navigator.pop(context);
-                                widget.onRatingSubmit?.call(_selectedRating);
-                              })
-                        : widget.onPrimaryPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: Colors.white,
-                      shadowColor: Colors.transparent,
-                      disabledBackgroundColor: Colors.transparent,
-                      disabledForegroundColor: AppColors.textMuted.withValues(alpha: 0.6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                      color: isPrimaryDisabled ? AppColors.border : null,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: isPrimaryDisabled
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.25),
+                                blurRadius: 14,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
                     ),
+                    alignment: Alignment.center,
                     child: Text(
                       widget.primaryButtonText,
                       style: AppTextStyles.getStyle(
@@ -222,6 +213,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                         color: isPrimaryDisabled
                             ? AppColors.textMuted.withValues(alpha: 0.6)
                             : Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
@@ -229,24 +221,27 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                 // Secondary Button (if present) - Redesigned
                 if (widget.secondaryButtonText != null && widget.onSecondaryPressed != null) ...[
                   const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 54,
-                    child: OutlinedButton(
-                      onPressed: widget.onSecondaryPressed,
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColors.primary, width: 1.5),
-                        foregroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  ScaleButton(
+                    onTap: widget.onSecondaryPressed,
+                    child: Container(
+                      width: double.infinity,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.35),
+                          width: 1.5,
                         ),
                       ),
+                      alignment: Alignment.center,
                       child: Text(
                         widget.secondaryButtonText!,
                         style: AppTextStyles.getStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -260,3 +255,55 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
     );
   }
 }
+
+class ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+
+  const ScaleButton({super.key, required this.child, this.onTap});
+
+  @override
+  State<ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => widget.onTap != null ? _controller.forward() : null,
+      onTapUp: (_) {
+        if (widget.onTap != null) {
+          _controller.reverse();
+          widget.onTap!();
+        }
+      },
+      onTapCancel: () => widget.onTap != null ? _controller.reverse() : null,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
+      ),
+    );
+  }
+}
+

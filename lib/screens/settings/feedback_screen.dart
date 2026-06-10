@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
@@ -78,43 +77,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         title: AppStrings.feedbackScreenTitle,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Star display (read-only)
-            if (widget.rating != null && widget.rating! > 0) ...[
-              Center(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(5, (index) {
-                        return FaIcon(
-                          index < widget.rating!
-                              ? FontAwesomeIcons.solidStar
-                              : FontAwesomeIcons.star,
-                          color: index < widget.rating!
-                              ? const Color(0xFFFFC107)
-                              : AppColors.border,
-                          size: 36,
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'You rated us ${widget.rating!} star${widget.rating! == 1 ? '' : 's'}',
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-            ],
             Text(
               'What can we improve?',
               style: AppTextStyles.getStyle(
@@ -155,20 +121,32 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             ),
             const SizedBox(height: 28),
             // Submit button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitFeedback,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: AppColors.border,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
+            ScaleButton(
+              onTap: _isSubmitting ? null : _submitFeedback,
+              child: Container(
+                width: double.infinity,
+                height: 54,
+                decoration: BoxDecoration(
+                  gradient: _isSubmitting
+                      ? null
+                      : const LinearGradient(
+                          colors: [Color(0xFFB8308F), AppColors.primary],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                  color: _isSubmitting ? AppColors.border : null,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: _isSubmitting
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.25),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
                 ),
+                alignment: Alignment.center,
                 child: _isSubmitting
                     ? const SizedBox(
                         height: 20,
@@ -183,12 +161,65 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         style: AppTextStyles.getStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
                         ),
                       ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+
+  const ScaleButton({super.key, required this.child, this.onTap});
+
+  @override
+  State<ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => widget.onTap != null ? _controller.forward() : null,
+      onTapUp: (_) {
+        if (widget.onTap != null) {
+          _controller.reverse();
+          widget.onTap!();
+        }
+      },
+      onTapCancel: () => widget.onTap != null ? _controller.reverse() : null,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
       ),
     );
   }

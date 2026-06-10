@@ -30,4 +30,8 @@ class AppColors {
 
   //unlock button dialog
   static const Color unLockButton = Color(0xFFAF4D97);
+
+  //Button Gradient
+  static const Color buttonGradientStart = Color(0xFFB8308F);
+  static const Color buttonGradientEnd = Color(0xFF5D1049);
 }

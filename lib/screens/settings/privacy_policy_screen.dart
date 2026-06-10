@@ -4,6 +4,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 
@@ -62,7 +63,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               }
             },
             onWebResourceError: (WebResourceError error) {
-              debugPrint('WebView Error: \${error.description}');
+              CommonUtils.printLog('WebView Error: ${error.description}');
             },
           ),
         )
@@ -78,10 +79,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        debugPrint('Could not launch $_privacyPolicyUrl');
+        CommonUtils.printLog('Could not launch $_privacyPolicyUrl');
       }
     } catch (e) {
-      debugPrint('Error launching url: $e');
+      CommonUtils.printLog('Error launching url: $e');
     }
   }
 

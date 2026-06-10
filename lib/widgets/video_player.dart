@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../utils/colors.dart';
+import '../utils/common_utils.dart';
 import '../utils/strings.dart';
 import '../utils/text_app.dart';
 
@@ -90,7 +91,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         });
       }
     } catch (e) {
-      debugPrint('Error initializing video: $e');
+      CommonUtils.printLog('Error initializing video: $e');
       if (mounted) {
         setState(() {
           _hasError = true;

@@ -3,6 +3,7 @@ import '../models/video_category.dart';
 import '../services/api_service.dart';
 import 'database_helper.dart';
 import 'analytics_service.dart';
+import '../utils/common_utils.dart';
 
 class AppState extends ChangeNotifier {
   AppState() {
@@ -96,7 +97,7 @@ class AppState extends ChangeNotifier {
       _favorites.addAll(dbFavs);
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading favorites: $e');
+      CommonUtils.printLog('Error loading favorites: $e');
     }
   }
 

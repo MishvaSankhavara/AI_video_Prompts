@@ -1,5 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
+import '../utils/common_utils.dart';
 
 /// A wrapper service around [FirebaseAnalytics] to centralize event tracking.
 class AnalyticsService {
@@ -17,9 +17,9 @@ class AnalyticsService {
   Future<void> setUserProperty({required String name, required String value}) async {
     try {
       await _analytics.setUserProperty(name: name, value: value);
-      debugPrint('Analytics: User Property Set [$name = $value]');
+      CommonUtils.printLog('Analytics: User Property Set [$name = $value]');
     } catch (e) {
-      debugPrint('Analytics Error setting user property: $e');
+      CommonUtils.printLog('Analytics Error setting user property: $e');
     }
   }
 
@@ -27,9 +27,9 @@ class AnalyticsService {
   Future<void> logEvent({required String name, Map<String, Object>? parameters}) async {
     try {
       await _analytics.logEvent(name: name, parameters: parameters);
-      debugPrint('Analytics: Event Logged [$name] with parameters: $parameters');
+      CommonUtils.printLog('Analytics: Event Logged [$name] with parameters: $parameters');
     } catch (e) {
-      debugPrint('Analytics Error logging event $name: $e');
+      CommonUtils.printLog('Analytics Error logging event $name: $e');
     }
   }
 
@@ -40,9 +40,9 @@ class AnalyticsService {
         screenName: screenName,
         screenClass: screenClass ?? screenName,
       );
-      debugPrint('Analytics: Screen View Logged [$screenName]');
+      CommonUtils.printLog('Analytics: Screen View Logged [$screenName]');
     } catch (e) {
-      debugPrint('Analytics Error logging screen view $screenName: $e');
+      CommonUtils.printLog('Analytics Error logging screen view $screenName: $e');
     }
   }
 }

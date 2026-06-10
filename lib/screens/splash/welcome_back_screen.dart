@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../adsmanager/ad_service.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
@@ -58,16 +59,27 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
         if (!mounted) return;
 
         if (widget.isResume) {
-          Navigator.of(context).pop();
+          // Show App Open Ad on resume, then pop back
+          AdService.instance.showAppOpenAd(
+            onAdDismissed: () {
+              if (!mounted) return;
+              Navigator.of(context).pop();
+            },
+          );
         } else {
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              transitionDuration: const Duration(milliseconds: 400),
-            ),
+          AdService.instance.showAppOpenAd(
+            onAdDismissed: () {
+              if (!mounted) return;
+              Navigator.of(context).pushReplacement(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  transitionDuration: const Duration(milliseconds: 400),
+                ),
+              );
+            },
           );
         }
       }

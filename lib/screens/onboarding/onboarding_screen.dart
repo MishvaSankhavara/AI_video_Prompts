@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
 import '../home/home_screen.dart';
@@ -55,7 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('has_seen_onboarding', true);
     } catch (e) {
-      debugPrint('Error writing onboarding flag to shared preferences: $e');
+      CommonUtils.printLog('Error writing onboarding flag to shared preferences: $e');
     }
     
     if (mounted) {

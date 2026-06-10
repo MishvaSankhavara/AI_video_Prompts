@@ -12,12 +12,12 @@ class AppStrings {
 
   // Dialog strings
   static const String unlockDialogTitle = 'Unlock Prompt ✨';
-  static const String unlockDialogSubtitle = 'Unlock this premium prompt with PRO or watch a short ad.';
+  static const String unlockDialogSubtitle = 'Unlock this premium prompt with PRO or watch a ad.';
   static const String unlockDialogBuyPro = 'Get PRO';
   static const String unlockDialogWatchAd = 'Watch Ad';
   static const String rewardDialogTitle = 'Prompt Unlocked! 🎉';
   static const String rewardDialogSubtitle = 'Premium prompt unlocked! Copy it and start creating.';
-  static const String rewardDialogDone = 'Start Creating';
+  static const String rewardDialogDone = 'Done';
 
   // Rating & Feedback strings
   static const String ratingDialogTitle = 'Enjoying the App?';
@@ -96,7 +96,7 @@ class AppStrings {
   // App Update dialog strings
   static const String updateDialogTitle = 'Update Available! 🚀';
   static const String updateDialogSubtitle = 'Update now for new categories, faster previews, and better performance.';
-  static const String updateDialogPrimary = 'Upgrade Now';
+  static const String updateDialogPrimary = 'Update Now';
   static const String updateDialogSecondary = 'Later';
   static const String playStoreBaseUrl = 'https://play.google.com/store/apps/details?id=';
 

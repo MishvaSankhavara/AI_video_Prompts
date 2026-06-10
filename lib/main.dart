@@ -8,8 +8,11 @@ import 'screens/splash/welcome_back_screen.dart';
 import 'services/app_state.dart';
 import 'services/analytics_service.dart';
 import 'utils/colors.dart';
+import 'utils/common_utils.dart';
 import 'utils/strings.dart';
 import 'utils/text_app.dart';
+import 'adsmanager/ad_service.dart';
+import 'adsmanager/ad_ids.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -23,8 +26,12 @@ void main() async {
   try {
     await Firebase.initializeApp();
   } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
+    CommonUtils.printLog('Firebase initialization failed: $e');
   }
+
+  await AdService.instance.initialize();
+  // Preload App Open Ad so it is ready after splash
+  AdService.instance.loadAppOpenAd(adUnitId: AdIds.appOpenAdUnitId);
   runApp(
     MultiProvider(
       providers: [
@@ -87,7 +94,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         );
       }
     } catch (e) {
-      debugPrint('Error showing welcome back screen on resume: $e');
+      CommonUtils.printLog('Error showing welcome back screen on resume: $e');
     }
   }
 

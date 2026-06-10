@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -45,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
       }
     } catch (e) {
-      debugPrint('Error fetching app version: $e');
+      CommonUtils.printLog('Error fetching app version: $e');
     }
   }
 
@@ -90,7 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }
               }
             } catch (e) {
-              debugPrint('Error opening Play Store from feedback: $e');
+              CommonUtils.printLog('Error opening Play Store from feedback: $e');
             }
           } else {
             // 1-3 stars → open Feedback screen
@@ -131,7 +132,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   );
                 } catch (e) {
-                  debugPrint('Error sharing app: $e');
+                  CommonUtils.printLog('Error sharing app: $e');
                   // Fallback share logic if package info fails
                   await SharePlus.instance.share(
                     ShareParams(

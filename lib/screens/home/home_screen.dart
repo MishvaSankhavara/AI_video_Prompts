@@ -3,9 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../adsmanager/ad_service.dart';
+import '../../adsmanager/ad_ids.dart';
 import '../../services/app_state.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/shimmer_grid_card.dart';
@@ -32,6 +35,11 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<AppState>(context, listen: false).loadCategories();
       _checkForUpdates();
     });
+    // Preload interstitial so it is ready when user taps a category item
+    AdService.instance.loadInterstitialAd(
+      highFloorId: AdIds.interHomelHF1,
+      lowFloorId: AdIds.interHomeLF1,
+    );
   }
 
   Future<void> _checkForUpdates() async {
@@ -49,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _showUpdateDialog();
       }
     } catch (e) {
-      debugPrint('Error checking for app updates: $e');
+      CommonUtils.printLog('Error checking for app updates: $e');
     }
   }
 
@@ -95,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
             }
           } catch (e) {
-            debugPrint('Error launching play store: $e');
+            CommonUtils.printLog('Error launching play store: $e');
           }
         },
         onSecondaryPressed: () {
@@ -220,14 +228,19 @@ class HomeTabBody extends StatelessWidget {
           categoryName: category.categoryName,
           isPremium: isPremium,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CategoryDetailsScreen(
-                  categoryId: category.categoryId,
-                  categoryName: category.categoryName,
-                ),
-              ),
+            // Show interstitial ad then navigate to category details
+            AdService.instance.showInterstitialAd(
+              onAdDismissed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryDetailsScreen(
+                      categoryId: category.categoryId,
+                      categoryName: category.categoryName,
+                    ),
+                  ),
+                );
+              },
             );
           },
         );

@@ -30,7 +30,7 @@ class FavoriteScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Saved templates will appear here.',
               style: AppTextStyles.getStyle(color: AppColors.textMuted, fontSize: 13),

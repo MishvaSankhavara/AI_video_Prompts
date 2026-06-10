@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../adsmanager/ad_service.dart';
+import '../../adsmanager/ad_ids.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
 import '../home/home_screen.dart';
@@ -23,7 +26,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     AnalyticsService.instance.logScreenView(screenName: 'splash_screen');
-    
+    // Preload interstitial early so it is ready by the time splash finishes
+    AdService.instance.loadInterstitialAd(
+      highFloorId: AdIds.interSplashHF1,
+      lowFloorId: AdIds.interSplashLF2,
+    );
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
@@ -52,21 +60,28 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           final prefs = await SharedPreferences.getInstance();
           hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
         } catch (e) {
-          debugPrint('Error reading onboarding status: $e');
+          CommonUtils.printLog('Error reading onboarding status: $e');
         }
 
         if (!mounted) return;
 
         Widget targetScreen = hasSeenOnboarding ? const HomeScreen() : const OnboardingScreen();
 
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
+        void navigateToTarget() {
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              transitionDuration: const Duration(milliseconds: 300),
+            ),
+          );
+        }
+
+        AdService.instance.showInterstitialAd(
+          onAdDismissed: navigateToTarget,
         );
       }
     });

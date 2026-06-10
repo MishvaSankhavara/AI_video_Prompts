@@ -20,7 +20,14 @@ class AppColors {
   static const Color splashBackgroundEnd = Color(0xFFFCF9FC);
   static const Color splashAccent = Color(0xFF5D1049); // Crane Purple loader
 
-
-
   static const Color homeBottomBar = Color(0xFF7A3969); // Crane Purple 800 (Primary Brand Color)
+
+  // Shimmer Colors
+  static const Color shimmerBase = Color(0xFFE5E7EB);
+  static const Color shimmerHighlight = Color(0xFFF3F4F6);
+
+
+
+  //unlock button dialog
+  static const Color unLockButton = Color(0xFFAF4D97);
 }

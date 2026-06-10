@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
@@ -16,6 +18,12 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackScreenState extends State<FeedbackScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logScreenView(screenName: 'feedback_screen');
+  }
 
   @override
   void dispose() {
@@ -36,6 +44,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     }
 
     setState(() => _isSubmitting = true);
+
+    AnalyticsService.instance.logEvent(
+      name: 'feedback_submitted',
+      parameters: {
+        'rating': widget.rating ?? 0,
+        'feedback_text_length': text.length,
+      },
+    );
 
     // Simulate submission delay
     await Future.delayed(const Duration(milliseconds: 800));
@@ -75,10 +91,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(5, (index) {
-                        return Icon(
+                        return FaIcon(
                           index < widget.rating!
-                              ? Icons.star_rounded
-                              : Icons.star_outline_rounded,
+                              ? FontAwesomeIcons.solidStar
+                              : FontAwesomeIcons.star,
                           color: index < widget.rating!
                               ? const Color(0xFFFFC107)
                               : AppColors.border,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';
@@ -19,7 +20,7 @@ class FavoriteScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.favorite_border_rounded, size: 64, color: AppColors.textMuted),
+            FaIcon(FontAwesomeIcons.heart, size: 64, color: AppColors.textMuted),
             const SizedBox(height: 16),
             Text(
               'No Favorites Yet',

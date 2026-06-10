@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/splash/welcome_back_screen.dart';
 import 'services/app_state.dart';
+import 'services/analytics_service.dart';
 import 'utils/colors.dart';
 import 'utils/strings.dart';
 import 'utils/text_app.dart';
@@ -94,6 +95,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       title: AppStrings.appName,
       navigatorKey: navigatorKey,
+      navigatorObservers: [AnalyticsService.instance.observer],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,

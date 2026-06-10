@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -227,8 +228,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       errorWidget: (context, url, error) => Container(
         color: Colors.grey,
         alignment: Alignment.center,
-        child: const Icon(
-          Icons.videocam_off,
+        child: const FaIcon(
+          FontAwesomeIcons.videoSlash,
           color: AppColors.white,
           size: 24,
         ),
@@ -326,10 +327,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                           color: Colors.black54,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.play_arrow_rounded,
+                        child: const FaIcon(
+                          FontAwesomeIcons.play,
                           color: Colors.white,
-                          size: 40,
+                          size: 30,
                         ),
                       ),
                     ),

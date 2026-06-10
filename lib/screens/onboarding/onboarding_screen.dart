@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -16,31 +18,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.instance.logEvent(name: 'onboarding_started');
+    AnalyticsService.instance.logScreenView(screenName: 'onboarding_slide_1');
+  }
+
   final List<OnboardingPageData> _pages = [
     OnboardingPageData(
       title: AppStrings.onboardingTitle1,
       subtitle: AppStrings.onboardingSubtitle1,
-      icon: Icons.auto_awesome_rounded,
+      icon: FontAwesomeIcons.wandMagicSparkles,
       gradientColors: [const Color(0xFF6366F1), const Color(0xFF4F46E5)], // Indigo/Blue
       visualWidget: const OnboardingVisualOne(),
     ),
     OnboardingPageData(
       title: AppStrings.onboardingTitle2,
       subtitle: AppStrings.onboardingSubtitle2,
-      icon: Icons.copy_all_rounded,
+      icon: FontAwesomeIcons.solidCopy,
       gradientColors: [const Color(0xFF06B6D4), const Color(0xFF0891B2)], // Teal/Cyan
       visualWidget: const OnboardingVisualTwo(),
     ),
     OnboardingPageData(
       title: AppStrings.onboardingTitle3,
       subtitle: AppStrings.onboardingSubtitle3,
-      icon: Icons.workspace_premium_rounded,
+      icon: FontAwesomeIcons.crown,
       gradientColors: [const Color(0xFFF59E0B), const Color(0xFFD97706)], // Amber/Orange
       visualWidget: const OnboardingVisualThree(),
     ),
   ];
 
   Future<void> _completeOnboarding() async {
+    AnalyticsService.instance.logEvent(name: 'onboarding_completed');
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('has_seen_onboarding', true);
@@ -82,6 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: _currentPage < 2
                     ? TextButton(
                         onPressed: () {
+                          AnalyticsService.instance.logEvent(name: 'onboarding_skip_tapped');
                           _pageController.animateToPage(
                             2,
                             duration: const Duration(milliseconds: 500),
@@ -113,6 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   setState(() {
                     _currentPage = index;
                   });
+                  AnalyticsService.instance.logScreenView(screenName: 'onboarding_slide_${index + 1}');
                 },
                 itemBuilder: (context, index) {
                   final page = _pages[index];
@@ -246,7 +258,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingPageData {
   final String title;
   final String subtitle;
-  final IconData icon;
+  final FaIconData icon;
   final List<Color> gradientColors;
   final Widget visualWidget;
 
@@ -359,8 +371,8 @@ class OnboardingVisualOne extends StatelessWidget {
               ],
             ),
             child: const Center(
-              child: Icon(
-                Icons.auto_awesome_rounded,
+              child: FaIcon(
+                FontAwesomeIcons.wandMagicSparkles,
                 color: Color(0xFF4F46E5),
                 size: 52,
               ),
@@ -539,8 +551,8 @@ class OnboardingVisualTwo extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.check_rounded,
+              child: const FaIcon(
+                FontAwesomeIcons.check,
                 color: Colors.white,
                 size: 28,
               ),
@@ -551,8 +563,8 @@ class OnboardingVisualTwo extends StatelessWidget {
           Positioned(
             top: 40,
             right: 45,
-            child: const Icon(
-              Icons.content_paste_rounded,
+            child: const FaIcon(
+              FontAwesomeIcons.clipboard,
               color: Color(0xFF0891B2),
               size: 26,
             ),
@@ -631,8 +643,8 @@ class OnboardingVisualThree extends StatelessWidget {
               ],
             ),
             child: const Center(
-              child: Icon(
-                Icons.workspace_premium_rounded,
+              child: FaIcon(
+                FontAwesomeIcons.crown,
                 color: Colors.white,
                 size: 54,
               ),
@@ -661,7 +673,7 @@ class OnboardingVisualThree extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 14),
+                  const FaIcon(FontAwesomeIcons.solidStar, color: Color(0xFFF59E0B), size: 14),
                   const SizedBox(width: 4),
                   Text(
                     AppStrings.onboardingProBadge,
@@ -680,12 +692,12 @@ class OnboardingVisualThree extends StatelessWidget {
           Positioned(
             top: 80,
             left: 30,
-            child: const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 20),
+            child: const FaIcon(FontAwesomeIcons.solidStar, color: Color(0xFFF59E0B), size: 20),
           ),
           Positioned(
             bottom: 80,
             right: 30,
-            child: const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 16),
+            child: const FaIcon(FontAwesomeIcons.solidStar, color: Color(0xFFF59E0B), size: 16),
           ),
         ],
       ),

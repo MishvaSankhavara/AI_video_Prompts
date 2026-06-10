@@ -11,13 +11,13 @@ class AppStrings {
   static const String generateButton = 'Generate Prompt';
 
   // Dialog strings
-  static const String unlockDialogTitle = 'Unlock Prompt';
-  static const String unlockDialogSubtitle = 'Unlock this prompt without ads by upgrading to Pro, or watch an ad to continue for free.';
-  static const String unlockDialogBuyPro = 'Buy Pro';
+  static const String unlockDialogTitle = 'Unlock Prompt ✨';
+  static const String unlockDialogSubtitle = 'Unlock this premium prompt with PRO or watch a short ad.';
+  static const String unlockDialogBuyPro = 'Get PRO';
   static const String unlockDialogWatchAd = 'Watch Ad';
-  static const String rewardDialogTitle = 'Reward Granted';
-  static const String rewardDialogSubtitle = 'Prompt Unlocked Successfully';
-  static const String rewardDialogDone = 'Done';
+  static const String rewardDialogTitle = 'Prompt Unlocked! 🎉';
+  static const String rewardDialogSubtitle = 'Premium prompt unlocked! Copy it and start creating.';
+  static const String rewardDialogDone = 'Start Creating';
 
   // Rating & Feedback strings
   static const String ratingDialogTitle = 'Enjoying the App?';
@@ -65,10 +65,38 @@ class AppStrings {
   static const String guidanceTipTitle = 'Creator Tip';
   static const String guidanceTipDesc = 'Customize the prompt by replacing names, actions, or lighting style to make it unique!';
 
+  // Prompt Details Screen strings
+  static const String detailsUnlockPrompt = 'Unlock Prompt';
+  static const String detailsCopyPrompt = 'Copy Prompt';
+  static const String detailsCopiedMessage = 'Prompt copied to clipboard!';
+  static const String detailsExplore = 'Explore Similar';
+  static const String detailsViewMore = 'View More';
+  static const String detailsNoRecommendations = 'No recommendations available.';
+  static const String categoryFavorites = 'Favorites';
+  static const String categoryDefaultFallback = 'Category';
+  static const String truncationSuffix = '....';
+
+  // Analytics Event Names
+  static const String analyticsPromptDetailsScreen = 'prompt_details';
+  static const String analyticsViewPrompt = 'view_prompt';
+  static const String analyticsUnlockPromptDialogViewed = 'unlock_prompt_dialog_viewed';
+  static const String analyticsUnlockPromptBuyProTapped = 'unlock_prompt_buy_pro_tapped';
+  static const String analyticsUnlockPromptWatchAdTapped = 'unlock_prompt_watch_ad_tapped';
+  static const String analyticsUnlockPromptSuccess = 'unlock_prompt_success';
+  static const String analyticsToggleFavorite = 'toggle_favorite';
+  static const String analyticsSharePrompt = 'share_prompt';
+  static const String analyticsCopyPrompt = 'copy_prompt';
+
+  // Analytics Parameter Names
+  static const String paramPromptId = 'prompt_id';
+  static const String paramCategoryName = 'category_name';
+  static const String paramCategoryId = 'category_id';
+  static const String paramIsFavorite = 'is_favorite';
+
   // App Update dialog strings
-  static const String updateDialogTitle = 'Update Available';
-  static const String updateDialogSubtitle = 'A new version of the app is available. Please update to get the latest prompts, templates, and performance improvements.';
-  static const String updateDialogPrimary = 'Update Now';
+  static const String updateDialogTitle = 'Update Available! 🚀';
+  static const String updateDialogSubtitle = 'Update now for new categories, faster previews, and better performance.';
+  static const String updateDialogPrimary = 'Upgrade Now';
   static const String updateDialogSecondary = 'Later';
   static const String playStoreBaseUrl = 'https://play.google.com/store/apps/details?id=';
 
@@ -83,4 +111,3 @@ class AppStrings {
   static const String settingsPlayStoreError = 'Could not open Play Store.';
   static const String loading = 'Loading..';
 }
-

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../utils/colors.dart';
 import '../utils/text_app.dart';
 
@@ -33,14 +34,14 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
+              icon: const FaIcon(FontAwesomeIcons.chevronLeft, color: AppColors.textPrimary, size: 18),
               onPressed: onBackPressed ?? () => Navigator.pop(context),
             )
           : null,
       backgroundColor: backgroundColor,
       surfaceTintColor: surfaceTintColor,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: false,
       actions: actions,
     );
   }

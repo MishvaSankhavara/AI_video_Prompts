@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/app_state.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/prompt_grid_card.dart';
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logScreenView(screenName: 'home_tab');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       Provider.of<AppState>(context, listen: false).loadCategories();
@@ -68,17 +71,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showUpdateDialog() {
+    AnalyticsService.instance.logEvent(name: 'app_update_dialog_viewed');
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) => CustomAppDialog(
         title: AppStrings.updateDialogTitle,
         subtitle: AppStrings.updateDialogSubtitle,
-        icon: Icons.system_update_rounded,
+        icon: FontAwesomeIcons.cloudArrowDown,
         primaryButtonText: AppStrings.updateDialogPrimary,
         secondaryButtonText: AppStrings.updateDialogSecondary,
         showCloseButton: true,
         onPrimaryPressed: () async {
+          AnalyticsService.instance.logEvent(
+            name: 'app_update_action',
+            parameters: {'action': 'update_now'},
+          );
           Navigator.pop(context);
           try {
             final packageInfo = await PackageInfo.fromPlatform();
@@ -90,7 +98,13 @@ class _HomeScreenState extends State<HomeScreen> {
             debugPrint('Error launching play store: $e');
           }
         },
-        onSecondaryPressed: () => Navigator.pop(context),
+        onSecondaryPressed: () {
+          AnalyticsService.instance.logEvent(
+            name: 'app_update_action',
+            parameters: {'action': 'remind_later'},
+          );
+          Navigator.pop(context);
+        },
       ),
     );
   }
@@ -153,7 +167,7 @@ class HomeTabBody extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 64, color: AppColors.textMuted),
+              const FaIcon(FontAwesomeIcons.triangleExclamation, size: 64, color: AppColors.textMuted),
               const SizedBox(height: 16),
               Text(
                 appState.apiError,

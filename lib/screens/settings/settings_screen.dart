@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../utils/strings.dart';
@@ -58,17 +60,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showRatingDialog(BuildContext context) {
+    AnalyticsService.instance.logEvent(name: 'rate_app_dialog_viewed');
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (_) => CustomAppDialog(
         title: AppStrings.ratingDialogTitle,
         subtitle: AppStrings.ratingDialogSubtitle,
-        icon: Icons.star_rounded,
+        icon: FontAwesomeIcons.solidStar,
         primaryButtonText: AppStrings.ratingDialogSubmit,
         showCloseButton: true,
         showRatingStars: true,
         onRatingSubmit: (rating) async {
+          AnalyticsService.instance.logEvent(
+            name: 'rate_app_submit',
+            parameters: {'rating': rating},
+          );
           if (rating >= 4) {
             // 4 or 5 stars → open Play Store
             try {
@@ -111,9 +118,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
-              icon: Icons.share_rounded,
+              icon: FontAwesomeIcons.arrowUpFromBracket,
               title: AppStrings.settingsShareApp,
               onTap: () async {
+                AnalyticsService.instance.logEvent(name: 'share_app_tapped');
                 try {
                   final packageInfo = await PackageInfo.fromPlatform();
                   final appUrl = '$_playStoreBaseUrl${packageInfo.packageName}';
@@ -134,12 +142,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             _buildSettingsTile(
-              icon: Icons.star_outline_rounded,
+              icon: FontAwesomeIcons.star,
               title: AppStrings.settingsRateApp,
               onTap: () => _showRatingDialog(context),
             ),
             _buildSettingsTile(
-              icon: Icons.feedback_outlined,
+              icon: FontAwesomeIcons.comment,
               title: AppStrings.settingsFeedback,
               onTap: () {
                 Navigator.push(
@@ -155,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
-              icon: Icons.lock_outline_rounded,
+              icon: FontAwesomeIcons.shieldHalved,
               title: AppStrings.settingsPrivacyPolicy,
               onTap: () {
                 Navigator.push(
@@ -165,7 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             _buildSettingsTile(
-              icon: Icons.info_outline_rounded,
+              icon: FontAwesomeIcons.circleInfo,
               title: AppStrings.settingsAppVersion,
               trailing: Text(
                 _appVersion,
@@ -278,7 +286,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSettingsTile({
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     Widget? trailing,
     VoidCallback? onTap,
@@ -294,7 +302,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.primary, size: 20),
+            child: FaIcon(icon, color: AppColors.primary, size: 20),
           ),
           title: Text(
             title,
@@ -304,7 +312,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               fontSize: 15,
             ),
           ),
-          trailing: trailing ?? const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted, size: 22),
+          trailing: trailing ?? const FaIcon(FontAwesomeIcons.chevronRight, color: AppColors.textMuted, size: 18),
           onTap: onTap,
         ),
         if (showDivider)

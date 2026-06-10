@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/video_category.dart';
 import '../../services/app_state.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -41,12 +43,26 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
   void initState() {
     super.initState();
     _currentItem = widget.item;
+    _logPromptView();
+  }
+
+  void _logPromptView() {
+    AnalyticsService.instance.logScreenView(screenName: 'prompt_details');
+    AnalyticsService.instance.logEvent(
+      name: 'view_prompt',
+      parameters: {
+        'prompt_id': _currentItem.id,
+        'category_name': widget.categoryName,
+        'category_id': widget.categoryId,
+      },
+    );
   }
 
   void _changeCurrentItem(VideoItem newItem) {
     setState(() {
       _currentItem = newItem;
     });
+    _logPromptView();
   }
 
   @override
@@ -64,6 +80,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
   }
 
   void _showUnlockDialog() {
+    AnalyticsService.instance.logEvent(
+      name: 'unlock_prompt_dialog_viewed',
+      parameters: {'prompt_id': _currentItem.id},
+    );
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -71,12 +91,21 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
         return CustomAppDialog(
           title: AppStrings.unlockDialogTitle,
           subtitle: AppStrings.unlockDialogSubtitle,
+          icon: FontAwesomeIcons.crown,
           primaryButtonText: AppStrings.unlockDialogBuyPro,
           onPrimaryPressed: () {
+            AnalyticsService.instance.logEvent(
+              name: 'unlock_prompt_buy_pro_tapped',
+              parameters: {'prompt_id': _currentItem.id},
+            );
             Navigator.pop(context);
           },
           secondaryButtonText: AppStrings.unlockDialogWatchAd,
           onSecondaryPressed: () {
+            AnalyticsService.instance.logEvent(
+              name: 'unlock_prompt_watch_ad_tapped',
+              parameters: {'prompt_id': _currentItem.id},
+            );
             Navigator.pop(context); // Close Unlock Dialog
             _showRewardGrantedDialog();
           },
@@ -94,8 +123,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
         return CustomAppDialog(
           title: AppStrings.rewardDialogTitle,
           subtitle: AppStrings.rewardDialogSubtitle,
+          icon: FontAwesomeIcons.circleCheck,
           primaryButtonText: AppStrings.rewardDialogDone,
           onPrimaryPressed: () {
+            AnalyticsService.instance.logEvent(
+              name: 'unlock_prompt_success',
+              parameters: {'prompt_id': _currentItem.id},
+            );
             Navigator.pop(context); // Close Dialog
             setState(() {
               _unlockedItemIds.add(_currentItem.id);
@@ -136,8 +170,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   color: AppColors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.auto_awesome_rounded,
+                child: const FaIcon(
+                  FontAwesomeIcons.wandMagicSparkles,
                   color: AppColors.primary,
                   size: 24,
                 ),
@@ -156,7 +190,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                         letterSpacing: 0.2,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       AppStrings.guidanceHeaderSubtitle,
                       style: AppTextStyles.getStyle(
@@ -221,12 +255,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.tips_and_updates_rounded,
+                const FaIcon(
+                  FontAwesomeIcons.lightbulb,
                   color: Color(0xFFF59E0B), // Warm Gold color
                   size: 22,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +273,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         AppStrings.guidanceTipDesc,
                         style: AppTextStyles.getStyle(
@@ -336,7 +370,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
     // Get the category items: if we came from Favorites screen, find the original category of this item
     List<VideoItem> categoryItems = widget.categoryItems;
-    if (widget.categoryName == 'Favorites') {
+    if (widget.categoryName == AppStrings.categoryFavorites) {
       try {
         final matchedCategory = appState.categories.firstWhere(
           (cat) {
@@ -368,19 +402,32 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
         actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
-                  icon: Icon(
-                    isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  icon: FaIcon(
+                    isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
                     color: isFav ? Colors.redAccent : AppColors.textPrimary,
                   ),
                   onPressed: () {
                     appState.toggleFavorite(_currentItem);
+                    AnalyticsService.instance.logEvent(
+                      name: 'toggle_favorite',
+                      parameters: {
+                        'prompt_id': _currentItem.id,
+                        'is_favorite': (!isFav).toString(),
+                      },
+                    );
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.share_rounded, color: AppColors.textPrimary),
+                  icon: const FaIcon(FontAwesomeIcons.shareNodes, color: AppColors.textPrimary),
                   onPressed: () {
                     SharePlus.instance.share(
                       ShareParams(text: _currentItem.aiPrompt),
+                    );
+                    AnalyticsService.instance.logEvent(
+                      name: 'share_prompt',
+                      parameters: {
+                        'prompt_id': _currentItem.id,
+                      },
                     );
                   },
                 ),
@@ -441,55 +488,93 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
             // 3. Action Button (Unlock or Copy)
             if (!(_isUnlocked || isFav))
-              ElevatedButton.icon(
-                onPressed: _showUnlockDialog,
-                icon: const Icon(Icons.lock_rounded, size: 20, color: Colors.white),
-                label: Text(
-                  'Unlock Prompt',
-                  style: AppTextStyles.getStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _showUnlockDialog,
+                  icon: const FaIcon(
+                    FontAwesomeIcons.lock,
+                    size: 18,
+                    color: AppColors.primary,
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  label: Text(
+                    AppStrings.detailsUnlockPrompt,
+                    style: AppTextStyles.getStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                  elevation: 0,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF8F9FB),
+                    foregroundColor: AppColors.textPrimary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(
+                        color: AppColors.textPrimary.withValues(alpha: 0.15),
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
                 ),
               )
             else
-              ElevatedButton.icon(
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: _currentItem.aiPrompt));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Prompt copied to clipboard!'),
-                      backgroundColor: AppColors.primary,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Clipboard.setData(
+                      ClipboardData(text: _currentItem.aiPrompt),
+                    );
+
+                    AnalyticsService.instance.logEvent(
+                      name: 'copy_prompt',
+                      parameters: {
+                        'prompt_id': _currentItem.id,
+                        'category_name': widget.categoryName,
+                      },
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          AppStrings.detailsCopiedMessage,
+                        ),
+                        backgroundColor: AppColors.primary,
+                      ),
+                    );
+                  },
+                  icon: const FaIcon(
+                    FontAwesomeIcons.copy,
+                    size: 18,
+                    color: AppColors.textPrimary,
+                  ),
+                  label: Text(
+                    AppStrings.detailsCopyPrompt,
+                    style: AppTextStyles.getStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
                     ),
-                  );
-                },
-                icon: const Icon(Icons.content_copy_rounded, size: 20, color: Colors.white),
-                label: Text(
-                  'Copy Prompt',
-                  style: AppTextStyles.getStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textPrimary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(
+                        color: AppColors.textPrimary.withValues(alpha: 0.15),
+                        width: 1.5,
+                      ),
+                    ),
                   ),
-                  elevation: 0,
                 ),
               ),
+
             if (_isUnlocked || isFav) ...[
               const SizedBox(height: 24),
               _buildPromptGuidance(),
@@ -503,7 +588,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Recommended',
+                  AppStrings.detailsExplore,
                   style: AppTextStyles.getStyle(
                     color: AppColors.textPrimary,
                     fontSize: 18,
@@ -512,7 +597,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    if (widget.categoryId == 999 || widget.categoryName == 'Favorites') {
+                    if (widget.categoryId == 999 || widget.categoryName == AppStrings.categoryFavorites) {
                       final appState = Provider.of<AppState>(context, listen: false);
                       int? targetCategoryId = _currentItem.categoryId;
                       
@@ -532,7 +617,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                       }
 
                       if (targetCategoryId != null && targetCategoryId != 0) {
-                        final catName = matchedCategory?.categoryName ?? 'Category';
+                        final catName = matchedCategory?.categoryName ?? AppStrings.categoryDefaultFallback;
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -550,10 +635,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                     }
                   },
                   child: Text(
-                    'View More',
+                    AppStrings.detailsViewMore,
                     style: AppTextStyles.getStyle(
+                      fontSize: 14,
                       color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -564,10 +649,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
             // 5. Recommended Grids
             if (recommendedItems.isEmpty)
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.0),
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Center(
                   child: Text(
-                    'No recommendations available.',
+                    AppStrings.detailsNoRecommendations,
                     style: AppTextStyles.getStyle(color: AppColors.textMuted),
                   ),
                 ),

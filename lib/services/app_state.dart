@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/video_category.dart';
 import '../services/api_service.dart';
 import 'database_helper.dart';
+import 'analytics_service.dart';
 
 class AppState extends ChangeNotifier {
   AppState() {
@@ -41,6 +42,21 @@ class AppState extends ChangeNotifier {
   void changeTab(int index) {
     _currentTabIndex = index;
     notifyListeners();
+    String screenName;
+    switch (index) {
+      case 0:
+        screenName = 'home_tab';
+        break;
+      case 1:
+        screenName = 'favorites_tab';
+        break;
+      case 2:
+        screenName = 'settings_tab';
+        break;
+      default:
+        screenName = 'home_tab';
+    }
+    AnalyticsService.instance.logScreenView(screenName: screenName);
   }
 
   // Load Categories from API

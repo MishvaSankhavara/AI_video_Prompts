@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/video_category.dart';
 import '../../services/api_service.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 
 import '../../utils/text_app.dart';
@@ -31,6 +33,14 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logScreenView(screenName: 'category_details');
+    AnalyticsService.instance.logEvent(
+      name: 'view_category',
+      parameters: {
+        'category_id': widget.categoryId,
+        'category_name': widget.categoryName,
+      },
+    );
     _fetchCategoryVideos();
   }
 
@@ -91,7 +101,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 64, color: AppColors.textMuted),
+              const FaIcon(FontAwesomeIcons.triangleExclamation, size: 64, color: AppColors.textMuted),
               const SizedBox(height: 16),
               Text(
                 _errorMessage,
@@ -172,8 +182,8 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               errorWidget: (context, url, error) => Container(
                 color: AppColors.cardBackground,
                 alignment: Alignment.center,
-                child: const Icon(
-                  Icons.image_not_supported_rounded,
+                child: const FaIcon(
+                  FontAwesomeIcons.circleExclamation,
                   color: AppColors.textMuted,
                   size: 32,
                 ),

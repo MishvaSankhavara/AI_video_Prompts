@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -22,6 +23,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logScreenView(screenName: 'welcome_back_screen');
 
     _controller = AnimationController(
       vsync: this,

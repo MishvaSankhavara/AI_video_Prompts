@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
@@ -22,6 +24,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logScreenView(screenName: 'privacy_policy');
 
     // If no URL is set yet, skip WebView entirely
     if (_privacyPolicyUrl.isEmpty) {
@@ -104,8 +107,8 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         shape: BoxShape.circle,
                         color: AppColors.cardBackground,
                       ),
-                      child: const Icon(
-                        Icons.lock_outline_rounded,
+                      child: const FaIcon(
+                        FontAwesomeIcons.lock,
                         size: 40,
                         color: AppColors.primary,
                       ),
@@ -151,8 +154,8 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.language_rounded,
+                        const FaIcon(
+                          FontAwesomeIcons.globe,
                           size: 72,
                           color: AppColors.textMuted,
                         ),
@@ -179,7 +182,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         const SizedBox(height: 32),
                         ElevatedButton.icon(
                           onPressed: _launchUrl,
-                          icon: const Icon(Icons.open_in_browser_rounded, color: Colors.white),
+                          icon: const FaIcon(FontAwesomeIcons.arrowUpRightFromSquare, color: Colors.white),
                           label: Text(
                             'Open Policy Website',
                             style: AppTextStyles.getStyle(

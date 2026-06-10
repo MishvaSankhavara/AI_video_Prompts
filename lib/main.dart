@@ -10,6 +10,7 @@ import 'services/analytics_service.dart';
 import 'utils/colors.dart';
 import 'utils/strings.dart';
 import 'utils/text_app.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -92,24 +93,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
-      navigatorKey: navigatorKey,
-      navigatorObservers: [AnalyticsService.instance.observer],
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: AppColors.primary,
-        scaffoldBackgroundColor: AppColors.mainBackground,
-        colorScheme: const ColorScheme.light(
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
-          surface: AppColors.cardBackground,
-        ),
-        textTheme: AppTextStyles.getTextTheme(ThemeData.light().textTheme),
-        useMaterial3: true,
-      ),
-      home: const SplashScreen(),
+    return ResponsiveSizer(
+      builder: (context, orientation, screenType) {
+        return MaterialApp(
+          title: AppStrings.appName,
+          navigatorKey: navigatorKey,
+          navigatorObservers: [AnalyticsService.instance.observer],
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primaryColor: AppColors.primary,
+            scaffoldBackgroundColor: AppColors.mainBackground,
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              secondary: AppColors.secondary,
+              surface: AppColors.cardBackground,
+            ),
+            textTheme: AppTextStyles.getTextTheme(ThemeData.light().textTheme),
+            useMaterial3: true,
+          ),
+          home: const SplashScreen(),
+        );
+      },
     );
   }
 }

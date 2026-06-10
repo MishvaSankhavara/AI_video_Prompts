@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,7 +15,6 @@ import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/video_player.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../widgets/common_app_bar.dart';
-import 'category_details_screen.dart';
 
 class PromptDetailsScreen extends StatefulWidget {
   final VideoItem item;
@@ -33,9 +34,16 @@ class PromptDetailsScreen extends StatefulWidget {
   State<PromptDetailsScreen> createState() => _PromptDetailsScreenState();
 }
 
-class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
+class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerProviderStateMixin {
   late VideoItem _currentItem;
   final Set<int> _unlockedItemIds = {};
+  final ScrollController _scrollController = ScrollController();
+  bool _isAppBarWhite = false;
+  
+  // Animation for the button pulse and shimmer
+  late AnimationController _btnController;
+  late Animation<double> _shimmerAnimation;
+  late Animation<double> _scaleAnimation;
 
   bool get _isUnlocked => _unlockedItemIds.contains(_currentItem.id);
 
@@ -43,17 +51,44 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
   void initState() {
     super.initState();
     _currentItem = widget.item;
+    _scrollController.addListener(_onScroll);
+    
+    _btnController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    )..repeat();
+
+    _shimmerAnimation = Tween<double>(begin: -1.5, end: 2.5).animate(
+      CurvedAnimation(parent: _btnController, curve: Curves.easeInOut),
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.025), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.025, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _btnController, curve: Curves.easeInOutQuad));
+
     _logPromptView();
   }
 
+  void _onScroll() {
+    if (_scrollController.hasClients) {
+      final isWhite = _scrollController.offset > 20.0;
+      if (isWhite != _isAppBarWhite) {
+        setState(() {
+          _isAppBarWhite = isWhite;
+        });
+      }
+    }
+  }
+
   void _logPromptView() {
-    AnalyticsService.instance.logScreenView(screenName: 'prompt_details');
+    AnalyticsService.instance.logScreenView(screenName: AppStrings.analyticsPromptDetailsScreen);
     AnalyticsService.instance.logEvent(
-      name: 'view_prompt',
+      name: AppStrings.analyticsViewPrompt,
       parameters: {
-        'prompt_id': _currentItem.id,
-        'category_name': widget.categoryName,
-        'category_id': widget.categoryId,
+        AppStrings.paramPromptId: _currentItem.id,
+        AppStrings.paramCategoryName: widget.categoryName,
+        AppStrings.paramCategoryId: widget.categoryId,
       },
     );
   }
@@ -67,6 +102,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
+    _btnController.dispose();
     super.dispose();
   }
 
@@ -74,15 +111,15 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
     String trimmed = fullPrompt.trim();
     List<String> words = trimmed.split(RegExp(r'\s+'));
     if (words.length <= 10) {
-      return '$trimmed....';
+      return '$trimmed${AppStrings.truncationSuffix}';
     }
-    return '${words.take(10).join(' ')}....';
+    return '${words.take(10).join(' ')}${AppStrings.truncationSuffix}';
   }
 
   void _showUnlockDialog() {
     AnalyticsService.instance.logEvent(
-      name: 'unlock_prompt_dialog_viewed',
-      parameters: {'prompt_id': _currentItem.id},
+      name: AppStrings.analyticsUnlockPromptDialogViewed,
+      parameters: {AppStrings.paramPromptId: _currentItem.id},
     );
     showDialog(
       context: context,
@@ -95,18 +132,18 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
           primaryButtonText: AppStrings.unlockDialogBuyPro,
           onPrimaryPressed: () {
             AnalyticsService.instance.logEvent(
-              name: 'unlock_prompt_buy_pro_tapped',
-              parameters: {'prompt_id': _currentItem.id},
+              name: AppStrings.analyticsUnlockPromptBuyProTapped,
+              parameters: {AppStrings.paramPromptId: _currentItem.id},
             );
             Navigator.pop(context);
           },
           secondaryButtonText: AppStrings.unlockDialogWatchAd,
           onSecondaryPressed: () {
             AnalyticsService.instance.logEvent(
-              name: 'unlock_prompt_watch_ad_tapped',
-              parameters: {'prompt_id': _currentItem.id},
+              name: AppStrings.analyticsUnlockPromptWatchAdTapped,
+              parameters: {AppStrings.paramPromptId: _currentItem.id},
             );
-            Navigator.pop(context); // Close Unlock Dialog
+            Navigator.pop(context);
             _showRewardGrantedDialog();
           },
           showCloseButton: true,
@@ -118,7 +155,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
   void _showRewardGrantedDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, // User must press Done
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return CustomAppDialog(
           title: AppStrings.rewardDialogTitle,
@@ -127,10 +164,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
           primaryButtonText: AppStrings.rewardDialogDone,
           onPrimaryPressed: () {
             AnalyticsService.instance.logEvent(
-              name: 'unlock_prompt_success',
-              parameters: {'prompt_id': _currentItem.id},
+              name: AppStrings.analyticsUnlockPromptSuccess,
+              parameters: {AppStrings.paramPromptId: _currentItem.id},
             );
-            Navigator.pop(context); // Close Dialog
+            Navigator.pop(context); 
             setState(() {
               _unlockedItemIds.add(_currentItem.id);
             });
@@ -140,154 +177,427 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
     );
   }
 
-  Widget _buildPromptGuidance() {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.8),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Row with glowing icon
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const FaIcon(
-                  FontAwesomeIcons.wandMagicSparkles,
-                  color: AppColors.primary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.guidanceHeaderTitle,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      AppStrings.guidanceHeaderSubtitle,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Divider(color: AppColors.border.withValues(alpha: 0.6), height: 1, thickness: 1.2),
-          const SizedBox(height: 15),
+    //Unlock Button
+  Widget _buildActionButton({
+    required VoidCallback onTap,
+    required FaIconData icon,
+    required String label,
+    bool isUnlock = false,
+  }) {
+    final List<Color> gradientColors = isUnlock
+        ? [AppColors.unLockButton, AppColors.secondary, AppColors.primary]
+        : [AppColors.primary, AppColors.secondary, AppColors.primary];
 
-          // Step 1: Copy
-          _buildStepRow(
-            stepNumber: '1',
-            title: AppStrings.guidanceStep1Title,
-            description: AppStrings.guidanceStep1Desc,
-            gradientColors: [const Color(0xFF0D9488), const Color(0xFF14B8A6)], // Vibrant Teal
-          ),
-          const SizedBox(height: 15),
-
-          // Step 2: Choose AI tool
-          _buildStepRow(
-            stepNumber: '2',
-            title: AppStrings.guidanceStep2Title,
-            description: AppStrings.guidanceStep2Desc,
-            gradientColors: [const Color(0xFF4F46E5), const Color(0xFF6366F1)], // Vibrant Indigo
-          ),
-          const SizedBox(height: 15),
-
-          // Step 3: Paste and generate
-          _buildStepRow(
-            stepNumber: '3',
-            title: AppStrings.guidanceStep3Title,
-            description: AppStrings.guidanceStep3Desc,
-            gradientColors: [const Color(0xFF8B5CF6), const Color(0xFFA78BFA)], // Vibrant Purple
-          ),
-          const SizedBox(height: 15),
-
-          // Beautiful Pro Tip Box
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    return AnimatedBuilder(
+      animation: _btnController,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: isUnlock ? _scaleAnimation.value : 1.0,
+          child: Container(
+            width: double.infinity,
+            height: 62,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.03),
-                  AppColors.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: gradientColors[1].withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  blurRadius: 0,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Stack(
+                children: [
+                  // Base Gradient
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: gradientColors,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Animated Liquid Shimmer
+                  Positioned.fill(
+                    child: FractionallySizedBox(
+                      alignment: Alignment(_shimmerAnimation.value, 0),
+                      widthFactor: 0.7,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white.withValues(alpha: 0.0),
+                              Colors.white.withValues(alpha: 0.35),
+                              Colors.white.withValues(alpha: 0.0),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Glossy Top Highlight
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 33,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.15),
+                            Colors.white.withValues(alpha: 0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Interaction Layer
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onTap,
+                      splashColor: Colors.white.withValues(alpha: 0.3),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.18),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: 1),
+                              ),
+                              child: FaIcon(icon, size: 16, color: Colors.white),
+                            ),
+                            const SizedBox(width: 16),
+                            Text(
+                              label,
+                              style: AppTextStyles.getStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.15),
-                width: 1,
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const FaIcon(
-                  FontAwesomeIcons.lightbulb,
-                  color: Color(0xFFF59E0B), // Warm Gold color
-                  size: 22,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBlurredBackground() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 540,
+      child: ClipRect(
+        child: Stack(
+          children: [
+            // Background thumbnail image
+            Positioned.fill(
+              child: _currentItem.videoThumbnailFullUrl.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: _currentItem.videoThumbnailFullUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(color: AppColors.mainBackground),
+                      errorWidget: (context, url, error) => Container(color: AppColors.mainBackground),
+                    )
+                  : Container(color: AppColors.mainBackground),
+            ),
+            // Blur effect
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  color: Colors.white.withValues(alpha: 0.65), // Light theme translucent overlay
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.guidanceTipTitle,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        AppStrings.guidanceTipDesc,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12,
-                          height: 1.4,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+              ),
+            ),
+            // Smooth gradient fade to white at the bottom to remove the partition line
+            Positioned.fill(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.white38,
+                      Colors.white70,
+                      AppColors.mainBackground,
                     ],
+                    stops: [0.0, 0.6, 0.85, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
+    final isFav = appState.isFavorite(_currentItem);
+
+    List<VideoItem> categoryItems = widget.categoryItems;
+    if (widget.categoryName == AppStrings.categoryFavorites) {
+      try {
+        final matchedCategory = appState.categories.firstWhere(
+          (cat) => cat.items.any((item) => item.id == _currentItem.id),
+        );
+        categoryItems = matchedCategory.items;
+      } catch (_) {}
+    }
+
+    final recommendedItems = categoryItems
+        .where((element) => element.id != _currentItem.id && !appState.isFavorite(element))
+        .toList();
+
+    final displayPrompt = (_isUnlocked || isFav) 
+        ? _currentItem.aiPrompt 
+        : _getTruncatedPrompt(_currentItem.aiPrompt);
+
+    return Scaffold(
+      backgroundColor: AppColors.mainBackground,
+      extendBodyBehindAppBar: true,
+      appBar: CommonAppBar(
+        title: '',
+        backgroundColor: _isAppBarWhite ? Colors.white : Colors.transparent,
+        surfaceTintColor: _isAppBarWhite ? Colors.white : Colors.transparent,
+        actions: (_isUnlocked || isFav)
+            ? [
+                IconButton(
+                  icon: FaIcon(
+                    isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
+                    color: isFav ? Colors.redAccent : AppColors.textPrimary,
+                  ),
+                  onPressed: () {
+                    appState.toggleFavorite(_currentItem);
+                  },
+                ),
+                IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.shareNodes, color: AppColors.textPrimary),
+                  onPressed: () {
+                    SharePlus.instance.share(ShareParams(text: _currentItem.aiPrompt));
+                  },
+                ),
+              ]
+            : null,
+      ),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Stack(
+          children: [
+            _buildBlurredBackground(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                const SizedBox(height: kToolbarHeight + 20),
+                Center(
+                  child: Container(
+                    width: 300,
+                    height: 490,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.12),
+                          blurRadius: 24,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: CommonVideoPlayer(
+                      videoUrl: _currentItem.categoryVideoFullUrl,
+                      thumbnailUrl: _currentItem.videoThumbnailFullUrl,
+                      isMuted: false,
+                      isLooping: true,
+                      interactivePlayPause: true,
+                    ),
+                  ),
+                ),
+            const SizedBox(height: 28),
+            Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.border.withValues(alpha: 0.8), width: 1.2),
+              ),
+              child: Text(
+                displayPrompt,
+                style: AppTextStyles.getStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                  height: 1.55,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            if (!(_isUnlocked || isFav))
+              _buildActionButton(
+                onTap: _showUnlockDialog,
+                icon: FontAwesomeIcons.lock,
+                label: AppStrings.detailsUnlockPrompt,
+                isUnlock: true,
+              )
+            else
+              _buildActionButton(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: _currentItem.aiPrompt));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(AppStrings.detailsCopiedMessage),
+                      backgroundColor: AppColors.primary,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  );
+                },
+                icon: FontAwesomeIcons.copy,
+                label: AppStrings.detailsCopyPrompt,
+              ),
+            const SizedBox(height: 10),
+            if (_isUnlocked || isFav) ...[
+              _buildPromptGuidance(),
+              const SizedBox(height: 15),
+            ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppStrings.detailsExplore,
+                  style: AppTextStyles.getStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    AppStrings.detailsViewMore,
+                    style: AppTextStyles.getStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
+            if (recommendedItems.isEmpty)
+              Center(child: Text(AppStrings.detailsNoRecommendations))
+            else
+              GridView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.72,
+                  crossAxisSpacing: 14,
+                  mainAxisSpacing: 14,
+                ),
+                itemCount: recommendedItems.length,
+                itemBuilder: (context, index) {
+                  return PromptGridCard(
+                    item: recommendedItems[index],
+                    categoryName: '',
+                    isPremium: index % 3 == 0,
+                    onTap: () => _changeCurrentItem(recommendedItems[index]),
+                  );
+                },
+              ),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+);
+}
+
+  Widget _buildPromptGuidance() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.8), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const FaIcon(FontAwesomeIcons.wandMagicSparkles, color: AppColors.primary, size: 22),
+              const SizedBox(width: 14),
+              Text(
+                AppStrings.guidanceHeaderTitle,
+                style: AppTextStyles.getStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 22),
+          _buildStepRow(
+            stepNumber: '1',
+            title: AppStrings.guidanceStep1Title,
+            description: AppStrings.guidanceStep1Desc,
+            gradientColors: [const Color(0xFF0D9488), const Color(0xFF14B8A6)],
+          ),
+          const SizedBox(height: 18),
+          _buildStepRow(
+            stepNumber: '2',
+            title: AppStrings.guidanceStep2Title,
+            description: AppStrings.guidanceStep2Desc,
+            gradientColors: [const Color(0xFF4F46E5), const Color(0xFF6366F1)],
+          ),
+          const SizedBox(height: 18),
+          _buildStepRow(
+            stepNumber: '3',
+            title: AppStrings.guidanceStep3Title,
+            description: AppStrings.guidanceStep3Desc,
+            gradientColors: [const Color(0xFF8B5CF6), const Color(0xFFA78BFA)],
           ),
         ],
       ),
@@ -303,38 +613,24 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Number badge with a glowing shadow
         Container(
-          width: 28,
-          height: 28,
+          width: 30,
+          height: 30,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: gradientColors,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: LinearGradient(colors: gradientColors),
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(
-                color: gradientColors[0].withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
+              BoxShadow(color: gradientColors[0].withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4)),
             ],
           ),
           child: Center(
             child: Text(
               stepNumber,
-              style: AppTextStyles.getStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
             ),
           ),
         ),
-        const SizedBox(width: 14),
-        // Step details
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,344 +643,15 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
                 description,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 13,
-                  height: 1.4,
-                ),
+                style: AppTextStyles.getStyle(color: AppColors.textMuted, fontSize: 13, height: 1.4),
               ),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
-    final isFav = appState.isFavorite(_currentItem);
-
-    // Get the category items: if we came from Favorites screen, find the original category of this item
-    List<VideoItem> categoryItems = widget.categoryItems;
-    if (widget.categoryName == AppStrings.categoryFavorites) {
-      try {
-        final matchedCategory = appState.categories.firstWhere(
-          (cat) {
-            if (_currentItem.categoryId != null && _currentItem.categoryId != 0) {
-              return cat.categoryId == _currentItem.categoryId;
-            }
-            return cat.items.any((item) => item.id == _currentItem.id);
-          },
-        );
-        categoryItems = matchedCategory.items;
-      } catch (_) {
-        // Fallback to widget.categoryItems if not found
-      }
-    }
-
-    // Filter out the currently selected item and any favorited items from the recommended grid
-    final recommendedItems = categoryItems
-        .where((element) => element.id != _currentItem.id && !appState.isFavorite(element))
-        .toList();
-
-    final displayPrompt = (_isUnlocked || isFav) 
-        ? _currentItem.aiPrompt 
-        : _getTruncatedPrompt(_currentItem.aiPrompt);
-
-    return Scaffold(
-      backgroundColor: AppColors.mainBackground,
-      appBar: CommonAppBar(
-        title: '',
-        actions: (_isUnlocked || isFav)
-            ? [
-                IconButton(
-                  icon: FaIcon(
-                    isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
-                    color: isFav ? Colors.redAccent : AppColors.textPrimary,
-                  ),
-                  onPressed: () {
-                    appState.toggleFavorite(_currentItem);
-                    AnalyticsService.instance.logEvent(
-                      name: 'toggle_favorite',
-                      parameters: {
-                        'prompt_id': _currentItem.id,
-                        'is_favorite': (!isFav).toString(),
-                      },
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.shareNodes, color: AppColors.textPrimary),
-                  onPressed: () {
-                    SharePlus.instance.share(
-                      ShareParams(text: _currentItem.aiPrompt),
-                    );
-                    AnalyticsService.instance.logEvent(
-                      name: 'share_prompt',
-                      parameters: {
-                        'prompt_id': _currentItem.id,
-                      },
-                    );
-                  },
-                ),
-              ]
-            : null,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 1. Large Vertical Preview Image/Video Player (9:16 layout)
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: 380,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: CommonVideoPlayer(
-                  videoUrl: _currentItem.categoryVideoFullUrl,
-                  thumbnailUrl: _currentItem.videoThumbnailFullUrl,
-                  isMuted: false,
-                  isLooping: true,
-                  interactivePlayPause: true,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // 2. Prompt Text Card Description
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border, width: 1),
-              ),
-              child: Text(
-                displayPrompt,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 15,
-                  height: 1.45,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // 3. Action Button (Unlock or Copy)
-            if (!(_isUnlocked || isFav))
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _showUnlockDialog,
-                  icon: const FaIcon(
-                    FontAwesomeIcons.lock,
-                    size: 18,
-                    color: AppColors.primary,
-                  ),
-                  label: Text(
-                    AppStrings.detailsUnlockPrompt,
-                    style: AppTextStyles.getStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF8F9FB),
-                    foregroundColor: AppColors.textPrimary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        color: AppColors.textPrimary.withValues(alpha: 0.15),
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            else
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Clipboard.setData(
-                      ClipboardData(text: _currentItem.aiPrompt),
-                    );
-
-                    AnalyticsService.instance.logEvent(
-                      name: 'copy_prompt',
-                      parameters: {
-                        'prompt_id': _currentItem.id,
-                        'category_name': widget.categoryName,
-                      },
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          AppStrings.detailsCopiedMessage,
-                        ),
-                        backgroundColor: AppColors.primary,
-                      ),
-                    );
-                  },
-                  icon: const FaIcon(
-                    FontAwesomeIcons.copy,
-                    size: 18,
-                    color: AppColors.textPrimary,
-                  ),
-                  label: Text(
-                    AppStrings.detailsCopyPrompt,
-                    style: AppTextStyles.getStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.textPrimary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        color: AppColors.textPrimary.withValues(alpha: 0.15),
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-            if (_isUnlocked || isFav) ...[
-              const SizedBox(height: 24),
-              _buildPromptGuidance(),
-              const SizedBox(height: 16),
-            ] else ...[
-              const SizedBox(height: 32),
-            ],
-
-            // 4. Recommended Section Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppStrings.detailsExplore,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (widget.categoryId == 999 || widget.categoryName == AppStrings.categoryFavorites) {
-                      final appState = Provider.of<AppState>(context, listen: false);
-                      int? targetCategoryId = _currentItem.categoryId;
-                      
-                      VideoCategory? matchedCategory;
-                      try {
-                        matchedCategory = appState.categories.firstWhere(
-                          (cat) {
-                            if (targetCategoryId != null && targetCategoryId != 0) {
-                              return cat.categoryId == targetCategoryId;
-                            }
-                            return cat.items.any((item) => item.id == _currentItem.id);
-                          },
-                        );
-                        targetCategoryId = matchedCategory.categoryId;
-                      } catch (_) {
-                        // Fallback
-                      }
-
-                      if (targetCategoryId != null && targetCategoryId != 0) {
-                        final catName = matchedCategory?.categoryName ?? AppStrings.categoryDefaultFallback;
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CategoryDetailsScreen(
-                              categoryId: targetCategoryId!,
-                              categoryName: catName,
-                            ),
-                          ),
-                        );
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text(
-                    AppStrings.detailsViewMore,
-                    style: AppTextStyles.getStyle(
-                      fontSize: 14,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // 5. Recommended Grids
-            if (recommendedItems.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24.0),
-                child: Center(
-                  child: Text(
-                    AppStrings.detailsNoRecommendations,
-                    style: AppTextStyles.getStyle(color: AppColors.textMuted),
-                  ),
-                ),
-              )
-            else
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.70,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: recommendedItems.length,
-                itemBuilder: (context, index) {
-                  final recItem = recommendedItems[index];
-                  // Hide labels on cards by passing empty categoryName as requested
-                  return PromptGridCard(
-                    item: recItem,
-                    categoryName: '',
-                    isPremium: index == 0,
-                    onTap: () {
-                      _changeCurrentItem(recItem);
-                    },
-                  );
-                },
-              ),
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
     );
   }
 }

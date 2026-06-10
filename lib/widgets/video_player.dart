@@ -18,6 +18,7 @@ class CommonVideoPlayer extends StatefulWidget {
   final BoxFit fit;
   final bool showLoadingIndicator;
   final double? loadingTextSize;
+  final ValueChanged<double>? onAspectRatioInitialized;
 
   const CommonVideoPlayer({
     super.key,
@@ -29,6 +30,7 @@ class CommonVideoPlayer extends StatefulWidget {
     this.fit = BoxFit.cover,
     this.showLoadingIndicator = true,
     this.loadingTextSize,
+    this.onAspectRatioInitialized,
   });
 
   @override
@@ -69,6 +71,8 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       await controller.initialize();
 
       if (!mounted || _isDisposed) return;
+
+      widget.onAspectRatioInitialized?.call(controller.value.aspectRatio);
 
       await controller.setLooping(widget.isLooping);
       await controller.setVolume(widget.isMuted ? 0.0 : 1.0);

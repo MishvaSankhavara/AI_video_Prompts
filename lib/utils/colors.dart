@@ -27,7 +27,6 @@ class AppColors {
   static const Color shimmerHighlight = Color(0xFFF3F4F6);
 
 
-
   //unlock button dialog
   static const Color unLockButton = Color(0xFFAF4D97);
 

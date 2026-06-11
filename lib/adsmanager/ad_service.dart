@@ -1,11 +1,34 @@
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../utils/common_utils.dart';
+import '../utils/colors.dart';
+import '../main.dart';
 import 'ad_ids.dart';
 
 class AdService {
   AdService._internal();
   static final AdService instance = AdService._internal();
+
+  /// Set to 'debug' to use test ad IDs, or 'release' to use production/real ad IDs.
+  static const String adMode = 'debug'; // Options: 'debug' | 'release'
+
+  /// Clean common helper to resolve the correct Ad ID based on mode and platform.
+  static String getAdUnitId({
+    required String androidDebug,
+    required String androidRelease,
+    required String iosDebug,
+    required String iosRelease,
+  }) {
+    final bool isAndroid = Platform.isAndroid;
+    final bool isRelease = adMode == 'release';
+
+    if (isAndroid) {
+      return isRelease ? androidRelease : androidDebug;
+    } else {
+      return isRelease ? iosRelease : iosDebug;
+    }
+  }
 
   // ─── INTERNAL STATE ──────────────
   AppOpenAd? _appOpenAd;
@@ -23,6 +46,12 @@ class AdService {
   String? _lastRewardedHighFloorId;
   String? _lastRewardedLowFloorId;
 
+  // Global Dialog State
+  bool _isDialogShowing = false;
+
+  // Get current global context from navigatorKey
+  BuildContext? get _globalContext => navigatorKey.currentContext;
+
   // ─── INITIALIZATION ────────────────────────────────────────────────────────
 
   Future<void> initialize() async {
@@ -34,9 +63,76 @@ class AdService {
     CommonUtils.printLog('AdService: MobileAds SDK initialized.');
   }
 
+  // ─── LOADING DIALOG UI ─────────────────────────────────────────────────────
+
+  void _showLoadingDialog() {
+    final context = _globalContext;
+    if (context == null || _isDialogShowing) return;
+
+    _isDialogShowing = true;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withValues(alpha: 0.55),
+      builder: (BuildContext context) {
+        return PopScope(
+          canPop: false, // Prevent dismissal via back button
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 38,
+                    height: 38,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      strokeWidth: 3.5,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Loading Ad...',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.none,
+                      fontFamily: 'Outfit',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _dismissLoadingDialog() {
+    final context = _globalContext;
+    if (context == null || !_isDialogShowing) return;
+
+    _isDialogShowing = false;
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
   // ─── APP OPEN AD ───────────────────────────────────────────────────────────
 
-  /// Preloads the App Open Ad.
+  // Preloads the App Open Ad.
   void loadAppOpenAd({String? adUnitId}) {
     if (adUnitId != null) {
       _lastAppOpenAdUnitId = adUnitId;
@@ -80,7 +176,7 @@ class AdService {
     }
 
     if (_appOpenAd == null || _isShowingAppOpenAd) {
-      CommonUtils.printLog('AdSeshowAppOpenAdrvice: App Open Ad not ready (is null or already showing), proceeding without ad.');
+      CommonUtils.printLog('showAppOpenAd: App Open Ad not ready, proceeding without ad.');
       onAdDismissed();
       return;
     }
@@ -116,13 +212,13 @@ class AdService {
 
   // ─── INTERSTITIAL AD ───────────────────────────────────────────────────────
 
-  /// Pre-loads the interstitial ad.
+  // Pre-loads the interstitial ad.
   void loadInterstitialAd({String? highFloorId, String? lowFloorId}) {
     if (highFloorId != null) _lastInterstitialHighFloorId = highFloorId;
     if (lowFloorId != null) _lastInterstitialLowFloorId = lowFloorId;
 
     if (!AdIds.showAdsEnabled) {
-      CommonUtils.printLog('loadInterstitialAd: Ads are disabled. Skipping loadInterstitialAd.');
+      CommonUtils.printLog('AdService: Ads are disabled. Skipping loadInterstitialAd.');
       return;
     }
 
@@ -132,7 +228,7 @@ class AdService {
     final String highId = _lastInterstitialHighFloorId ?? AdIds.interHomelHF1;
     final String lowId = _lastInterstitialLowFloorId ?? AdIds.interHomeLF1;
 
-    CommonUtils.printLog('loadInterstitialAd: Starting load for Interstitial Ad (high-floor) with ID: $highId');
+    CommonUtils.printLog('AdService: Starting load for Interstitial Ad (high-floor) with ID: $highId');
 
     // Attempt high-floor first
     InterstitialAd.load(
@@ -142,10 +238,10 @@ class AdService {
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialLoading = false;
-          CommonUtils.printLog('loadInterstitialAd: Interstitial (high-floor) loaded successfully with ID: $highId');
+          CommonUtils.printLog('AdService: Interstitial (high-floor) loaded successfully with ID: $highId');
         },
         onAdFailedToLoad: (error) {
-          CommonUtils.printLog('loadInterstitialAd: Interstitial high-floor ($highId) failed ($error), trying low-floor fallback ($lowId)...');
+          CommonUtils.printLog('AdService: Interstitial high-floor ($highId) failed ($error), trying low-floor fallback ($lowId)...');
           // Fallback to low-floor
           InterstitialAd.load(
             adUnitId: lowId,
@@ -154,12 +250,12 @@ class AdService {
               onAdLoaded: (ad) {
                 _interstitialAd = ad;
                 _isInterstitialLoading = false;
-                CommonUtils.printLog('loadInterstitialAd: Interstitial (low-floor) loaded successfully with ID: $lowId');
+                CommonUtils.printLog('AdService: Interstitial (low-floor) loaded successfully with ID: $lowId');
               },
               onAdFailedToLoad: (err) {
                 _interstitialAd = null;
                 _isInterstitialLoading = false;
-                CommonUtils.printLog('loadInterstitialAd: Interstitial low-floor ($lowId) also failed: $err');
+                CommonUtils.printLog('AdService: Interstitial low-floor ($lowId) also failed: $err');
               },
             ),
           );
@@ -171,23 +267,59 @@ class AdService {
   // Shows the interstitial ad
   void showInterstitialAd({required VoidCallback onAdDismissed}) {
     if (!AdIds.showAdsEnabled) {
-      CommonUtils.printLog('showInterstitialAd: Ads are disabled. Skipping Interstitial Ad show.');
+      CommonUtils.printLog('AdService: Ads are disabled. Skipping Interstitial Ad show.');
       onAdDismissed();
       return;
     }
 
+    _showLoadingDialog();
+
+    // If ad is not ready yet, try loading on-the-fly and wait with a timeout
     if (_interstitialAd == null) {
-      CommonUtils.printLog('showInterstitialAd: Interstitial not ready, proceeding without ad.');
-      onAdDismissed();
+      CommonUtils.printLog('AdService: Interstitial not ready. Attempting to load on-the-fly...');
+      
+      bool finished = false;
+      Future.delayed(const Duration(seconds: 4), () {
+        if (!finished) {
+          finished = true;
+          CommonUtils.printLog('AdService: Interstitial load timed out. Proceeding...');
+          _dismissLoadingDialog();
+          onAdDismissed();
+        }
+      });
+
+      loadInterstitialAd();
+
+      void checkAdReady() {
+        if (finished) return;
+        if (_interstitialAd != null) {
+          finished = true;
+          CommonUtils.printLog('AdService: Interstitial loaded on-the-fly. Displaying ad.');
+          _showLoadedInterstitial(onAdDismissed);
+        } else if (!_isInterstitialLoading) {
+          finished = true;
+          CommonUtils.printLog('AdService: Interstitial failed to load on-the-fly. Proceeding...');
+          _dismissLoadingDialog();
+          onAdDismissed();
+        } else {
+          Future.delayed(const Duration(milliseconds: 250), checkAdReady);
+        }
+      }
+
+      checkAdReady();
       return;
     }
 
+    _showLoadedInterstitial(onAdDismissed);
+  }
+
+  void _showLoadedInterstitial(VoidCallback onAdDismissed) {
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
         final adId = ad.adUnitId;
         ad.dispose();
         _interstitialAd = null;
-        CommonUtils.printLog('showInterstitialAd: Interstitial dismissed. (Ad ID: $adId)');
+        CommonUtils.printLog('AdService: Interstitial dismissed. (Ad ID: $adId)');
         onAdDismissed();
         loadInterstitialAd(); // Preload next using the last active IDs
       },
@@ -195,12 +327,14 @@ class AdService {
         final adId = ad.adUnitId;
         ad.dispose();
         _interstitialAd = null;
-        CommonUtils.printLog('showInterstitialAd: Interstitial failed to show. Error: $error. (Ad ID: $adId)');
+        CommonUtils.printLog('AdService: Interstitial failed to show. Error: $error. (Ad ID: $adId)');
+        _dismissLoadingDialog();
         onAdDismissed();
         loadInterstitialAd();
       },
       onAdShowedFullScreenContent: (ad) {
-        CommonUtils.printLog('showInterstitialAd: Interstitial successfully displayed. (Ad ID: ${ad.adUnitId})');
+        CommonUtils.printLog('AdService: Interstitial successfully displayed. (Ad ID: ${ad.adUnitId})');
+        _dismissLoadingDialog();
       },
     );
 
@@ -215,7 +349,7 @@ class AdService {
     if (lowFloorId != null) _lastRewardedLowFloorId = lowFloorId;
 
     if (!AdIds.showAdsEnabled) {
-      CommonUtils.printLog('loadRewardedAd: Ads are disabled. Skipping loadRewardedAd.');
+      CommonUtils.printLog('AdService: Ads are disabled. Skipping loadRewardedAd.');
       return;
     }
 
@@ -225,7 +359,7 @@ class AdService {
     final String highId = _lastRewardedHighFloorId ?? AdIds.rewardedHF;
     final String lowId = _lastRewardedLowFloorId ?? AdIds.rewardedLF;
 
-    CommonUtils.printLog('loadRewardedAd: Starting load for Rewarded Ad (high-floor) with ID: $highId');
+    CommonUtils.printLog('AdService: Starting load for Rewarded Ad (high-floor) with ID: $highId');
 
     // Attempt high-floor first
     RewardedAd.load(
@@ -235,10 +369,10 @@ class AdService {
         onAdLoaded: (ad) {
           _rewardedAd = ad;
           _isRewardedAdLoading = false;
-          CommonUtils.printLog('loadRewardedAd: Rewarded Ad (high-floor) loaded successfully with ID: $highId');
+          CommonUtils.printLog('AdService: Rewarded Ad (high-floor) loaded successfully with ID: $highId');
         },
         onAdFailedToLoad: (error) {
-          CommonUtils.printLog('loadRewardedAd: Rewarded Ad high-floor ($highId) failed ($error), trying low-floor fallback ($lowId)...');
+          CommonUtils.printLog('AdService: Rewarded Ad high-floor ($highId) failed ($error), trying low-floor fallback ($lowId)...');
           // Fallback to low-floor
           RewardedAd.load(
             adUnitId: lowId,
@@ -247,12 +381,12 @@ class AdService {
               onAdLoaded: (ad) {
                 _rewardedAd = ad;
                 _isRewardedAdLoading = false;
-                CommonUtils.printLog('loadRewardedAd: Rewarded Ad (low-floor) loaded successfully with ID: $lowId');
+                CommonUtils.printLog('AdService: Rewarded Ad (low-floor) loaded successfully with ID: $lowId');
               },
               onAdFailedToLoad: (err) {
                 _rewardedAd = null;
                 _isRewardedAdLoading = false;
-                CommonUtils.printLog('loadRewardedAd: Rewarded Ad low-floor ($lowId) also failed: $err');
+                CommonUtils.printLog('AdService: Rewarded Ad low-floor ($lowId) also failed: $err');
               },
             ),
           );
@@ -266,18 +400,55 @@ class AdService {
     required VoidCallback onRewarded,
     required VoidCallback onDismissed,
   }) {
-    if (!AdIds.showAdsEnabled) {
-      CommonUtils.printLog('showRewardedAd: Ads are disabled. Skipping Rewarded Ad show.');
-      onDismissed();
-      return;
-    }
+      if (!AdIds.showAdsEnabled) {
+        CommonUtils.printLog('AdService: Ads are disabled. Auto-rewarding user and skipping Rewarded Ad show.');
+        onRewarded();
+        onDismissed();
+        return;
+      }
 
-    if (_rewardedAd == null) {
-      CommonUtils.printLog('showRewardedAd: Rewarded Ad not ready, proceeding without ad.');
-      onDismissed();
-      return;
-    }
+      _showLoadingDialog();
 
+      // If ad is not ready yet, try loading on-the-fly and wait with a timeout
+      if (_rewardedAd == null) {
+        CommonUtils.printLog('AdService: Rewarded Ad not ready. Attempting to load on-the-fly...');
+
+        bool finished = false;
+        Future.delayed(const Duration(seconds: 4), () {
+          if (!finished) {
+            finished = true;
+            CommonUtils.printLog('AdService: Rewarded Ad load timed out. Proceeding...');
+            _dismissLoadingDialog();
+            onDismissed();
+          }
+        });
+
+        loadRewardedAd();
+
+        void checkAdReady() {
+          if (finished) return;
+          if (_rewardedAd != null) {
+            finished = true;
+            CommonUtils.printLog('AdService: Rewarded Ad loaded on-the-fly. Displaying ad.');
+            _showLoadedRewarded(onRewarded, onDismissed);
+          } else if (!_isRewardedAdLoading) {
+            finished = true;
+            CommonUtils.printLog('AdService: Rewarded Ad failed to load on-the-fly. Proceeding...');
+            _dismissLoadingDialog();
+            onDismissed();
+          } else {
+            Future.delayed(const Duration(milliseconds: 250), checkAdReady);
+          }
+        }
+
+        checkAdReady();
+        return;
+      }
+
+      _showLoadedRewarded(onRewarded, onDismissed);
+  }
+
+  void _showLoadedRewarded(VoidCallback onRewarded, VoidCallback onDismissed) {
     bool rewardEarned = false;
 
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
@@ -285,7 +456,7 @@ class AdService {
         final adId = ad.adUnitId;
         ad.dispose();
         _rewardedAd = null;
-        CommonUtils.printLog('showRewardedAd: Rewarded Ad dismissed. Reward earned: $rewardEarned. (Ad ID: $adId)');
+        CommonUtils.printLog('AdService: Rewarded Ad dismissed. Reward earned: $rewardEarned. (Ad ID: $adId)');
         if (rewardEarned) onRewarded();
         onDismissed();
         loadRewardedAd(); // Preload next using the last active IDs
@@ -294,19 +465,21 @@ class AdService {
         final adId = ad.adUnitId;
         ad.dispose();
         _rewardedAd = null;
-        CommonUtils.printLog('showRewardedAd: Rewarded Ad failed to show. Error: $error. (Ad ID: $adId)');
+        CommonUtils.printLog('AdService: Rewarded Ad failed to show. Error: $error. (Ad ID: $adId)');
+        _dismissLoadingDialog();
         onDismissed();
         loadRewardedAd();
       },
       onAdShowedFullScreenContent: (ad) {
-        CommonUtils.printLog('showRewardedAd: Rewarded Ad successfully displayed. (Ad ID: ${ad.adUnitId})');
+        CommonUtils.printLog('AdService: Rewarded Ad successfully displayed. (Ad ID: ${ad.adUnitId})');
+        _dismissLoadingDialog();
       },
     );
 
     _rewardedAd!.show(
       onUserEarnedReward: (ad, reward) {
         rewardEarned = true;
-        CommonUtils.printLog('showRewardedAd: User earned reward: ${reward.amount} ${reward.type} (Ad ID: ${ad.adUnitId})');
+        CommonUtils.printLog('AdService: User earned reward: ${reward.amount} ${reward.type} (Ad ID: ${ad.adUnitId})');
       },
     );
   }

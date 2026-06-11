@@ -45,7 +45,7 @@ dependencies:
   google_fonts: ^6.2.1
   firebase_core: ^4.10.0
   firebase_analytics: ^12.4.2
-  curved_navigation_bar_pro: ^2.0.6
+  google_nav_bar: ^5.0.7
   cached_network_image: ^3.4.1
   responsive_sizer: ^3.3.1
   visibility_detector: ^0.4.0+2

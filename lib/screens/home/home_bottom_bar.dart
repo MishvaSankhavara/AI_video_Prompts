@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -93,13 +93,12 @@ class CustomBottomBar extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 
 
 //Bottom bar using the google nav bar package with custom colors and icons
 
-/*
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -219,6 +218,12 @@ class CustomBottomBar extends StatelessWidget {
               ? AppColors.primary.withValues(alpha: 0.08)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : Colors.transparent,
+            width: 0.5,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -252,5 +257,4 @@ class CustomBottomBar extends StatelessWidget {
     );
   }
 }
-*/
 

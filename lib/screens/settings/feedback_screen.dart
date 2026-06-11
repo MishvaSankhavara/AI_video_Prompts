@@ -4,6 +4,7 @@ import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../utils/text_app.dart';
+import '../../services/navigation_service.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final int? rating;
@@ -66,7 +67,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       ),
     );
 
-    Navigator.pop(context);
+    NavigationService.pop(context);
   }
 
   @override

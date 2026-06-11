@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/analytics_service.dart';
+import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
@@ -60,15 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
     
     if (mounted) {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: const Duration(milliseconds: 400),
-        ),
-      );
+      NavigationService.pushReplacement(context, const HomeScreen());
     }
   }
 

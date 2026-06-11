@@ -11,6 +11,7 @@ import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
 import 'feedback_screen.dart';
 import 'privacy_policy_screen.dart';
+import '../../services/navigation_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -96,11 +97,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           } else {
             // 1-3 stars → open Feedback screen
             if (context.mounted) {
-              Navigator.push(
+              NavigationService.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => FeedbackScreen(rating: rating),
-                ),
+                FeedbackScreen(rating: rating),
               );
             }
           }
@@ -151,9 +150,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: FontAwesomeIcons.comment,
               title: AppStrings.settingsFeedback,
               onTap: () {
-                Navigator.push(
+                NavigationService.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FeedbackScreen()),
+                  const FeedbackScreen(),
                 );
               },
               showDivider: false,
@@ -167,9 +166,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: FontAwesomeIcons.shieldHalved,
               title: AppStrings.settingsPrivacyPolicy,
               onTap: () {
-                Navigator.push(
+                NavigationService.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
+                  const PrivacyPolicyScreen(),
                 );
               },
             ),

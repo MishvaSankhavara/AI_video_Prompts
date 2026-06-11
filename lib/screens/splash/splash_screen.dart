@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../adsmanager/ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/analytics_service.dart';
+import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
@@ -69,15 +70,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
         void navigateToTarget() {
           if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              transitionDuration: const Duration(milliseconds: 300),
-            ),
-          );
+          NavigationService.pushReplacement(context, targetScreen);
         }
 
         AdService.instance.showInterstitialAd(

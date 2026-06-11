@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../adsmanager/ad_service.dart';
 import '../../services/analytics_service.dart';
+import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -63,22 +64,14 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
           AdService.instance.showAppOpenAd(
             onAdDismissed: () {
               if (!mounted) return;
-              Navigator.of(context).pop();
+              NavigationService.pop(context);
             },
           );
         } else {
           AdService.instance.showAppOpenAd(
             onAdDismissed: () {
               if (!mounted) return;
-              Navigator.of(context).pushReplacement(
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                  transitionDuration: const Duration(milliseconds: 400),
-                ),
-              );
+              NavigationService.pushReplacement(context, const HomeScreen());
             },
           );
         }

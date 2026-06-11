@@ -7,6 +7,7 @@ import '../../adsmanager/ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/app_state.dart';
 import '../../services/analytics_service.dart';
+import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
@@ -231,13 +232,11 @@ class HomeTabBody extends StatelessWidget {
             // Show interstitial ad then navigate to category details
             AdService.instance.showInterstitialAd(
               onAdDismissed: () {
-                Navigator.push(
+                NavigationService.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => CategoryDetailsScreen(
-                      categoryId: category.categoryId,
-                      categoryName: category.categoryName,
-                    ),
+                  CategoryDetailsScreen(
+                    categoryId: category.categoryId,
+                    categoryName: category.categoryName,
                   ),
                 );
               },

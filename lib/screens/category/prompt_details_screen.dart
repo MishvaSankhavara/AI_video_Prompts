@@ -17,6 +17,7 @@ import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/video_player.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../widgets/common_app_bar.dart';
+import '../../services/navigation_service.dart';
 
 class PromptDetailsScreen extends StatefulWidget {
   final VideoItem item;
@@ -537,7 +538,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                   ),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => NavigationService.pop(context),
                   child: Text(
                     AppStrings.detailsViewMore,
                     style: AppTextStyles.getStyle(
@@ -568,15 +569,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                     categoryName: '',
                     isPremium: index % 3 == 0,
                     onTap: () {
-                      Navigator.push(
+                      NavigationService.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => PromptDetailsScreen(
-                            item: recommendedItems[index],
-                            categoryItems: widget.categoryItems,
-                            categoryName: widget.categoryName,
-                            categoryId: widget.categoryId,
-                          ),
+                        PromptDetailsScreen(
+                          item: recommendedItems[index],
+                          categoryItems: widget.categoryItems,
+                          categoryName: widget.categoryName,
+                          categoryId: widget.categoryId,
                         ),
                       );
                     },

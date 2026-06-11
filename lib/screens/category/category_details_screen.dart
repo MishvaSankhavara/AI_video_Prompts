@@ -10,6 +10,7 @@ import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 import 'prompt_details_screen.dart';
 import '../../adsmanager/ad_service.dart';
+import '../../services/navigation_service.dart';
 
 class CategoryDetailsScreen extends StatefulWidget {
   final int categoryId;
@@ -157,15 +158,13 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             // Show interstitial ad, then navigate to prompt details
             AdService.instance.showInterstitialAd(
               onAdDismissed: () {
-                Navigator.push(
+                NavigationService.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => PromptDetailsScreen(
-                      item: item,
-                      categoryItems: _videos,
-                      categoryName: widget.categoryName,
-                      categoryId: widget.categoryId,
-                    ),
+                  PromptDetailsScreen(
+                    item: item,
+                    categoryItems: _videos,
+                    categoryName: widget.categoryName,
+                    categoryId: widget.categoryId,
                   ),
                 );
               },

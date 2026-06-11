@@ -6,6 +6,7 @@ import '../../utils/colors.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../category/prompt_details_screen.dart';
+import '../../services/navigation_service.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -56,15 +57,13 @@ class FavoriteScreen extends StatelessWidget {
           categoryName: '',
           isPremium: false,
           onTap: () {
-            Navigator.push(
+            NavigationService.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => PromptDetailsScreen(
-                  item: item,
-                  categoryItems: favorites,
-                  categoryName: 'Favorites',
-                  categoryId: 999,
-                ),
+              PromptDetailsScreen(
+                item: item,
+                categoryItems: favorites,
+                categoryName: 'Favorites',
+                categoryId: 999,
               ),
             );
           },

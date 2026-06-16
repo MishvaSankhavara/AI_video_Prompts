@@ -341,6 +341,53 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     );
   }
 
+  Widget _buildLikeButton(AppState appState, bool isFav) {
+    return Container(
+      width: 62,
+      height: 62,
+      decoration: BoxDecoration(
+        color: isFav ? AppColors.primary : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isFav ? AppColors.primary : AppColors.border,
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isFav
+                ? AppColors.primary.withValues(alpha: 0.25)
+                : Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              appState.toggleFavorite(_currentItem);
+            },
+            splashColor: (isFav ? Colors.white : AppColors.primary).withValues(alpha: 0.15),
+            child: Center(
+              child: AnimatedScale(
+                scale: isFav ? 1.15 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: FaIcon(
+                  isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
+                  color: isFav ? Colors.white : AppColors.primary,
+                  size: 22,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildBlurredBackground() {
     return Positioned(
       top: 0,
@@ -427,15 +474,6 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
         actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
-                  icon: FaIcon(
-                    isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
-                    color: isFav ? AppColors.textPrimary : AppColors.textPrimary,
-                  ),
-                  onPressed: () {
-                    appState.toggleFavorite(_currentItem);
-                  },
-                ),
-                IconButton(
                   icon: const FaIcon(FontAwesomeIcons.shareNodes, color: AppColors.textPrimary),
                   onPressed: () {
                     SharePlus.instance.share(ShareParams(text: _currentItem.aiPrompt));
@@ -506,20 +544,28 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                 isUnlock: true,
               )
             else
-              _buildActionButton(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: _currentItem.aiPrompt));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(AppStrings.detailsCopiedMessage),
-                      backgroundColor: AppColors.primary,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildActionButton(
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: _currentItem.aiPrompt));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(AppStrings.detailsCopiedMessage),
+                            backgroundColor: AppColors.primary,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                        );
+                      },
+                      icon: FontAwesomeIcons.copy,
+                      label: AppStrings.detailsCopyPrompt,
                     ),
-                  );
-                },
-                icon: FontAwesomeIcons.copy,
-                label: AppStrings.detailsCopyPrompt,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildLikeButton(appState, isFav),
+                ],
               ),
             const SizedBox(height: 10),
             if (_isUnlocked || isFav) ...[

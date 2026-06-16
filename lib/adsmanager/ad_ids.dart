@@ -133,4 +133,17 @@ class AdIds {
         iosDebug: rewardedLFDebugIos,
         iosRelease: rewardedLFReleaseIos,
       );
+
+  // Native Ad IDs (Google demo / production)
+  static const String nativeDebugAndroid = 'ca-app-pub-3940256099942544/2247696110';
+  static const String nativeDebugIos = 'ca-app-pub-3940256099942544/3986624511';
+  static const String nativeReleaseAndroid = 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX';
+  static const String nativeReleaseIos = 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX';
+
+  static String get nativeAdUnitId => AdService.getAdUnitId(
+        androidDebug: nativeDebugAndroid,
+        androidRelease: nativeReleaseAndroid,
+        iosDebug: nativeDebugIos,
+        iosRelease: nativeReleaseIos,
+      );
 }

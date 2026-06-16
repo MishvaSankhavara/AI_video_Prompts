@@ -1,17 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../models/video_category.dart';
 import '../../services/api_service.dart';
 import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 import 'prompt_details_screen.dart';
 import '../../adsmanager/ad_service.dart';
 import '../../services/navigation_service.dart';
-
 class CategoryDetailsScreen extends StatefulWidget {
   final int categoryId;
   final String categoryName;
@@ -31,6 +33,148 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   List<VideoItem> _videos = [];
   bool _isLoading = true;
   String _errorMessage = '';
+
+  final Map<int, NativeAd> _adCache = {};
+  final Set<int> _loadingAdIndices = {};
+
+  bool _isAdIndex(int index) {
+    return (index + 1) % 6 == 0;
+  }
+
+  int _adCountBefore(int index) {
+    return (index + 1) ~/ 6;
+  }
+
+  int _gridIndexToContentIndex(int index) {
+    return index - _adCountBefore(index);
+  }
+
+  int get _gridItemCount {
+    if (_videos.isEmpty) return 0;
+    return _videos.length + (_videos.length - 1) ~/ 5;
+  }
+
+  void _loadAdForIndex(int index) {
+    if (!AdIds.showAdsEnabled) return;
+    if (_adCache.containsKey(index) || _loadingAdIndices.contains(index)) return;
+
+    _loadingAdIndices.add(index);
+    final NativeAd ad = NativeAd(
+      adUnitId: AdIds.nativeAdUnitId,
+      request: const AdRequest(),
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          if (mounted) {
+            setState(() {
+              _loadingAdIndices.remove(index);
+              _adCache[index] = ad as NativeAd;
+            });
+          }
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          if (mounted) {
+            setState(() {
+              _loadingAdIndices.remove(index);
+            });
+          }
+          CommonUtils.printLog('Ad failed to load at index $index: $error');
+        },
+      ),
+      nativeTemplateStyle: NativeTemplateStyle(
+        templateType: TemplateType.medium,
+        mainBackgroundColor: AppColors.cardBackground,
+        cornerRadius: 24.0, // Match the card corner radius
+        callToActionTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.white,
+          backgroundColor: AppColors.primary,
+          size: 13.0,
+        ),
+        primaryTextStyle: NativeTemplateTextStyle(
+          textColor: AppColors.textPrimary,
+          size: 13.0,
+        ),
+        secondaryTextStyle: NativeTemplateTextStyle(
+          textColor: AppColors.textMuted,
+          size: 11.0,
+        ),
+        tertiaryTextStyle: NativeTemplateTextStyle(
+          textColor: AppColors.textMuted,
+          size: 11.0,
+        ),
+      ),
+    );
+    ad.load();
+  }
+
+  @override
+  void dispose() {
+    for (var ad in _adCache.values) {
+      ad.dispose();
+    }
+    super.dispose();
+  }
+
+  double _getItemHeight(int index) {
+    final double baseHeight = 220.0;
+    // Stable pseudo-random height variation based on index to create a natural staggered grid
+    final int modifier = (index * 47) % 65; // Height modifier between 0 and 65 dp
+    return baseHeight + modifier;
+  }
+
+  Widget _buildVideoCard(VideoItem item, int index) {
+    final double height = _getItemHeight(index);
+    return GestureDetector(
+      onTap: () {
+        // Show interstitial ad, then navigate to prompt details
+        AdService.instance.showInterstitialAd(
+          onAdDismissed: () {
+            NavigationService.push(
+              context,
+              PromptDetailsScreen(
+                item: item,
+                categoryItems: _videos,
+                categoryName: widget.categoryName,
+                categoryId: widget.categoryId,
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.border, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: CachedNetworkImage(
+          imageUrl: item.videoThumbnailFullUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            color: AppColors.cardBackground,
+          ),
+          errorWidget: (context, url, error) => Container(
+            color: AppColors.cardBackground,
+            alignment: Alignment.center,
+            child: const FaIcon(
+              FontAwesomeIcons.circleExclamation,
+              color: AppColors.textMuted,
+              size: 32,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -141,36 +285,22 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       );
     }
 
-    // Thumbnail-only grid
-    return GridView.builder(
+    // Thumbnail-only staggered grid
+    return MasonryGridView.builder(
       padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.70,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
       ),
-      itemCount: _videos.length,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      itemCount: _gridItemCount,
       itemBuilder: (context, index) {
-        final item = _videos[index];
-        return GestureDetector(
-          onTap: () {
-            // Show interstitial ad, then navigate to prompt details
-            AdService.instance.showInterstitialAd(
-              onAdDismissed: () {
-                NavigationService.push(
-                  context,
-                  PromptDetailsScreen(
-                    item: item,
-                    categoryItems: _videos,
-                    categoryName: widget.categoryName,
-                    categoryId: widget.categoryId,
-                  ),
-                );
-              },
-            );
-          },
-          child: Container(
+        if (_isAdIndex(index)) {
+          _loadAdForIndex(index);
+          final ad = _adCache[index];
+
+          return Container(
+            height: 320.0, // Fixed height for full-card ad in the staggered grid
             decoration: BoxDecoration(
               color: AppColors.cardBackground,
               borderRadius: BorderRadius.circular(24),
@@ -184,24 +314,24 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               ],
             ),
             clipBehavior: Clip.antiAlias,
-            child: CachedNetworkImage(
-              imageUrl: item.videoThumbnailFullUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: AppColors.cardBackground,
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: AppColors.cardBackground,
-                alignment: Alignment.center,
-                child: const FaIcon(
-                  FontAwesomeIcons.circleExclamation,
-                  color: AppColors.textMuted,
-                  size: 32,
-                ),
-              ),
-            ),
-          ),
-        );
+            child: ad != null
+                ? AdWidget(ad: ad)
+                : const Center(
+                    child: SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      ),
+                    ),
+                  ),
+          );
+        }
+
+        final contentIndex = _gridIndexToContentIndex(index);
+        final item = _videos[contentIndex];
+        return _buildVideoCard(item, index);
       },
     );
   }

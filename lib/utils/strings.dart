@@ -39,7 +39,7 @@ class AppStrings {
   static const String onboardingTitle2 = 'One-Tap Copy & Go';
   static const String onboardingSubtitle2 = 'Tap to copy elite prompts to your clipboard. Perfect for Sora, Runway, Kling, Luma, and more.';
   static const String onboardingTitle3 = 'Unlock Premium Prompts';
-  static const String onboardingSubtitle3 = 'Get access to exclusive cinematic prompts, high-resolution guides, and secret tags to elevate your video generation.';
+  static const String onboardingSubtitle3 = 'Get access to exclusive cinematic prompts, high-resolution guides & secret tags to elevate your generation.';
 
   // Welcome Back Screen strings
   static const String welcomeBackTitle = 'Welcome Back';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../../widgets/custom_native_ad.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../adsmanager/ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
@@ -24,14 +24,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   late Animation<double> _progressAnimation;
   late Animation<double> _fadeAnimation;
 
-  NativeAd? _nativeAd;
-  bool _isNativeAdLoaded = false;
+  // Removed manual native ad state
 
   @override
   void initState() {
     super.initState();
     AnalyticsService.instance.logScreenView(screenName: 'splash_screen');
-    _loadNativeAd();
     // Preload interstitial early so it is ready by the time splash finishes
     AdService.instance.loadInterstitialAd(
       highFloorId: AdIds.interSplashHF1,
@@ -85,37 +83,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     });
   }
 
-  void _loadNativeAd() {
-    if (!AdIds.showAdsEnabled) return;
-
-    _nativeAd = NativeAd(
-      adUnitId: AdIds.nativeAdUnitId,
-      request: const AdRequest(),
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _isNativeAdLoaded = true;
-          });
-          CommonUtils.printLog('Splash NativeAd loaded successfully.');
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          CommonUtils.printLog('Splash NativeAd failed to load: $error');
-        },
-      ),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.small,
-        mainBackgroundColor: Colors.white,
-        cornerRadius: 2.0,
-      ),
-    );
-    _nativeAd!.load();
-  }
+  // Removed _loadNativeAd
 
   @override
   void dispose() {
     _controller.dispose();
-    _nativeAd?.dispose();
     super.dispose();
   }
 
@@ -169,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               
               // Bottom Progress Bar
               Positioned(
-                bottom: 140,
+                bottom: 180,
                 left: 0,
                 right: 0,//ad
                 child: Center(
@@ -207,13 +179,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
               ),
 
-              // Small Native Ad at Bottom
-              if (_isNativeAdLoaded && _nativeAd != null)
+              // Medium Native Ad at Bottom
+              if (AdIds.showAdsEnabled)
                 Positioned(
                   bottom: 6,
                   left: 6,
                   right: 6,
-                  height: 90,
+                  height: 150,
                   child: Container(
                     width: MediaQuery.of(context).size.width - 32,
                     decoration: BoxDecoration(
@@ -228,7 +200,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ],
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: AdWidget(ad: _nativeAd!),
+                    child: const CustomNativeAd(
+                      factoryId: 'medium_ad_factory',
+                      height: 150,
+                    ),
                   ),
                 ),
             ],

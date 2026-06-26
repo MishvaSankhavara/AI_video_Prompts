@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../../widgets/custom_native_ad.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/analytics_service.dart';
@@ -21,10 +21,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   
-  NativeAd? _bottomNativeAd;
-  bool _isBottomAdLoaded = false;
-  NativeAd? _fullScreenNativeAd;
-  bool _isFullScreenAdLoaded = false;
+  // Removed manual NativeAd variables
 
   final List<OnboardingPageData> _pages = [
     OnboardingPageData(
@@ -49,101 +46,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.initState();
     AnalyticsService.instance.logEvent(name: 'onboarding_started');
     AnalyticsService.instance.logScreenView(screenName: 'onboarding_slide_1');
-    _loadBottomNativeAd();
-    _loadFullScreenNativeAd();
   }
 
-  void _loadBottomNativeAd() {
-    if (!AdIds.showAdsEnabled) return;
-
-    _bottomNativeAd = NativeAd(
-      adUnitId: AdIds.nativeAdUnitId,
-      request: const AdRequest(),
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          if (mounted) {
-            setState(() {
-              _isBottomAdLoaded = true;
-            });
-          }
-          CommonUtils.printLog('Onboarding Bottom NativeAd loaded successfully.');
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          CommonUtils.printLog('Onboarding Bottom NativeAd failed to load: $error');
-        },
-      ),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        mainBackgroundColor: Colors.white,
-        cornerRadius: 12.0,
-        callToActionTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.white,
-          backgroundColor: AppColors.primary,
-          size: 15.0,
-        ),
-        primaryTextStyle: NativeTemplateTextStyle(
-          textColor: AppColors.textPrimary,
-          size: 15.0,
-        ),
-        secondaryTextStyle: NativeTemplateTextStyle(
-          textColor: AppColors.textMuted,
-          size: 13.0,
-        ),
-        tertiaryTextStyle: NativeTemplateTextStyle(
-          textColor: AppColors.textMuted,
-          size: 13.0,
-        ),
-      ),
-    );
-    _bottomNativeAd!.load();
-  }
-
-  void _loadFullScreenNativeAd() {
-    if (!AdIds.showAdsEnabled) return;
-
-    _fullScreenNativeAd = NativeAd(
-      adUnitId: AdIds.nativeAdUnitId,
-      request: const AdRequest(),
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          if (mounted) {
-            setState(() {
-              _isFullScreenAdLoaded = true;
-            });
-          }
-          CommonUtils.printLog('Onboarding FullScreen NativeAd loaded successfully.');
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          CommonUtils.printLog('Onboarding FullScreen NativeAd failed to load: $error');
-        },
-      ),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        mainBackgroundColor: Colors.white,
-        cornerRadius: 0.0, // Seamless full-width screen edge alignment
-        callToActionTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.white,
-          backgroundColor: AppColors.primary,
-          size: 16.0,
-        ),
-        primaryTextStyle: NativeTemplateTextStyle(
-          textColor: AppColors.textPrimary,
-          size: 16.0,
-        ),
-        secondaryTextStyle: NativeTemplateTextStyle(
-          textColor: AppColors.textMuted,
-          size: 14.0,
-        ),
-        tertiaryTextStyle: NativeTemplateTextStyle(
-          textColor: AppColors.textMuted,
-          size: 14.0,
-        ),
-      ),
-    );
-    _fullScreenNativeAd!.load();
-  }
+  // Removed manual NativeAd load methods
 
   Future<void> _completeOnboarding() async {
     AnalyticsService.instance.logEvent(name: 'onboarding_completed');
@@ -162,8 +67,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void dispose() {
     _pageController.dispose();
-    _bottomNativeAd?.dispose();
-    _fullScreenNativeAd?.dispose();
     super.dispose();
   }
 
@@ -195,17 +98,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       color: Colors.white,
                       width: double.infinity,
                       height: double.infinity,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: SizedBox(
-                          height: 500,
-                          width: double.infinity,
-                          child: _isFullScreenAdLoaded && _fullScreenNativeAd != null
-                              ? AdWidget(ad: _fullScreenNativeAd!)
-                              : const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
+                      child: CustomNativeAd(
+                        factoryId: 'fullscreen_ad_factory',
+                        height: MediaQuery.of(context).size.height,
                       ),
                     );
                   }
@@ -326,13 +221,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 height: 300,
                 width: double.infinity,
                 color: AppColors.mainBackground, // White background for the ad container
-                child: _isBottomAdLoaded && _bottomNativeAd != null
-                    ? AdWidget(ad: _bottomNativeAd!)
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                        ),
-                      ),
+                child: const CustomNativeAd(
+                  factoryId: 'large_ad_factory',
+                  height: 300,
+                ),
               ),
           ],
         ),

@@ -14,6 +14,8 @@ import 'utils/text_app.dart';
 import 'adsmanager/ad_service.dart';
 import 'adsmanager/ad_ids.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'services/remote_config_service.dart';
+import 'services/notification_service.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -25,6 +27,12 @@ void main() async {
   ]);
   try {
     await Firebase.initializeApp();
+    await RemoteConfigService.instance.initialize();
+    
+    // Initialize notifications and schedule random Firebase alerts
+    await NotificationService.instance.initialize();
+    await NotificationService.instance.requestPermissions();
+    NotificationService.instance.scheduleDailyNotifications();
   } catch (e) {
     CommonUtils.printLog('Firebase initialization failed: $e');
   }

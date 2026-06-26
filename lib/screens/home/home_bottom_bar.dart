@@ -101,7 +101,7 @@ class CustomBottomBar extends StatelessWidget {
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+
 
 import '../../services/app_state.dart';
 import '../../utils/colors.dart';

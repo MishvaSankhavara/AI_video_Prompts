@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../widgets/custom_native_ad.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -18,6 +19,7 @@ import '../../widgets/video_player.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class PromptDetailsScreen extends StatefulWidget {
   final VideoItem item;
@@ -42,7 +44,27 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
   final Set<int> _unlockedItemIds = {};
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarWhite = false;
-  
+  // Removed manual native ad state variables
+
+  bool _isGridAdIndex(int index) {
+    return (index + 1) % 6 == 0;
+  }
+
+  int _gridAdCountBefore(int index) {
+    return (index + 1) ~/ 6;
+  }
+
+  int _gridIndexToContentIndex(int index) {
+    return index - _gridAdCountBefore(index);
+  }
+
+  int _getGridItemCount(int contentCount) {
+    if (contentCount == 0) return 0;
+    return contentCount + (contentCount - 1) ~/ 5;
+  }
+
+  // Removed _loadGridAdForIndex logic
+
   // Animation for the button pulse and shimmer
   late AnimationController _btnController;
   late Animation<double> _shimmerAnimation;
@@ -116,6 +138,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     _btnController.dispose();
     super.dispose();
   }
+
+  // Removed _loadNativeAd logic
 
   String _getTruncatedPrompt(String fullPrompt) {
     String trimmed = fullPrompt.trim();
@@ -567,6 +591,34 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                   _buildLikeButton(appState, isFav),
                 ],
               ),
+            if (AdIds.showAdsEnabled) ...[
+              const SizedBox(height: 20),
+              Container(
+                key: const ValueKey('prompt_details_native_ad'),
+                height: 130,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.border.withValues(alpha: 0.8),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: const CustomNativeAd(
+                  factoryId: 'medium_ad_factory',
+                  height: 120,
+                ),
+              ),
+            ],
             const SizedBox(height: 10),
             if (_isUnlocked || isFav) ...[
               _buildPromptGuidance(),
@@ -598,36 +650,64 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
             if (recommendedItems.isEmpty)
               Center(child: Text(AppStrings.detailsNoRecommendations))
             else
-              GridView.builder(
+              MasonryGridView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.72,
-                  crossAxisSpacing: 14,
-                  mainAxisSpacing: 14,
                 ),
-                itemCount: recommendedItems.length,
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                itemCount: _getGridItemCount(recommendedItems.length),
                 itemBuilder: (context, index) {
-                  return PromptGridCard(
-                    item: recommendedItems[index],
-                    categoryName: '',
-                    isPremium: index % 3 == 0,
-                    onTap: () {
-                      NavigationService.push(
-                        context,
-                        PromptDetailsScreen(
-                          item: recommendedItems[index],
-                          categoryItems: widget.categoryItems,
-                          categoryName: widget.categoryName,
-                          categoryId: widget.categoryId,
-                        ),
-                      );
-                    },
+                  if (_isGridAdIndex(index)) {
+                    return Container(
+                      height: 280.0, // Optimized height to perfectly fit the medium ad template
+                      decoration: BoxDecoration(
+                        color: AppColors.cardBackground,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: AppColors.border, width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: const CustomNativeAd(
+                        factoryId: 'grid_ad_factory',
+                        height: 290.0,
+                      ),
+                    );
+                  }
+
+                  final contentIndex = _gridIndexToContentIndex(index);
+                  final item = recommendedItems[contentIndex];
+                  return AspectRatio(
+                    aspectRatio: 0.72,
+                    child: PromptGridCard(
+                      item: item,
+                      categoryName: '',
+                      isPremium: contentIndex % 3 == 0,
+                      onTap: () {
+                        NavigationService.push(
+                          context,
+                          PromptDetailsScreen(
+                            item: item,
+                            categoryItems: widget.categoryItems,
+                            categoryName: widget.categoryName,
+                            categoryId: widget.categoryId,
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               ),
+
             const SizedBox(height: 40),
           ],
         ),

@@ -1,7 +1,7 @@
 import 'ad_service.dart';
 
 class AdIds {
-  static const bool showAdsEnabled = true;
+  static bool showAdsEnabled = true;
 
   // ─── PORTION 1: DEBUG / TEST ADS (Google Test IDs) ────────────────────────
 

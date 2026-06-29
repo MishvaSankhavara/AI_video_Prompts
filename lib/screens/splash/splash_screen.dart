@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../widgets/custom_native_ad.dart';
+import '../../adsmanager/native_ad_service.dart';
+import '../../adsmanager/custom_native_ad.dart';
+import '../../adsmanager/interstitial_ad_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../adsmanager/ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
-import '../home/home_screen.dart';
 import '../onboarding/onboarding_screen.dart';
+import '../start/start_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,12 +30,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logScreenView(screenName: 'splash_screen');
+    
     // Preload interstitial early so it is ready by the time splash finishes
-    AdService.instance.loadInterstitialAd(
-      highFloorId: AdIds.interSplashHF1,
-      lowFloorId: AdIds.interSplashLF2,
-    );
+    
 
     _controller = AnimationController(
       vsync: this,
@@ -69,15 +67,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
         if (!mounted) return;
 
-        Widget targetScreen = hasSeenOnboarding ? const HomeScreen() : const OnboardingScreen();
+        Widget targetScreen = hasSeenOnboarding ? const StartScreen() : const OnboardingScreen();
 
         void navigateToTarget() {
           if (!mounted) return;
           NavigationService.pushReplacement(context, targetScreen);
         }
 
-        AdService.instance.showInterstitialAd(
-          onAdDismissed: navigateToTarget,
+        InterstitialAdService.showAd(
+          context: context,
+          customAdIds: [AdIds.interSplashHF1, AdIds.interSplashLF2],
+          onAdClosed: navigateToTarget,
         );
       }
     });
@@ -118,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     children: [
                       // Light-optimized Image Logo from assets
                       Image.asset(
-                        'assets/images/logo_light.png',
+                        'assets/images/logo.png',
                         width: 180,
                         height: 180,
                         fit: BoxFit.contain,
@@ -200,9 +200,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ],
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: const CustomNativeAd(
+                    child: NativeAdService.instance.showAd(
+                      0, // Index 0 for splash single ad
+                      () => setState(() {}),
+                      customAdIds: [AdIds.nativeAdUnitId],
                       factoryId: 'medium_ad_factory',
-                      height: 150,
+                      screenName: 'AiSplashScreen_Medium',
+                      shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
                     ),
                   ),
                 ),

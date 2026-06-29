@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/splash/welcome_back_screen.dart';
 import 'services/app_state.dart';
-import 'services/analytics_service.dart';
+// import 'services/analytics_service.dart';
 import 'utils/colors.dart';
 import 'utils/common_utils.dart';
 import 'utils/strings.dart';
 import 'utils/text_app.dart';
-import 'adsmanager/ad_service.dart';
+import 'adsmanager/ad_manager.dart';
+import 'adsmanager/app_open_ad_service.dart';
 import 'adsmanager/ad_ids.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'services/remote_config_service.dart';
@@ -27,6 +31,15 @@ void main() async {
   ]);
   try {
     await Firebase.initializeApp();
+    
+    // Pass all uncaught "fatal" errors from the framework to Crashlytics
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
     await RemoteConfigService.instance.initialize();
     
     // Initialize notifications and schedule random Firebase alerts
@@ -37,9 +50,7 @@ void main() async {
     CommonUtils.printLog('Firebase initialization failed: $e');
   }
 
-  await AdService.instance.initialize();
-  // Preload App Open Ad so it is ready after splash
-  AdService.instance.loadAppOpenAd(adUnitId: AdIds.appOpenAdUnitId);
+  await AdManager.instance.initialize();
   runApp(
     MultiProvider(
       providers: [
@@ -113,7 +124,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return MaterialApp(
           title: AppStrings.appName,
           navigatorKey: navigatorKey,
-          navigatorObservers: [AnalyticsService.instance.observer],
+          navigatorObservers: [FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance)],
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             brightness: Brightness.light,

@@ -8,6 +8,7 @@ import '../utils/colors.dart';
 import '../utils/common_utils.dart';
 import '../utils/strings.dart';
 import '../utils/text_app.dart';
+import 'shimmer_loading.dart';
 
 
 class CommonVideoPlayer extends StatefulWidget {
@@ -229,7 +230,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           ),
         );
       },
-      placeholder: (context, url) => Container(color: AppColors.cardBackground),
+      placeholder: (context, url) => const ShimmerLoading(),
       errorWidget: (context, url, error) => Container(
         color: Colors.grey,
         alignment: Alignment.center,

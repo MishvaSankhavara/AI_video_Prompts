@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/video_category.dart';
 import '../services/api_service.dart';
 import 'database_helper.dart';
-import 'analytics_service.dart';
+// import 'analytics_service.dart';
 import '../utils/common_utils.dart';
 
 class AppState extends ChangeNotifier {
@@ -57,7 +57,7 @@ class AppState extends ChangeNotifier {
       default:
         screenName = 'home_tab';
     }
-    AnalyticsService.instance.logScreenView(screenName: screenName);
+    /* AnalyticsService.instance.logScreenView(screenName: screenName); */
   }
 
   // Load Categories from API

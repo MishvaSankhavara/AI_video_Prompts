@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../adsmanager/ad_service.dart';
-import '../../services/analytics_service.dart';
+import '../../adsmanager/app_open_ad_service.dart';
+import '../../adsmanager/ad_ids.dart';
+// import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
@@ -25,9 +26,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logScreenView(screenName: 'welcome_back_screen');
-
-    _controller = AnimationController(
+_controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2500),
     );
@@ -60,16 +59,21 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
         if (!mounted) return;
 
         if (widget.isResume) {
-          // Show App Open Ad on resume, then pop back
-          AdService.instance.showAppOpenAd(
-            onAdDismissed: () {
+          AppOpenAdService.showAd(
+            context: context,
+            customAdIds: [AdIds.appOpenAdUnitId],
+            screenName: 'WelcomeBackScreen',
+            onAdClosed: () {
               if (!mounted) return;
               NavigationService.pop(context);
             },
           );
         } else {
-          AdService.instance.showAppOpenAd(
-            onAdDismissed: () {
+          AppOpenAdService.showAd(
+            context: context,
+            customAdIds: [AdIds.appOpenAdUnitId],
+            screenName: 'WelcomeBackScreen',
+            onAdClosed: () {
               if (!mounted) return;
               NavigationService.pushReplacement(context, const HomeScreen());
             },
@@ -161,10 +165,6 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> with SingleTicker
                               decoration: BoxDecoration(
                                 color: AppColors.white.withValues(alpha: 0.45),
                                 borderRadius: BorderRadius.circular(32),
-                                border: Border.all(
-                                  color: AppColors.primary.withValues(alpha: 0.08),
-                                  width: 1.5,
-                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.primary.withValues(alpha: 0.03),

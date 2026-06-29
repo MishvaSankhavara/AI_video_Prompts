@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../widgets/custom_native_ad.dart';
+import '../../adsmanager/native_ad_service.dart';
+import '../../adsmanager/custom_native_ad.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../adsmanager/ad_ids.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
@@ -44,14 +45,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logEvent(name: 'onboarding_started');
-    AnalyticsService.instance.logScreenView(screenName: 'onboarding_slide_1');
+    
+    
   }
 
   // Removed manual NativeAd load methods
 
   Future<void> _completeOnboarding() async {
-    AnalyticsService.instance.logEvent(name: 'onboarding_completed');
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('has_seen_onboarding', true);
@@ -90,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   setState(() {
                     _currentPage = index;
                   });
-                  AnalyticsService.instance.logScreenView(screenName: 'onboarding_slide_${index + 1}');
+                  
                 },
                 itemBuilder: (context, index) {
                   if (index == 2) {
@@ -98,9 +99,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       color: Colors.white,
                       width: double.infinity,
                       height: double.infinity,
-                      child: CustomNativeAd(
+                      child: NativeAdService.instance.showAd(
+                        0, // Fullscreen ad index 0
+                        () => setState(() {}),
+                        customAdIds: [AdIds.nativeAdUnitId],
                         factoryId: 'fullscreen_ad_factory',
-                        height: MediaQuery.of(context).size.height,
+                        screenName: 'AiOnboardingScreen_Fullscreen',
+                        shimmer: ShimmerNativeAd.fullscreenNativeAdShimmer(),
                       ),
                     );
                   }
@@ -221,9 +226,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 height: 300,
                 width: double.infinity,
                 color: AppColors.mainBackground, // White background for the ad container
-                child: const CustomNativeAd(
+                child: NativeAdService.instance.showAd(
+                  1, // Large ad index 1
+                  () => setState(() {}),
+                  customAdIds: [AdIds.nativeAdUnitId],
                   factoryId: 'large_ad_factory',
-                  height: 300,
+                  screenName: 'AiOnboardingScreen_Large',
+                  shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
                 ),
               ),
           ],

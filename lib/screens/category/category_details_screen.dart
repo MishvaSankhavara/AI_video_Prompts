@@ -1,17 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../adsmanager/native_ad_service.dart';
+import '../../adsmanager/custom_native_ad.dart';
+import '../../adsmanager/interstitial_ad_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/custom_native_ad.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../models/video_category.dart';
 import '../../services/api_service.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 import 'prompt_details_screen.dart';
-import '../../adsmanager/ad_service.dart';
 import '../../services/navigation_service.dart';
 class CategoryDetailsScreen extends StatefulWidget {
   final int categoryId;
@@ -65,8 +66,10 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     return GestureDetector(
       onTap: () {
         // Show interstitial ad, then navigate to prompt details
-        AdService.instance.showInterstitialAd(
-          onAdDismissed: () {
+        InterstitialAdService.showAd(
+          context: context,
+          customAdIds: [AdIds.interCategoryHF2, AdIds.interCategoryLF2],
+          onAdClosed: () {
             NavigationService.push(
               context,
               PromptDetailsScreen(
@@ -117,21 +120,12 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logScreenView(screenName: 'category_details');
-    AnalyticsService.instance.logEvent(
-      name: 'view_category',
-      parameters: {
-        'category_id': widget.categoryId,
-        'category_name': widget.categoryName,
-      },
-    );
+    
+    
     _fetchCategoryVideos();
 
     // Load Category Interstitial Ad
-    AdService.instance.loadInterstitialAd(
-      highFloorId: AdIds.interCategoryHF2,
-      lowFloorId: AdIds.interCategoryLF2,
-    );
+    
   }
 
   Future<void> _fetchCategoryVideos() async {
@@ -249,9 +243,13 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               ],
             ),
             clipBehavior: Clip.antiAlias,
-            child: const CustomNativeAd(
+            child: NativeAdService.instance.showAd(
+              index,
+              () => setState(() {}),
+              customAdIds: [AdIds.nativeAdUnitId],
               factoryId: 'grid_ad_factory',
-              height: 300.0,
+              screenName: 'AiCategoryDetailsScreen',
+              shimmer: ShimmerNativeAd.gridViewNativeAdShimmer(),
             ),
           );
         }

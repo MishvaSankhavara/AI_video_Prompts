@@ -21,7 +21,7 @@ class FavoriteScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FaIcon(FontAwesomeIcons.heart, size: 64, color: AppColors.textMuted),
+            Image.asset('assets/images/ic_like.png', width: 64, height: 64, color: AppColors.primary),
             const SizedBox(height: 16),
             Text(
               'No Favorites Yet',

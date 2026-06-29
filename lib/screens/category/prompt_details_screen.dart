@@ -1,16 +1,17 @@
 import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../adsmanager/native_ad_service.dart';
+import '../../adsmanager/custom_native_ad.dart';
+import '../../adsmanager/rewarded_ad_service.dart';
 import 'package:flutter/services.dart';
-import '../../widgets/custom_native_ad.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/video_category.dart';
-import '../../adsmanager/ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/app_state.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
@@ -94,10 +95,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
 
     _logPromptView();
     // Preload rewarded ad so it is ready when the user taps unlock
-    AdService.instance.loadRewardedAd(
-      highFloorId: AdIds.rewardedHF,
-      lowFloorId: AdIds.rewardedLF,
-    );
+    
   }
 
   void _onScroll() {
@@ -112,15 +110,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
   }
 
   void _logPromptView() {
-    AnalyticsService.instance.logScreenView(screenName: AppStrings.analyticsPromptDetailsScreen);
-    AnalyticsService.instance.logEvent(
-      name: AppStrings.analyticsViewPrompt,
-      parameters: {
-        AppStrings.paramPromptId: _currentItem.id,
-        AppStrings.paramCategoryName: widget.categoryName,
-        AppStrings.paramCategoryId: widget.categoryId,
-      },
-    );
+    
+    
   }
 
   @override
@@ -151,10 +142,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
   }
 
   void _showUnlockDialog() {
-    AnalyticsService.instance.logEvent(
-      name: AppStrings.analyticsUnlockPromptDialogViewed,
-      parameters: {AppStrings.paramPromptId: _currentItem.id},
-    );
+    
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -165,37 +153,27 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
           icon: FontAwesomeIcons.crown,
           primaryButtonText: AppStrings.unlockDialogBuyPro,
           onPrimaryPressed: () {
-            AnalyticsService.instance.logEvent(
-              name: AppStrings.analyticsUnlockPromptBuyProTapped,
-              parameters: {AppStrings.paramPromptId: _currentItem.id},
-            );
+            
             Navigator.pop(context);
           },
           secondaryButtonText: AppStrings.unlockDialogWatchAd,
           onSecondaryPressed: () {
-            AnalyticsService.instance.logEvent(
-              name: AppStrings.analyticsUnlockPromptWatchAdTapped,
-              parameters: {AppStrings.paramPromptId: _currentItem.id},
-            );
+            
             Navigator.pop(context);
             // Show real rewarded ad – unlock only if user finishes the ad
-            AdService.instance.showRewardedAd(
-              onRewarded: () {
+            RewardedAdService.showAd(
+              context: context,
+              customAdIds: [AdIds.rewardedHF, AdIds.rewardedLF],
+              onUserEarnedReward: () {
                 // User watched the full ad – grant the unlock
                 setState(() {
                   _unlockedItemIds.add(_currentItem.id);
                 });
-                AnalyticsService.instance.logEvent(
-                  name: AppStrings.analyticsUnlockPromptSuccess,
-                  parameters: {AppStrings.paramPromptId: _currentItem.id},
-                );
+                
                 _showRewardGrantedDialog();
               },
-              onDismissed: () {
-                  AdService.instance.loadRewardedAd(
-                    highFloorId: AdIds.rewardedHF,
-                    lowFloorId: AdIds.rewardedLF,
-                  ); // Preload next
+              onAdClosed: () {
+                   // Preload next
               },
             );
           },
@@ -216,10 +194,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
           icon: FontAwesomeIcons.circleCheck,
           primaryButtonText: AppStrings.rewardDialogDone,
           onPrimaryPressed: () {
-            AnalyticsService.instance.logEvent(
-              name: AppStrings.analyticsUnlockPromptSuccess,
-              parameters: {AppStrings.paramPromptId: _currentItem.id},
-            );
+            
             Navigator.pop(context); 
             setState(() {
               _unlockedItemIds.add(_currentItem.id);
@@ -613,9 +588,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                   ],
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: const CustomNativeAd(
+                child: NativeAdService.instance.showAd(
+                  0, // Using 0 as index for single ad
+                  () => setState(() {}),
+                  customAdIds: [AdIds.nativeAdUnitId],
                   factoryId: 'medium_ad_factory',
-                  height: 120,
+                  screenName: 'AiPromptDetailsScreen_Medium',
+                  shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
                 ),
               ),
             ],
@@ -677,9 +656,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                         ],
                       ),
                       clipBehavior: Clip.antiAlias,
-                      child: const CustomNativeAd(
+                      child: NativeAdService.instance.showAd(
+                        index,
+                        () => setState(() {}),
+                        customAdIds: [AdIds.nativeAdUnitId],
                         factoryId: 'grid_ad_factory',
-                        height: 290.0,
+                        screenName: 'AiPromptDetailsScreen_Grid',
+                        shimmer: ShimmerNativeAd.gridViewNativeAdShimmer(),
                       ),
                     );
                   }

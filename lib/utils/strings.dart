@@ -100,6 +100,12 @@ class AppStrings {
   static const String updateDialogSecondary = 'Later';
   static const String playStoreBaseUrl = 'https://play.google.com/store/apps/details?id=';
 
+  // Exit App Dialog strings
+  static const String exitDialogTitle = 'Exit App';
+  static const String exitDialogSubtitle = 'Are you sure you want to exit the app?';
+  static const String exitDialogPrimary = 'Exit';
+  static const String exitDialogSecondary = 'Cancel';
+
   // Settings Screen strings
   static const String settingsShareApp = 'Share App';
   static const String settingsRateApp = 'Rate App';
@@ -110,4 +116,13 @@ class AppStrings {
   static const String settingsShareMessage = 'Check out this amazing AI Video Prompt app: ';
   static const String settingsPlayStoreError = 'Could not open Play Store.';
   static const String loading = 'Loading..';
+
+  // Pro Screen strings
+  static const String proUnlockPremium = 'Unlock Premium';
+  static const String proTitle = 'Unlock Unlimited AI Video Prompts';
+  static const String proSubtitle = 'Create incredible AI videos with unlimited premium prompts and no ads.';
+  static const String proFeature1 = 'Unlock All\nPrompts';
+  static const String proFeature2 = 'Remove\nAds';
+  static const String proFeature3 = 'Exclusive\nPrompts';
+  static const String proFeature4 = 'Unlimited\nAccess';
 }

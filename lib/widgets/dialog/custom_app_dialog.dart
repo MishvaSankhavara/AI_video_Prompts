@@ -171,82 +171,99 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                   ),
                 ],
                 const SizedBox(height: 28),
-                // Primary Button - Gradient with Shadow & Micro-animation
-                ScaleButton(
-                  onTap: isPrimaryDisabled
-                      ? null
-                      : (widget.showRatingStars
-                          ? () {
-                              Navigator.pop(context);
-                              widget.onRatingSubmit?.call(_selectedRating);
-                            }
-                          : widget.onPrimaryPressed),
-                  child: Container(
-                    width: double.infinity,
-                    height: 54,
-                    decoration: BoxDecoration(
-                      gradient: isPrimaryDisabled
+                // Buttons Section
+                Builder(
+                  builder: (context) {
+                    final Widget primaryBtn = ScaleButton(
+                      onTap: isPrimaryDisabled
                           ? null
-                          : const LinearGradient(
-                              colors: [Color(0xFFB8308F), AppColors.primary],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                      color: isPrimaryDisabled ? AppColors.border : null,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: isPrimaryDisabled
-                          ? null
-                          : [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.25),
-                                blurRadius: 14,
-                                offset: const Offset(0, 6),
+                          : (widget.showRatingStars
+                              ? () {
+                                  Navigator.pop(context);
+                                  widget.onRatingSubmit?.call(_selectedRating);
+                                }
+                              : widget.onPrimaryPressed),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          gradient: isPrimaryDisabled
+                              ? null
+                              : const LinearGradient(
+                                  colors: [Color(0xFFB8308F), AppColors.primary],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                          color: isPrimaryDisabled ? AppColors.border : null,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: isPrimaryDisabled
+                              ? null
+                              : [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.25),
+                                    blurRadius: 14,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.primaryButtonText,
+                          style: AppTextStyles.getStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isPrimaryDisabled
+                                ? AppColors.textMuted.withValues(alpha: 0.6)
+                                : Colors.white,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    );
+
+                    if (widget.secondaryButtonText != null && widget.onSecondaryPressed != null) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: ScaleButton(
+                              onTap: widget.onSecondaryPressed,
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: AppColors.primary.withValues(alpha: 0.35),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  widget.secondaryButtonText!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyles.getStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                               ),
-                            ],
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      widget.primaryButtonText,
-                      style: AppTextStyles.getStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: isPrimaryDisabled
-                            ? AppColors.textMuted.withValues(alpha: 0.6)
-                            : Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: primaryBtn,
+                          ),
+                        ],
+                      );
+                    }
+
+                    return primaryBtn;
+                  },
                 ),
-                // Secondary Button (if present) - Redesigned
-                if (widget.secondaryButtonText != null && widget.onSecondaryPressed != null) ...[
-                  const SizedBox(height: 12),
-                  ScaleButton(
-                    onTap: widget.onSecondaryPressed,
-                    child: Container(
-                      width: double.infinity,
-                      height: 54,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.35),
-                          width: 1.5,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        widget.secondaryButtonText!,
-                        style: AppTextStyles.getStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ],
             ),
           ],

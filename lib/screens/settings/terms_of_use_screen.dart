@@ -8,30 +8,28 @@ import '../../utils/common_utils.dart';
 import '../../utils/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 
-class PrivacyPolicyScreen extends StatefulWidget {
-  const PrivacyPolicyScreen({super.key});
+class TermsOfUseScreen extends StatefulWidget {
+  const TermsOfUseScreen({super.key});
 
   @override
-  State<PrivacyPolicyScreen> createState() => _PrivacyPolicyScreenState();
+  State<TermsOfUseScreen> createState() => _TermsOfUseScreenState();
 }
 
-class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
+class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
   late final WebViewController _webViewController;
   bool _useWebView = false;
   bool _isLoading = true;
 
-  static const String _privacyPolicyUrl = 'https://www.google.com';
+  static const String _termsOfUseUrl = 'https://www.google.com';
 
   @override
   void initState() {
     super.initState();
-// If no URL is set yet, skip WebView entirely
-    if (_privacyPolicyUrl.isEmpty) {
+if (_termsOfUseUrl.isEmpty) {
       _isLoading = false;
       return;
     }
 
-    // Safely check if webview platform is registered (e.g. mobile platforms)
     try {
       if (WebViewPlatform.instance != null) {
         _useWebView = true;
@@ -65,19 +63,19 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             },
           ),
         )
-        ..loadRequest(Uri.parse(_privacyPolicyUrl));
+        ..loadRequest(Uri.parse(_termsOfUseUrl));
     } else {
       _isLoading = false;
     }
   }
 
   Future<void> _launchUrl() async {
-    final uri = Uri.parse(_privacyPolicyUrl);
+    final uri = Uri.parse(_termsOfUseUrl);
     try {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        CommonUtils.printLog('Could not launch $_privacyPolicyUrl');
+        CommonUtils.printLog('Could not launch $_termsOfUseUrl');
       }
     } catch (e) {
       CommonUtils.printLog('Error launching url: $e');
@@ -89,10 +87,9 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
       appBar: const CommonAppBar(
-        title: 'Privacy Policy',
+        title: 'Terms of Use',
       ),
-      body: _privacyPolicyUrl.isEmpty
-          // No URL set yet — show coming soon placeholder
+      body: _termsOfUseUrl.isEmpty
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
@@ -114,7 +111,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Privacy Policy',
+                      'Terms of Use',
                       style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
                         fontSize: 20,
@@ -123,7 +120,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Our privacy policy will be available here soon. Thank you for your patience!',
+                      'Our terms of use will be available here soon. Thank you for your patience!',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
@@ -160,7 +157,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'View Privacy Policy Online',
+                          'View Terms of Use Online',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.getStyle(
                             color: AppColors.textPrimary,
@@ -170,7 +167,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'This device or platform does not support inline web browsing. Tapping the button below will open our privacy policy website in your system browser.',
+                          'This device or platform does not support inline web browsing. Tapping the button below will open our terms of use website in your system browser.',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.getStyle(
                             color: AppColors.textMuted,
@@ -183,7 +180,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                           onPressed: _launchUrl,
                           icon: const FaIcon(FontAwesomeIcons.arrowUpRightFromSquare, color: Colors.white),
                           label: Text(
-                            'Open Policy Website',
+                            'Open Terms Website',
                             style: AppTextStyles.getStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

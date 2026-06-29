@@ -1,9 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
@@ -11,6 +12,7 @@ import '../../utils/strings.dart';
 import '../../utils/text_app.dart';
 import 'feedback_screen.dart';
 import 'privacy_policy_screen.dart';
+import 'terms_of_use_screen.dart';
 import '../../services/navigation_service.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -62,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showRatingDialog(BuildContext context) {
-    AnalyticsService.instance.logEvent(name: 'rate_app_dialog_viewed');
+    /* AnalyticsService.instance.logEvent(name: 'rate_app_dialog_viewed'); */
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -74,10 +76,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         showCloseButton: true,
         showRatingStars: true,
         onRatingSubmit: (rating) async {
-          AnalyticsService.instance.logEvent(
+          /* AnalyticsService.instance.logEvent(
             name: 'rate_app_submit',
             parameters: {'rating': rating},
-          );
+          ); */
           if (rating >= 4) {
             // 4 or 5 stars → open Play Store
             try {
@@ -118,10 +120,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
-              icon: FontAwesomeIcons.arrowUpFromBracket,
+              imagePath: 'assets/images/ic_share.png',
               title: AppStrings.settingsShareApp,
               onTap: () async {
-                AnalyticsService.instance.logEvent(name: 'share_app_tapped');
+                /* AnalyticsService.instance.logEvent(name: 'share_app_tapped'); */
                 try {
                   final packageInfo = await PackageInfo.fromPlatform();
                   final appUrl = '$_playStoreBaseUrl${packageInfo.packageName}';
@@ -142,12 +144,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             _buildSettingsTile(
-              icon: FontAwesomeIcons.star,
+              imagePath: 'assets/images/ic_rate.png',
               title: AppStrings.settingsRateApp,
               onTap: () => _showRatingDialog(context),
             ),
             _buildSettingsTile(
-              icon: FontAwesomeIcons.comment,
+              imagePath: 'assets/images/ic_feedback.png',
               title: AppStrings.settingsFeedback,
               onTap: () {
                 NavigationService.push(
@@ -163,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
-              icon: FontAwesomeIcons.shieldHalved,
+              imagePath: 'assets/images/ic_privacy_policy.png',
               title: AppStrings.settingsPrivacyPolicy,
               onTap: () {
                 NavigationService.push(
@@ -172,8 +174,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
+            if (Platform.isIOS)
+              _buildSettingsTile(
+                imagePath: 'assets/images/ic_privacy_policy.png',
+                title: 'Terms of Use',
+                onTap: () {
+                  NavigationService.push(
+                    context,
+                    const TermsOfUseScreen(),
+                  );
+                },
+              ),
             _buildSettingsTile(
-              icon: FontAwesomeIcons.circleInfo,
+              imagePath: 'assets/images/ic_app_version.png',
               title: AppStrings.settingsAppVersion,
               trailing: Text(
                 _appVersion,
@@ -286,7 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSettingsTile({
-    required FaIconData icon,
+    required String imagePath,
     required String title,
     Widget? trailing,
     VoidCallback? onTap,
@@ -302,7 +315,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: FaIcon(icon, color: AppColors.primary, size: 20),
+            child: Image.asset(imagePath, color: AppColors.primary, width: 20, height: 20, fit: BoxFit.contain),
           ),
           title: Text(
             title,

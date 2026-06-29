@@ -1,6 +1,6 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '../adsmanager/ad_ids.dart';
+
 import '../utils/common_utils.dart';
 
 class RemoteConfigService {
@@ -42,7 +42,7 @@ class RemoteConfigService {
 
         if (disabledVersions.contains(currentVersion)) {
           CommonUtils.printLog('Ads disabled via Remote Config for version $currentVersion');
-          AdIds.showAdsEnabled = false;
+          // AdIds.showAdsEnabled removed
         } else {
           CommonUtils.printLog('Ads enabled. Current version $currentVersion is not in disabled list.');
         }

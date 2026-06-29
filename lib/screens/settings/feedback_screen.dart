@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
@@ -22,8 +22,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logScreenView(screenName: 'feedback_screen');
-  }
+}
 
   @override
   void dispose() {
@@ -45,13 +44,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     setState(() => _isSubmitting = true);
 
-    AnalyticsService.instance.logEvent(
+    /* AnalyticsService.instance.logEvent(
       name: 'feedback_submitted',
       parameters: {
         'rating': widget.rating ?? 0,
         'feedback_text_length': text.length,
       },
-    );
+    ); */
 
     // Simulate submission delay
     await Future.delayed(const Duration(milliseconds: 800));

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../adsmanager/ad_service.dart';
+import '../../adsmanager/interstitial_ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/app_state.dart';
-import '../../services/analytics_service.dart';
+// import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
@@ -16,6 +17,7 @@ import '../../widgets/shimmer_grid_card.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../category/category_details_screen.dart';
 import '../../widgets/common_app_bar.dart';
+import '../pro/pro_screen.dart';
 import '../../utils/text_app.dart';
 import 'home_bottom_bar.dart';
 
@@ -27,20 +29,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+  int _previousIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    AnalyticsService.instance.logScreenView(screenName: 'home_tab');
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       Provider.of<AppState>(context, listen: false).loadCategories();
       _checkForUpdates();
     });
-    // Preload interstitial so it is ready when user taps a category item
-    AdService.instance.loadInterstitialAd(
-      highFloorId: AdIds.interHomelHF1,
-      lowFloorId: AdIds.interHomeLF1,
-    );
   }
 
   Future<void> _checkForUpdates() async {
@@ -80,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showUpdateDialog() {
-    AnalyticsService.instance.logEvent(name: 'app_update_dialog_viewed');
+    /* AnalyticsService.instance.logEvent(name: 'app_update_dialog_viewed'); */
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -92,10 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
         secondaryButtonText: AppStrings.updateDialogSecondary,
         showCloseButton: true,
         onPrimaryPressed: () async {
-          AnalyticsService.instance.logEvent(
+          /* AnalyticsService.instance.logEvent(
             name: 'app_update_action',
             parameters: {'action': 'update_now'},
-          );
+          ); */
           Navigator.pop(context);
           try {
             final packageInfo = await PackageInfo.fromPlatform();
@@ -108,14 +107,45 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         onSecondaryPressed: () {
-          AnalyticsService.instance.logEvent(
+          /* AnalyticsService.instance.logEvent(
             name: 'app_update_action',
             parameters: {'action': 'remind_later'},
-          );
+          ); */
           Navigator.pop(context);
         },
       ),
     );
+  }
+
+  Future<bool> _showExitDialog() async {
+    /* AnalyticsService.instance.logEvent(name: 'exit_dialog_viewed'); */
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => CustomAppDialog(
+        title: AppStrings.exitDialogTitle ?? 'Exit App',
+        subtitle: AppStrings.exitDialogSubtitle ?? 'Are you sure you want to exit?',
+        icon: FontAwesomeIcons.doorOpen,
+        primaryButtonText: AppStrings.exitDialogPrimary ?? 'Exit',
+        secondaryButtonText: AppStrings.exitDialogSecondary ?? 'Cancel',
+        showCloseButton: false,
+        onPrimaryPressed: () {
+          /* AnalyticsService.instance.logEvent(
+            name: 'exit_app_action',
+            parameters: {'action': 'exit'},
+          ); */
+          Navigator.pop(context, true);
+        },
+        onSecondaryPressed: () {
+          /* AnalyticsService.instance.logEvent(
+            name: 'exit_app_action',
+            parameters: {'action': 'cancel'},
+          ); */
+          Navigator.pop(context, false);
+        },
+      ),
+    );
+    return result ?? false;
   }
 
   String _getAppBarTitle(int tabIndex) {
@@ -135,15 +165,90 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
     
-    return Scaffold(
+    if (appState.currentTabIndex != _currentIndex) {
+      _previousIndex = _currentIndex;
+      _currentIndex = appState.currentTabIndex;
+    }
+
+    return WillPopScope(
+      onWillPop: () async {
+        final state = Provider.of<AppState>(context, listen: false);
+        // If not on Home tab, go back to Home tab first
+        if (state.currentTabIndex != 0) {
+          state.changeTab(0);
+          return false;
+        }
+        // If on Home tab, show exit dialog
+        return await _showExitDialog();
+      },
+      child: Scaffold(
       backgroundColor: AppColors.mainBackground,
       extendBody: true,
       appBar: CommonAppBar(
-        title: _getAppBarTitle(appState.currentTabIndex),
+        title: _getAppBarTitle(_currentIndex),
         showBackButton: false,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              NavigationService.push(context, const ProScreen());
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Image.asset(
+                'assets/images/img_crown.png',
+                width: 32,
+                height: 32,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
       ),
-      body: CustomBottomBar.getBody(appState),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 350),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeOutCubic,
+        layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+          return Stack(
+            children: <Widget>[
+              ...previousChildren,
+              if (currentChild != null) currentChild,
+            ],
+          );
+        },
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          final key = child.key as ValueKey<int>?;
+          final childIndex = key?.value ?? 0;
+          final isIncoming = childIndex == _currentIndex;
+          final isMovingRight = _currentIndex > _previousIndex;
+
+          Offset beginOffset;
+          if (isIncoming) {
+            beginOffset = Offset(isMovingRight ? 0.3 : -0.3, 0.0);
+          } else {
+            beginOffset = Offset(isMovingRight ? -0.3 : 0.3, 0.0);
+          }
+
+          final offsetAnimation = Tween<Offset>(
+            begin: beginOffset,
+            end: Offset.zero,
+          ).animate(animation);
+
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<int>(_currentIndex),
+          child: CustomBottomBar.getBody(appState),
+        ),
+      ),
       bottomNavigationBar: const CustomBottomBar(),
+    ),
     );
   }
 }
@@ -230,8 +335,20 @@ class HomeTabBody extends StatelessWidget {
           isPremium: isPremium,
           onTap: () {
             // Show interstitial ad then navigate to category details
-            AdService.instance.showInterstitialAd(
-              onAdDismissed: () {
+            InterstitialAdService.showAd(
+              context: context,
+              customAdIds: [AdIds.interHomelHF1, AdIds.interHomeLF1],
+              screenName: 'HomeScreen',
+              onAdClosed: () {
+                NavigationService.push(
+                  context,
+                  CategoryDetailsScreen(
+                    categoryId: category.categoryId,
+                    categoryName: category.categoryName,
+                  ),
+                );
+              },
+              onAdFailedToShow: () {
                 NavigationService.push(
                   context,
                   CategoryDetailsScreen(

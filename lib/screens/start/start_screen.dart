@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import '../../adsmanager/native_ad_service.dart';
-import '../../adsmanager/custom_native_ad.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../adsmanager/native ad/native_ad_service.dart';
+import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
-import '../../utils/text_app.dart';
-import '../home/home_screen.dart';
+import '../../utils/strings.dart';
+import '../../widgets/text_app.dart';
+import '../home/bottom_nav_bar_screen.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -15,6 +19,14 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
+  final NativeAdService _nativeAdService = NativeAdService();
+
+  @override
+  void dispose() {
+    _nativeAdService.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +69,7 @@ class _StartScreenState extends State<StartScreen> {
                 ),
               ),
             ),
-            
+
             // Bottom Half: Text and Button
             Expanded(
               flex: 3,
@@ -76,14 +88,17 @@ class _StartScreenState extends State<StartScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // Start Exploring Button
                     SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
                         onPressed: () {
-                          NavigationService.pushReplacement(context, const HomeScreen());
+                          NavigationService.pushReplacement(
+                            context,
+                            const BottomNavBarScreen(),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
@@ -108,26 +123,22 @@ class _StartScreenState extends State<StartScreen> {
               ),
             ),
 
-            // Ad at the bottom if enabled
-            if (AdIds.showAdsEnabled)
-              Container(
-                margin: const EdgeInsets.only(bottom: 6, left: 6, right: 6),
-                height: 270, // Large ad height
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: NativeAdService.instance.showAd(
-                  0, // Index 0 for start screen single ad
-                  () => setState(() {}),
-                  customAdIds: [AdIds.nativeAdUnitId],
-                  factoryId: 'large_ad_factory',
-                  screenName: 'AiStartScreen_Large',
-                  shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
-                ),
-              ),
+            // Native ad at the bottom (collapses to nothing when unavailable)
+            _nativeAdService.buildNativeAdTile(
+              0, // Index 0 for start screen single ad
+              () => setState(() {}),
+              customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+              factoryId: Platform.isAndroid
+                  ? AppStrings.nativeAdFactoryLargeAndroid
+                  : AppStrings.nativeAdFactoryLargeIOS,
+              height: 34.h,
+              width: double.infinity,
+              borderRadius: 16,
+              backgroundColor: AppColors.cardBackground,
+              margin: const EdgeInsets.only(bottom: 6, left: 6, right: 6),
+              screenName: 'AiStartScreen_Large',
+              shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+            ),
           ],
         ),
       ),

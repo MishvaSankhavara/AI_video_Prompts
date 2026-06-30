@@ -36,21 +36,22 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY,
         ai_prompt TEXT,
         video_thumbnail TEXT,
-        no_of_video INTEGER,
-        name_change INTEGER,
-        video_thumbnail_full_url TEXT,
-        category_video TEXT,
-        category_video_full_url TEXT,
-        category_id INTEGER
+        video_thumbnail_full_url TEXT
       )
     ''');
   }
 
   Future<void> insertFavorite(VideoItem item) async {
     final db = await database;
+    // Only persist the columns the favorites table actually keeps.
     await db.insert(
       'favorites',
-      item.toMap(),
+      {
+        'id': item.id,
+        'ai_prompt': item.aiPrompt,
+        'video_thumbnail': item.videoThumbnail,
+        'video_thumbnail_full_url': item.videoThumbnailFullUrl,
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -69,7 +70,21 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query('favorites');
 
     return List.generate(maps.length, (i) {
-      return VideoItem.fromMap(maps[i]);
+      final map = maps[i];
+      // Build directly from the kept columns; fields not stored in the
+      // favorites table fall back to defaults.
+      return VideoItem(
+        id: map['id'] is int
+            ? map['id'] as int
+            : int.parse(map['id'].toString()),
+        aiPrompt: map['ai_prompt'] ?? '',
+        videoThumbnail: map['video_thumbnail'] ?? '',
+        videoThumbnailFullUrl: map['video_thumbnail_full_url'] ?? '',
+        noOfVideo: 0,
+        nameChange: false,
+        categoryVideo: '',
+        categoryVideoFullUrl: '',
+      );
     });
   }
 }

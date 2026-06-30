@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 
 class TermsOfUseScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
   @override
   void initState() {
     super.initState();
-if (_termsOfUseUrl.isEmpty) {
+    if (_termsOfUseUrl.isEmpty) {
       _isLoading = false;
       return;
     }
@@ -59,7 +59,7 @@ if (_termsOfUseUrl.isEmpty) {
               }
             },
             onWebResourceError: (WebResourceError error) {
-              CommonUtils.printLog('WebView Error: ${error.description}');
+              // CommonUtils.printLog('WebView Error: ${error.description}');
             },
           ),
         )
@@ -75,10 +75,10 @@ if (_termsOfUseUrl.isEmpty) {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        CommonUtils.printLog('Could not launch $_termsOfUseUrl');
+        // CommonUtils.printLog('Could not launch $_termsOfUseUrl');
       }
     } catch (e) {
-      CommonUtils.printLog('Error launching url: $e');
+      // CommonUtils.printLog('Error launching url: $e');
     }
   }
 
@@ -86,9 +86,7 @@ if (_termsOfUseUrl.isEmpty) {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: const CommonAppBar(
-        title: 'Terms of Use',
-      ),
+      appBar: const CommonAppBar(title: 'Terms of Use'),
       body: _termsOfUseUrl.isEmpty
           ? Center(
               child: Padding(
@@ -133,73 +131,81 @@ if (_termsOfUseUrl.isEmpty) {
               ),
             )
           : _useWebView
-              ? Stack(
-                  children: [
-                    WebViewWidget(controller: _webViewController),
-                    if (_isLoading)
-                      const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                        ),
+          ? Stack(
+              children: [
+                WebViewWidget(controller: _webViewController),
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
                       ),
-                  ],
-                )
-              : Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const FaIcon(
-                          FontAwesomeIcons.globe,
-                          size: 72,
-                          color: AppColors.textMuted,
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'View Terms of Use Online',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'This device or platform does not support inline web browsing. Tapping the button below will open our terms of use website in your system browser.',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.textMuted,
-                            fontSize: 14,
-                            height: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        ElevatedButton.icon(
-                          onPressed: _launchUrl,
-                          icon: const FaIcon(FontAwesomeIcons.arrowUpRightFromSquare, color: Colors.white),
-                          label: Text(
-                            'Open Terms Website',
-                            style: AppTextStyles.getStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            elevation: 0,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
+              ],
+            )
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const FaIcon(
+                      FontAwesomeIcons.globe,
+                      size: 72,
+                      color: AppColors.textMuted,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'View Terms of Use Online',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.getStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'This device or platform does not support inline web browsing. Tapping the button below will open our terms of use website in your system browser.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.getStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
+                      onPressed: _launchUrl,
+                      icon: const FaIcon(
+                        FontAwesomeIcons.arrowUpRightFromSquare,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Open Terms Website',
+                        style: AppTextStyles.getStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+            ),
     );
   }
 }

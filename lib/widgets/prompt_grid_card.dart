@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/video_category.dart';
 import '../utils/colors.dart';
-import '../utils/text_app.dart';
-import 'video_player.dart';
+import 'text_app.dart';
+import 'common_video_player.dart';
 
 class PromptGridCard extends StatelessWidget {
   final VideoItem item;
@@ -11,6 +11,9 @@ class PromptGridCard extends StatelessWidget {
   final VoidCallback onTap;
   final bool showLoadingIndicator;
 
+  /// When false, the card shows the thumbnail only (no video playback).
+  final bool playVideo;
+
   const PromptGridCard({
     super.key,
     required this.item,
@@ -18,6 +21,7 @@ class PromptGridCard extends StatelessWidget {
     this.isPremium = false,
     required this.onTap,
     this.showLoadingIndicator = true,
+    this.playVideo = true,
   });
 
   @override
@@ -28,10 +32,7 @@ class PromptGridCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: AppColors.border,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.border, width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -52,6 +53,7 @@ class PromptGridCard extends StatelessWidget {
               isLooping: true,
               interactivePlayPause: false,
               showLoadingIndicator: showLoadingIndicator,
+              playVideo: playVideo,
             ),
 
             // Bottom Gradient Overlay for text readability

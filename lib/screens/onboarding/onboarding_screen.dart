@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import '../../adsmanager/native_ad_service.dart';
-import '../../adsmanager/custom_native_ad.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../adsmanager/native ad/native_ad_service.dart';
+import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/ad_ids.dart';
 // import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
+import '../../services/shareed_prefe.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
-import '../../utils/text_app.dart';
-import '../home/home_screen.dart';
+import '../../widgets/text_app.dart';
+import '../home/bottom_nav_bar_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -21,8 +24,14 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
-  // Removed manual NativeAd variables
+
+  // Fullscreen ad slide gets its own service; each onboarding page gets its
+  // own so a fresh native ad is loaded whenever the page changes.
+  final NativeAdService _fullscreenAd = NativeAdService();
+  final List<NativeAdService> _pageAds = List.generate(
+    4, // matches PageView itemCount
+    (_) => NativeAdService(),
+  );
 
   final List<OnboardingPageData> _pages = [
     OnboardingPageData(
@@ -45,29 +54,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    
-    
   }
 
   // Removed manual NativeAd load methods
 
   Future<void> _completeOnboarding() async {
-    
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('has_seen_onboarding', true);
+      await SharedPrefs.setOnboardingSeen();
     } catch (e) {
-      CommonUtils.printLog('Error writing onboarding flag to shared preferences: $e');
+      // CommonUtils.printLog(
+      //   'Error writing onboarding flag to shared preferences: $e',
+      // );
     }
-    
+
     if (mounted) {
-      NavigationService.pushReplacement(context, const HomeScreen());
+      NavigationService.pushReplacement(context, const BottomNavBarScreen());
     }
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _fullscreenAd.dispose();
+    for (final ad in _pageAds) {
+      ad.dispose();
+    }
     super.dispose();
   }
 
@@ -76,10 +87,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final bool isAdPage = _currentPage == 2;
 
     return Scaffold(
-      backgroundColor: AppColors.mainBackground, // White background matching app theme
+      backgroundColor:
+          AppColors.mainBackground, // White background matching app theme
       body: SafeArea(
-        top: !isAdPage, // Expand full screen (above status bar area) on ad slide
-        bottom: !isAdPage, // Expand full screen (below navigation bar area) on ad slide
+        top:
+            !isAdPage, // Expand full screen (above status bar area) on ad slide
+        bottom:
+            !isAdPage, // Expand full screen (below navigation bar area) on ad slide
         child: Column(
           children: [
             // Page Content (Image and Text inside PageView)
@@ -91,22 +105,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   setState(() {
                     _currentPage = index;
                   });
-                  
                 },
                 itemBuilder: (context, index) {
                   if (index == 2) {
-                    return Container(
-                      color: Colors.white,
+                    return _fullscreenAd.buildNativeAdTile(
+                      0, // Fullscreen ad index 0
+                      () => setState(() {}),
+                      customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                      factoryId: Platform.isAndroid
+                          ? AppStrings.nativeAdFactoryFullscreenAndroid
+                          : AppStrings.nativeAdFactoryFullscreenIOS,
+                      height: 100.h,
                       width: double.infinity,
-                      height: double.infinity,
-                      child: NativeAdService.instance.showAd(
-                        0, // Fullscreen ad index 0
-                        () => setState(() {}),
-                        customAdIds: [AdIds.nativeAdUnitId],
-                        factoryId: 'fullscreen_ad_factory',
-                        screenName: 'AiOnboardingScreen_Fullscreen',
-                        shimmer: ShimmerNativeAd.fullscreenNativeAdShimmer(),
-                      ),
+                      backgroundColor: Colors.white,
+                      screenName: 'AiOnboardingScreen_Fullscreen',
+                      shimmer: ShimmerNativeAd.fullscreenNativeAdShimmer(),
                     );
                   }
 
@@ -133,7 +146,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Expanded(
                         flex: 5,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24.0,
+                            vertical: 16.0,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -169,7 +185,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             // Navigation Row (Dots on Left, Next/Start on Right) - Hidden on Ad Slide
             if (!isAdPage)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -185,8 +204,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4.0),
                             color: isActive
-                                ? AppColors.primary // Matches app theme primary color
-                                : AppColors.border, // Muted purple-grey inactive
+                                ? AppColors
+                                      .primary // Matches app theme primary color
+                                : AppColors
+                                      .border, // Muted purple-grey inactive
                           ),
                         );
                       }),
@@ -205,8 +226,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         }
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primary, // Matches app theme primary color
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        foregroundColor: AppColors
+                            .primary, // Matches app theme primary color
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                       ),
                       child: Text(
                         _currentPage == 3 ? 'Start' : 'Next',
@@ -220,20 +245,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
 
-            // Large Native Ad at bottom (only show on onboarding slides, not on the ad slide itself)
-            if (AdIds.showAdsEnabled && !isAdPage)
-              Container(
-                height: 300,
+            // Large Native Ad at bottom (only on onboarding slides, not the ad slide itself).
+            // A separate service per page loads a fresh ad whenever the page changes.
+            if (!isAdPage)
+              _pageAds[_currentPage].buildNativeAdTile(
+                0,
+                () => setState(() {}),
+                customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                factoryId: Platform.isAndroid
+                    ? AppStrings.nativeAdFactoryLargeAndroid
+                    : AppStrings.nativeAdFactoryLargeIOS,
+                height: 34.h,
                 width: double.infinity,
-                color: AppColors.mainBackground, // White background for the ad container
-                child: NativeAdService.instance.showAd(
-                  1, // Large ad index 1
-                  () => setState(() {}),
-                  customAdIds: [AdIds.nativeAdUnitId],
-                  factoryId: 'large_ad_factory',
-                  screenName: 'AiOnboardingScreen_Large',
-                  shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
-                ),
+                backgroundColor: AppColors.mainBackground,
+                screenName: 'AiOnboardingScreen_Large_$_currentPage',
+                shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
               ),
           ],
         ),

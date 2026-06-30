@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../../adsmanager/native_ad_service.dart';
-import '../../adsmanager/custom_native_ad.dart';
+import '../../adsmanager/native ad/native_ad_service.dart';
+import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/rewarded_ad_service.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,13 +12,15 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../models/video_category.dart';
 import '../../adsmanager/ad_ids.dart';
-import '../../services/app_state.dart';
+import '../../services/favorites_service.dart';
+import '../../viewmodel/fetch_video_category.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
-import '../../widgets/video_player.dart';
+import '../../widgets/common_video_player.dart';
+import '../../widgets/shimmer_loading.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
@@ -40,12 +44,13 @@ class PromptDetailsScreen extends StatefulWidget {
   State<PromptDetailsScreen> createState() => _PromptDetailsScreenState();
 }
 
-class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerProviderStateMixin {
+class _PromptDetailsScreenState extends State<PromptDetailsScreen>
+    with TickerProviderStateMixin {
   late VideoItem _currentItem;
   final Set<int> _unlockedItemIds = {};
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarWhite = false;
-  // Removed manual native ad state variables
+  final NativeAdService _nativeAdService = NativeAdService();
 
   bool _isGridAdIndex(int index) {
     return (index + 1) % 6 == 0;
@@ -78,24 +83,26 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     super.initState();
     _currentItem = widget.item;
     _scrollController.addListener(_onScroll);
-    
+
     _btnController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2200),
     )..repeat();
 
-    _shimmerAnimation = Tween<double>(begin: -1.5, end: 2.5).animate(
-      CurvedAnimation(parent: _btnController, curve: Curves.easeInOut),
-    );
+    _shimmerAnimation = Tween<double>(
+      begin: -1.5,
+      end: 2.5,
+    ).animate(CurvedAnimation(parent: _btnController, curve: Curves.easeInOut));
 
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.025), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.025, end: 1.0), weight: 50),
-    ]).animate(CurvedAnimation(parent: _btnController, curve: Curves.easeInOutQuad));
+    _scaleAnimation =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.025), weight: 50),
+          TweenSequenceItem(tween: Tween(begin: 1.025, end: 1.0), weight: 50),
+        ]).animate(
+          CurvedAnimation(parent: _btnController, curve: Curves.easeInOutQuad),
+        );
 
     _logPromptView();
-    // Preload rewarded ad so it is ready when the user taps unlock
-    
   }
 
   void _onScroll() {
@@ -109,16 +116,16 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     }
   }
 
-  void _logPromptView() {
-    
-    
-  }
+  void _logPromptView() {}
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final appState = Provider.of<AppState>(context, listen: false);
-    if (appState.isFavorite(_currentItem)) {
+    final favoritesService = Provider.of<FavoritesService>(
+      context,
+      listen: false,
+    );
+    if (favoritesService.isFavorite(_currentItem)) {
       _unlockedItemIds.add(_currentItem.id);
     }
   }
@@ -127,6 +134,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
   void dispose() {
     _scrollController.dispose();
     _btnController.dispose();
+    _nativeAdService.dispose();
     super.dispose();
   }
 
@@ -142,7 +150,6 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
   }
 
   void _showUnlockDialog() {
-    
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -153,28 +160,26 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
           icon: FontAwesomeIcons.crown,
           primaryButtonText: AppStrings.unlockDialogBuyPro,
           onPrimaryPressed: () {
-            
             Navigator.pop(context);
           },
           secondaryButtonText: AppStrings.unlockDialogWatchAd,
           onSecondaryPressed: () {
-            
             Navigator.pop(context);
-            // Show real rewarded ad – unlock only if user finishes the ad
+            // Unlock the prompt once the ad flow ends — whether it closes or
+            // fails to show — so the user is never blocked by the ad.
+            void grantUnlock() {
+              setState(() {
+                _unlockedItemIds.add(_currentItem.id);
+              });
+              _showRewardGrantedDialog();
+            }
+
             RewardedAdService.showAd(
               context: context,
               customAdIds: [AdIds.rewardedHF, AdIds.rewardedLF],
-              onUserEarnedReward: () {
-                // User watched the full ad – grant the unlock
-                setState(() {
-                  _unlockedItemIds.add(_currentItem.id);
-                });
-                
-                _showRewardGrantedDialog();
-              },
-              onAdClosed: () {
-                   // Preload next
-              },
+              onUserEarnedReward: () {},
+              onAdClosed: grantUnlock,
+              onAdFailedToShow: grantUnlock,
             );
           },
           showCloseButton: true,
@@ -194,8 +199,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
           icon: FontAwesomeIcons.circleCheck,
           primaryButtonText: AppStrings.rewardDialogDone,
           onPrimaryPressed: () {
-            
-            Navigator.pop(context); 
+            Navigator.pop(context);
             setState(() {
               _unlockedItemIds.add(_currentItem.id);
             });
@@ -205,7 +209,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     );
   }
 
-    //Unlock Button
+  //Unlock Button
   Widget _buildActionButton({
     required VoidCallback onTap,
     required FaIconData icon,
@@ -312,9 +316,16 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.18),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: 1),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                  width: 1,
+                                ),
                               ),
-                              child: FaIcon(icon, size: 16, color: Colors.white),
+                              child: FaIcon(
+                                icon,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Text(
@@ -340,7 +351,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     );
   }
 
-  Widget _buildLikeButton(AppState appState, bool isFav) {
+  Widget _buildLikeButton(FavoritesService favoritesService, bool isFav) {
     return Container(
       width: 62,
       height: 62,
@@ -367,9 +378,11 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              appState.toggleFavorite(_currentItem);
+              favoritesService.toggleFavorite(_currentItem);
             },
-            splashColor: (isFav ? Colors.white : AppColors.primary).withValues(alpha: 0.15),
+            splashColor: (isFav ? Colors.white : AppColors.primary).withValues(
+              alpha: 0.15,
+            ),
             child: Center(
               child: AnimatedScale(
                 scale: isFav ? 1.15 : 1.0,
@@ -402,8 +415,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                   ? CachedNetworkImage(
                       imageUrl: _currentItem.videoThumbnailFullUrl,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(color: AppColors.mainBackground),
-                      errorWidget: (context, url, error) => Container(color: AppColors.mainBackground),
+                      placeholder: (context, url) => const ShimmerLoading(),
+                      errorWidget: (context, url, error) =>
+                          Container(color: AppColors.mainBackground),
                     )
                   : Container(color: AppColors.mainBackground),
             ),
@@ -412,7 +426,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
               child: BackdropFilter(
                 filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  color: Colors.white.withValues(alpha: 0.65), // Light theme translucent overlay
+                  color: Colors.white.withValues(
+                    alpha: 0.65,
+                  ), // Light theme translucent overlay
                 ),
               ),
             ),
@@ -442,13 +458,17 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
-    final isFav = appState.isFavorite(_currentItem);
+    final favoritesService = Provider.of<FavoritesService>(context);
+    final isFav = favoritesService.isFavorite(_currentItem);
 
     List<VideoItem> categoryItems = widget.categoryItems;
     if (widget.categoryName == AppStrings.categoryFavorites) {
+      final categoryVM = Provider.of<FetchVideoCategoryViewModel>(
+        context,
+        listen: false,
+      );
       try {
-        final matchedCategory = appState.categories.firstWhere(
+        final matchedCategory = categoryVM.categories.firstWhere(
           (cat) => cat.items.any((item) => item.id == _currentItem.id),
         );
         categoryItems = matchedCategory.items;
@@ -456,11 +476,15 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
     }
 
     final recommendedItems = categoryItems
-        .where((element) => element.id != _currentItem.id && !appState.isFavorite(element))
+        .where(
+          (element) =>
+              element.id != _currentItem.id &&
+              !favoritesService.isFavorite(element),
+        )
         .toList();
 
-    final displayPrompt = (_isUnlocked || isFav) 
-        ? _currentItem.aiPrompt 
+    final displayPrompt = (_isUnlocked || isFav)
+        ? _currentItem.aiPrompt
         : _getTruncatedPrompt(_currentItem.aiPrompt);
 
     return Scaffold(
@@ -473,9 +497,14 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
         actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
-                  icon: const FaIcon(FontAwesomeIcons.shareNodes, color: AppColors.textPrimary),
+                  icon: const FaIcon(
+                    FontAwesomeIcons.shareNodes,
+                    color: AppColors.textPrimary,
+                  ),
                   onPressed: () {
-                    SharePlus.instance.share(ShareParams(text: _currentItem.aiPrompt));
+                    SharePlus.instance.share(
+                      ShareParams(text: _currentItem.aiPrompt),
+                    );
                   },
                 ),
               ]
@@ -487,166 +516,109 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
           children: [
             _buildBlurredBackground(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 12.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                const SizedBox(height: kToolbarHeight + 20),
-                Center(
-                  child: Container(
-                    width: 300,
-                    height: 490,
+                  const SizedBox(height: kToolbarHeight + 20),
+                  Center(
+                    child: Container(
+                      width: 300,
+                      height: 490,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 24,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: CommonVideoPlayer(
+                        videoUrl: _currentItem.categoryVideoFullUrl,
+                        thumbnailUrl: _currentItem.videoThumbnailFullUrl,
+                        isMuted: false,
+                        isLooping: true,
+                        interactivePlayPause: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Container(
+                    padding: const EdgeInsets.all(22),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.12),
-                          blurRadius: 24,
-                          offset: const Offset(0, 12),
+                      color: AppColors.cardBackground.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppColors.border.withValues(alpha: 0.8),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Text(
+                      displayPrompt,
+                      style: AppTextStyles.getStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        height: 1.55,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (!(_isUnlocked || isFav))
+                    _buildActionButton(
+                      onTap: _showUnlockDialog,
+                      icon: FontAwesomeIcons.lock,
+                      label: AppStrings.detailsUnlockPrompt,
+                      isUnlock: true,
+                    )
+                  else
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildActionButton(
+                            onTap: () {
+                              Clipboard.setData(
+                                ClipboardData(text: _currentItem.aiPrompt),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppStrings.detailsCopiedMessage,
+                                  ),
+                                  backgroundColor: AppColors.primary,
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: FontAwesomeIcons.copy,
+                            label: AppStrings.detailsCopyPrompt,
+                          ),
                         ),
+                        const SizedBox(width: 12),
+                        _buildLikeButton(favoritesService, isFav),
                       ],
                     ),
-                    clipBehavior: Clip.antiAlias,
-                    child: CommonVideoPlayer(
-                      videoUrl: _currentItem.categoryVideoFullUrl,
-                      thumbnailUrl: _currentItem.videoThumbnailFullUrl,
-                      isMuted: false,
-                      isLooping: true,
-                      interactivePlayPause: true,
-                    ),
-                  ),
-                ),
-            const SizedBox(height: 28),
-            Container(
-              padding: const EdgeInsets.all(22),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.border.withValues(alpha: 0.8), width: 1.2),
-              ),
-              child: Text(
-                displayPrompt,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 16,
-                  height: 1.55,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            if (!(_isUnlocked || isFav))
-              _buildActionButton(
-                onTap: _showUnlockDialog,
-                icon: FontAwesomeIcons.lock,
-                label: AppStrings.detailsUnlockPrompt,
-                isUnlock: true,
-              )
-            else
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: _currentItem.aiPrompt));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(AppStrings.detailsCopiedMessage),
-                            backgroundColor: AppColors.primary,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                        );
-                      },
-                      icon: FontAwesomeIcons.copy,
-                      label: AppStrings.detailsCopyPrompt,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  _buildLikeButton(appState, isFav),
-                ],
-              ),
-            if (AdIds.showAdsEnabled) ...[
-              const SizedBox(height: 20),
-              Container(
-                key: const ValueKey('prompt_details_native_ad'),
-                height: 130,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: AppColors.border.withValues(alpha: 0.8),
-                    width: 1.2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: NativeAdService.instance.showAd(
-                  0, // Using 0 as index for single ad
-                  () => setState(() {}),
-                  customAdIds: [AdIds.nativeAdUnitId],
-                  factoryId: 'medium_ad_factory',
-                  screenName: 'AiPromptDetailsScreen_Medium',
-                  shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
-                ),
-              ),
-            ],
-            const SizedBox(height: 10),
-            if (_isUnlocked || isFav) ...[
-              _buildPromptGuidance(),
-              const SizedBox(height: 15),
-            ],
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppStrings.detailsExplore,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => NavigationService.pop(context),
-                  child: Text(
-                    AppStrings.detailsViewMore,
-                    style: AppTextStyles.getStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (recommendedItems.isEmpty)
-              Center(child: Text(AppStrings.detailsNoRecommendations))
-            else
-              MasonryGridView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                itemCount: _getGridItemCount(recommendedItems.length),
-                itemBuilder: (context, index) {
-                  if (_isGridAdIndex(index)) {
-                    return Container(
-                      height: 280.0, // Optimized height to perfectly fit the medium ad template
+                  if (AdIds.showAdsEnabled) ...[
+                    const SizedBox(height: 20),
+                    Container(
+                      key: const ValueKey('prompt_details_native_ad'),
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        color: AppColors.cardBackground,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppColors.border, width: 1),
+                        color: AppColors.cardBackground.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppColors.border.withValues(alpha: 0.8),
+                          width: 1.2,
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.03),
@@ -656,50 +628,128 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
                         ],
                       ),
                       clipBehavior: Clip.antiAlias,
-                      child: NativeAdService.instance.showAd(
-                        index,
+                      child: _nativeAdService.buildNativeAdTile(
+                        0, // Using 0 as index for single ad
                         () => setState(() {}),
-                        customAdIds: [AdIds.nativeAdUnitId],
-                        factoryId: 'grid_ad_factory',
-                        screenName: 'AiPromptDetailsScreen_Grid',
-                        shimmer: ShimmerNativeAd.gridViewNativeAdShimmer(),
+                        customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                        factoryId: Platform.isAndroid
+                            ? AppStrings.nativeAdFactoryMediumAndroid
+                            : AppStrings.nativeAdFactoryMediumIOS,
+                        height: 16.h,
+                        screenName: 'AiPromptDetailsScreen_Medium',
+                        shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
                       ),
-                    );
-                  }
+                    ),
+                  ],
+                  const SizedBox(height: 10),
+                  if (_isUnlocked || isFav) ...[
+                    _buildPromptGuidance(),
+                    const SizedBox(height: 15),
+                  ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppStrings.detailsExplore,
+                        style: AppTextStyles.getStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => NavigationService.pop(context),
+                        child: Text(
+                          AppStrings.detailsViewMore,
+                          style: AppTextStyles.getStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (recommendedItems.isEmpty)
+                    Center(child: Text(AppStrings.detailsNoRecommendations))
+                  else
+                    MasonryGridView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                          ),
+                      mainAxisSpacing: 14,
+                      crossAxisSpacing: 14,
+                      itemCount: _getGridItemCount(recommendedItems.length),
+                      itemBuilder: (context, index) {
+                        if (_isGridAdIndex(index)) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.cardBackground,
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                color: AppColors.border,
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: _nativeAdService.buildNativeAdTile(
+                              index,
+                              () => setState(() {}),
+                              customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                              factoryId: Platform.isAndroid
+                                  ? AppStrings.nativeAdFactoryGridAndroid
+                                  : AppStrings.nativeAdFactoryGridIOS,
+                              height: 35.h,
+                              screenName: 'AiPromptDetailsScreen_Grid',
+                              shimmer:
+                                  ShimmerNativeAd.gridViewNativeAdShimmer(),
+                            ),
+                          );
+                        }
 
-                  final contentIndex = _gridIndexToContentIndex(index);
-                  final item = recommendedItems[contentIndex];
-                  return AspectRatio(
-                    aspectRatio: 0.72,
-                    child: PromptGridCard(
-                      item: item,
-                      categoryName: '',
-                      isPremium: contentIndex % 3 == 0,
-                      onTap: () {
-                        NavigationService.push(
-                          context,
-                          PromptDetailsScreen(
+                        final contentIndex = _gridIndexToContentIndex(index);
+                        final item = recommendedItems[contentIndex];
+                        return AspectRatio(
+                          aspectRatio: 0.72,
+                          child: PromptGridCard(
                             item: item,
-                            categoryItems: widget.categoryItems,
-                            categoryName: widget.categoryName,
-                            categoryId: widget.categoryId,
+                            categoryName: '',
+                            isPremium: contentIndex % 3 == 0,
+                            onTap: () {
+                              NavigationService.push(
+                                context,
+                                PromptDetailsScreen(
+                                  item: item,
+                                  categoryItems: widget.categoryItems,
+                                  categoryName: widget.categoryName,
+                                  categoryId: widget.categoryId,
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
                     ),
-                  );
-                },
-              ),
 
-            const SizedBox(height: 40),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
           ],
         ),
       ),
-    ],
-  ),
-),
-);
-}
+    );
+  }
 
   Widget _buildPromptGuidance() {
     return Container(
@@ -707,14 +757,21 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
       decoration: BoxDecoration(
         color: AppColors.cardBackground.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.8), width: 1.5),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.8),
+          width: 1.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const FaIcon(FontAwesomeIcons.wandMagicSparkles, color: AppColors.primary, size: 22),
+              const FaIcon(
+                FontAwesomeIcons.wandMagicSparkles,
+                color: AppColors.primary,
+                size: 22,
+              ),
               const SizedBox(width: 14),
               Text(
                 AppStrings.guidanceHeaderTitle,
@@ -768,13 +825,21 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
             gradient: LinearGradient(colors: gradientColors),
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(color: gradientColors[0].withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4)),
+              BoxShadow(
+                color: gradientColors[0].withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
             ],
           ),
           child: Center(
             child: Text(
               stepNumber,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
             ),
           ),
         ),
@@ -794,7 +859,11 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen> with TickerPr
               const SizedBox(height: 5),
               Text(
                 description,
-                style: AppTextStyles.getStyle(color: AppColors.textMuted, fontSize: 13, height: 1.4),
+                style: AppTextStyles.getStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 13,
+                  height: 1.4,
+                ),
               ),
             ],
           ),

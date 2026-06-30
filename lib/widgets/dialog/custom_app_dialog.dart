@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../utils/colors.dart';
-import '../../utils/text_app.dart';
+import '../text_app.dart';
 
 class CustomAppDialog extends StatefulWidget {
   final String title;
@@ -38,7 +38,8 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isPrimaryDisabled = widget.showRatingStars && _selectedRating == 0;
+    final bool isPrimaryDisabled =
+        widget.showRatingStars && _selectedRating == 0;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -103,10 +104,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.primary,
-                        AppColors.secondary,
-                      ],
+                      colors: [AppColors.primary, AppColors.secondary],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -156,13 +154,18 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                       final starIndex = index + 1;
                       final isSelected = starIndex <= _selectedRating;
                       return GestureDetector(
-                        onTap: () => setState(() => _selectedRating = starIndex),
+                        onTap: () =>
+                            setState(() => _selectedRating = starIndex),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: FaIcon(
-                            isSelected ? FontAwesomeIcons.solidStar : FontAwesomeIcons.star,
-                            color: isSelected ? const Color(0xFFFFC107) : AppColors.border,
+                            isSelected
+                                ? FontAwesomeIcons.solidStar
+                                : FontAwesomeIcons.star,
+                            color: isSelected
+                                ? const Color(0xFFFFC107)
+                                : AppColors.border,
                             size: isSelected ? 40 : 36,
                           ),
                         ),
@@ -178,11 +181,13 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                       onTap: isPrimaryDisabled
                           ? null
                           : (widget.showRatingStars
-                              ? () {
-                                  Navigator.pop(context);
-                                  widget.onRatingSubmit?.call(_selectedRating);
-                                }
-                              : widget.onPrimaryPressed),
+                                ? () {
+                                    Navigator.pop(context);
+                                    widget.onRatingSubmit?.call(
+                                      _selectedRating,
+                                    );
+                                  }
+                                : widget.onPrimaryPressed),
                       child: Container(
                         width: double.infinity,
                         height: 50,
@@ -190,7 +195,10 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                           gradient: isPrimaryDisabled
                               ? null
                               : const LinearGradient(
-                                  colors: [Color(0xFFB8308F), AppColors.primary],
+                                  colors: [
+                                    Color(0xFFB8308F),
+                                    AppColors.primary,
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
@@ -200,7 +208,9 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                               ? null
                               : [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.25),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.25,
+                                    ),
                                     blurRadius: 14,
                                     offset: const Offset(0, 6),
                                   ),
@@ -221,7 +231,8 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                       ),
                     );
 
-                    if (widget.secondaryButtonText != null && widget.onSecondaryPressed != null) {
+                    if (widget.secondaryButtonText != null &&
+                        widget.onSecondaryPressed != null) {
                       return Row(
                         children: [
                           Expanded(
@@ -234,7 +245,9 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(30),
                                   border: Border.all(
-                                    color: AppColors.primary.withValues(alpha: 0.35),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.35,
+                                    ),
                                     width: 1.5,
                                   ),
                                 ),
@@ -254,9 +267,7 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Expanded(
-                            child: primaryBtn,
-                          ),
+                          Expanded(child: primaryBtn),
                         ],
                       );
                     }
@@ -283,7 +294,8 @@ class ScaleButton extends StatefulWidget {
   State<ScaleButton> createState() => _ScaleButtonState();
 }
 
-class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStateMixin {
+class _ScaleButtonState extends State<ScaleButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -294,9 +306,10 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -316,11 +329,7 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
         }
       },
       onTapCancel: () => widget.onTap != null ? _controller.reverse() : null,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
     );
   }
 }
-

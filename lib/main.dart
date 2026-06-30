@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/splash/welcome_back_screen.dart';
-import 'services/app_state.dart';
+import 'services/favorites_service.dart';
+import 'services/shareed_prefe.dart';
+import 'viewmodel/fetch_video_category.dart';
 // import 'services/analytics_service.dart';
 import 'utils/colors.dart';
 import 'utils/common_utils.dart';
 import 'utils/strings.dart';
-import 'utils/text_app.dart';
+import 'widgets/text_app.dart';
 import 'adsmanager/ad_manager.dart';
 import 'adsmanager/app_open_ad_service.dart';
 import 'adsmanager/ad_ids.dart';
@@ -31,7 +32,7 @@ void main() async {
   ]);
   try {
     await Firebase.initializeApp();
-    
+
     // Pass all uncaught "fatal" errors from the framework to Crashlytics
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
@@ -41,20 +42,21 @@ void main() async {
     };
 
     await RemoteConfigService.instance.initialize();
-    
+
     // Initialize notifications and schedule random Firebase alerts
     await NotificationService.instance.initialize();
     await NotificationService.instance.requestPermissions();
     NotificationService.instance.scheduleDailyNotifications();
   } catch (e) {
-    CommonUtils.printLog('Firebase initialization failed: $e');
+    // CommonUtils.printLog('Firebase initialization failed: $e');
   }
 
   await AdManager.instance.initialize();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppState()),
+        ChangeNotifierProvider(create: (_) => FavoritesService()),
+        ChangeNotifierProvider(create: (_) => FetchVideoCategoryViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -99,21 +101,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _showWelcomeBackIfNeeded() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+      final hasSeenOnboarding = await SharedPrefs.hasSeenOnboarding();
       if (hasSeenOnboarding) {
         navigatorKey.currentState?.push(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const WelcomeBackScreen(isResume: true),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const WelcomeBackScreen(isResume: true),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
             transitionDuration: const Duration(milliseconds: 300),
           ),
         );
       }
     } catch (e) {
-      CommonUtils.printLog('Error showing welcome back screen on resume: $e');
+      // CommonUtils.printLog('Error showing welcome back screen on resume: $e');
     }
   }
 
@@ -124,7 +127,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return MaterialApp(
           title: AppStrings.appName,
           navigatorKey: navigatorKey,
-          navigatorObservers: [FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance)],
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          ],
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             brightness: Brightness.light,
@@ -144,4 +149,3 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
-

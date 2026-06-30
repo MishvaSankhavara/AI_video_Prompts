@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import '../../services/app_state.dart';
+import '../../services/favorites_service.dart';
 import '../../utils/colors.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../category/prompt_details_screen.dart';
 import '../../services/navigation_service.dart';
@@ -13,15 +13,19 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
-    final favorites = appState.favorites;
+    final favorites = Provider.of<FavoritesService>(context).favorites;
 
     if (favorites.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/ic_like.png', width: 64, height: 64, color: AppColors.primary),
+            Image.asset(
+              'assets/images/ic_like.png',
+              width: 64,
+              height: 64,
+              color: AppColors.primary,
+            ),
             const SizedBox(height: 16),
             Text(
               'No Favorites Yet',
@@ -34,7 +38,10 @@ class FavoriteScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Saved templates will appear here.',
-              style: AppTextStyles.getStyle(color: AppColors.textMuted, fontSize: 13),
+              style: AppTextStyles.getStyle(
+                color: AppColors.textMuted,
+                fontSize: 13,
+              ),
             ),
           ],
         ),

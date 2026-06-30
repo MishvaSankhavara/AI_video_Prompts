@@ -21,18 +21,18 @@ class NotificationService {
 
   Future<void> initialize() async {
     if (_isInitialized) return;
-    CommonUtils.printLog('>>> NOTIFICATION INIT: STARTING');
+    // CommonUtils.printLog('>>> NOTIFICATION INIT: STARTING');
 
     // Initialize Timezone
     try {
       tz.initializeTimeZones();
-      CommonUtils.printLog('>>> NOTIFICATION INIT: TIMEZONE DB LOADED');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: TIMEZONE DB LOADED');
       final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
-      CommonUtils.printLog('>>> NOTIFICATION INIT: LOCAL TIMEZONE FETCHED -> ${timeZoneInfo.identifier}');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: LOCAL TIMEZONE FETCHED -> ${timeZoneInfo.identifier}');
       tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
-      CommonUtils.printLog('>>> NOTIFICATION INIT: LOCATION SET');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: LOCATION SET');
     } catch (e, stacktrace) {
-      CommonUtils.printLog('>>> NOTIFICATION INIT: TIMEZONE ERROR: $e\n$stacktrace');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: TIMEZONE ERROR: $e\n$stacktrace');
     }
 
     try {
@@ -51,34 +51,34 @@ class NotificationService {
         iOS: initializationSettingsDarwin,
       );
 
-      CommonUtils.printLog('>>> NOTIFICATION INIT: CALLING PLUGIN INIT');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: CALLING PLUGIN INIT');
       await flutterLocalNotificationsPlugin.initialize(
         settings: initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse response) {
-          CommonUtils.printLog('Notification clicked: ${response.payload}');
+          // CommonUtils.printLog('Notification clicked: ${response.payload}');
         },
       );
-      CommonUtils.printLog('>>> NOTIFICATION INIT: PLUGIN INIT SUCCESS');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: PLUGIN INIT SUCCESS');
     } catch (e, stacktrace) {
-      CommonUtils.printLog('>>> NOTIFICATION INIT: PLUGIN INIT FAILED! ERROR: $e\n$stacktrace');
+      // CommonUtils.printLog('>>> NOTIFICATION INIT: PLUGIN INIT FAILED! ERROR: $e\n$stacktrace');
       rethrow;
     }
 
     _isInitialized = true;
-    CommonUtils.printLog('>>> NOTIFICATION INIT: FULLY COMPLETE');
+    // CommonUtils.printLog('>>> NOTIFICATION INIT: FULLY COMPLETE');
   }
 
   /// Fetches notifications from Firebase and schedules the next 7 days of alerts.
   Future<void> scheduleDailyNotifications() async {
-    CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: STARTING');
+    // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: STARTING');
     try {
       // 1. Fetch data from Firebase Realtime Database
-      CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FETCHING FIREBASE');
+      // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FETCHING FIREBASE');
       final DataSnapshot snapshot = await FirebaseDatabase.instance.ref('notifications').get();
       if (!snapshot.exists || snapshot.value == null) {
-        CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: NO DATA IN FIREBASE!');
+        // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: NO DATA IN FIREBASE!');
       } else {
-        CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FIREBASE DATA FETCHED SUCCESSFULLY');
+        // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FIREBASE DATA FETCHED SUCCESSFULLY');
       }
 
       // Convert Firebase list to a List of Maps
@@ -106,7 +106,7 @@ class NotificationService {
       }
 
       if (fetchedNotifications.isEmpty) {
-        CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FIREBASE WAS EMPTY. USING FALLBACK.');
+        // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FIREBASE WAS EMPTY. USING FALLBACK.');
         fetchedNotifications.add({
           'title': 'AI Video Prompts! 🚀',
           'message': 'Create amazing AI magic in just few seconds!'
@@ -114,7 +114,7 @@ class NotificationService {
       }
 
       // 2. Clear existing scheduled notifications to prevent duplicates
-      CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: CANCELLING OLD ALARMS');
+      // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: CANCELLING OLD ALARMS');
       await flutterLocalNotificationsPlugin.cancelAll();
 
       // 3. Schedule for the next 7 days (14 total notifications)
@@ -124,7 +124,7 @@ class NotificationService {
       // // --- TEMPORARY TEST NOTIFICATION ---
       // // This will fire 10 seconds after the app starts so you can test the new Logo!
       // if (fetchedNotifications.isNotEmpty) {
-      //   CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: SCHEDULING 10-SECOND TEST NOTIFICATION...');
+      //   // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: SCHEDULING 10-SECOND TEST NOTIFICATION...');
       //   final testItem = fetchedNotifications[random.nextInt(fetchedNotifications.length)];
       //   await _scheduleNotification(
       //     id: 999,
@@ -132,7 +132,7 @@ class NotificationService {
       //     body: testItem['message']!,
       //     scheduledDate: now.add(const Duration(seconds: 10)),
       //   );
-      //   CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: TEST NOTIFICATION SCHEDULED SUCCESSFULLY!');
+      //   // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: TEST NOTIFICATION SCHEDULED SUCCESSFULLY!');
       // }
 
       for (int i = 0; i < 7; i++) {
@@ -169,9 +169,9 @@ class NotificationService {
         }
       }
 
-      CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FULLY COMPLETED WITHOUT ERRORS!');
+      // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FULLY COMPLETED WITHOUT ERRORS!');
     } catch (e, stacktrace) {
-      CommonUtils.printLog('>>> NOTIFICATION SCHEDULING FAILED: ERROR = $e\n$stacktrace');
+      // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING FAILED: ERROR = $e\n$stacktrace');
     }
   }
 
@@ -215,10 +215,10 @@ class NotificationService {
 
   /// Request permissions on Android 13+ and iOS.
   Future<void> requestPermissions() async {
-    CommonUtils.printLog('>>> NOTIFICATION PERMS: STARTING REQUEST');
+    // CommonUtils.printLog('>>> NOTIFICATION PERMS: STARTING REQUEST');
     try {
       if (Platform.isIOS) {
-        CommonUtils.printLog('>>> NOTIFICATION PERMS: REQUESTING IOS');
+        // CommonUtils.printLog('>>> NOTIFICATION PERMS: REQUESTING IOS');
         await flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
                 IOSFlutterLocalNotificationsPlugin>()
@@ -227,24 +227,24 @@ class NotificationService {
               badge: true,
               sound: true,
             );
-        CommonUtils.printLog('>>> NOTIFICATION PERMS: IOS DONE');
+        // CommonUtils.printLog('>>> NOTIFICATION PERMS: IOS DONE');
       } else if (Platform.isAndroid) {
-        CommonUtils.printLog('>>> NOTIFICATION PERMS: REQUESTING ANDROID');
+        // CommonUtils.printLog('>>> NOTIFICATION PERMS: REQUESTING ANDROID');
         final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
             flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
                 AndroidFlutterLocalNotificationsPlugin>();
 
         if (androidImplementation == null) {
-          CommonUtils.printLog('>>> NOTIFICATION PERMS: ERROR - androidImplementation is null!');
+          // CommonUtils.printLog('>>> NOTIFICATION PERMS: ERROR - androidImplementation is null!');
         } else {
           final bool? granted = await androidImplementation.requestNotificationsPermission();
-          CommonUtils.printLog('>>> NOTIFICATION PERMS: ANDROID GRANTED? $granted');
+          // CommonUtils.printLog('>>> NOTIFICATION PERMS: ANDROID GRANTED? $granted');
         }
       }
     } catch (e, stacktrace) {
-      CommonUtils.printLog('>>> NOTIFICATION PERMS: ERROR: $e\n$stacktrace');
+      // CommonUtils.printLog('>>> NOTIFICATION PERMS: ERROR: $e\n$stacktrace');
       rethrow;
     }
-    CommonUtils.printLog('>>> NOTIFICATION PERMS: COMPLETED');
+    // CommonUtils.printLog('>>> NOTIFICATION PERMS: COMPLETED');
   }
 }

@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../../widgets/common_app_bar.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   void initState() {
     super.initState();
-// If no URL is set yet, skip WebView entirely
+    // If no URL is set yet, skip WebView entirely
     if (_privacyPolicyUrl.isEmpty) {
       _isLoading = false;
       return;
@@ -61,7 +61,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               }
             },
             onWebResourceError: (WebResourceError error) {
-              CommonUtils.printLog('WebView Error: ${error.description}');
+              // CommonUtils.printLog('WebView Error: ${error.description}');
             },
           ),
         )
@@ -77,10 +77,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        CommonUtils.printLog('Could not launch $_privacyPolicyUrl');
+        // CommonUtils.printLog('Could not launch $_privacyPolicyUrl');
       }
     } catch (e) {
-      CommonUtils.printLog('Error launching url: $e');
+      // CommonUtils.printLog('Error launching url: $e');
     }
   }
 
@@ -88,9 +88,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: const CommonAppBar(
-        title: 'Privacy Policy',
-      ),
+      appBar: const CommonAppBar(title: 'Privacy Policy'),
       body: _privacyPolicyUrl.isEmpty
           // No URL set yet — show coming soon placeholder
           ? Center(
@@ -136,73 +134,81 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               ),
             )
           : _useWebView
-              ? Stack(
-                  children: [
-                    WebViewWidget(controller: _webViewController),
-                    if (_isLoading)
-                      const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                        ),
+          ? Stack(
+              children: [
+                WebViewWidget(controller: _webViewController),
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
                       ),
-                  ],
-                )
-              : Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const FaIcon(
-                          FontAwesomeIcons.globe,
-                          size: 72,
-                          color: AppColors.textMuted,
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'View Privacy Policy Online',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'This device or platform does not support inline web browsing. Tapping the button below will open our privacy policy website in your system browser.',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.textMuted,
-                            fontSize: 14,
-                            height: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        ElevatedButton.icon(
-                          onPressed: _launchUrl,
-                          icon: const FaIcon(FontAwesomeIcons.arrowUpRightFromSquare, color: Colors.white),
-                          label: Text(
-                            'Open Policy Website',
-                            style: AppTextStyles.getStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            elevation: 0,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
+              ],
+            )
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const FaIcon(
+                      FontAwesomeIcons.globe,
+                      size: 72,
+                      color: AppColors.textMuted,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'View Privacy Policy Online',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.getStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'This device or platform does not support inline web browsing. Tapping the button below will open our privacy policy website in your system browser.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.getStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
+                      onPressed: _launchUrl,
+                      icon: const FaIcon(
+                        FontAwesomeIcons.arrowUpRightFromSquare,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Open Policy Website',
+                        style: AppTextStyles.getStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+            ),
     );
   }
 }

@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import '../../adsmanager/native_ad_service.dart';
-import '../../adsmanager/custom_native_ad.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../adsmanager/native ad/native_ad_service.dart';
+import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/interstitial_ad_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../adsmanager/ad_ids.dart';
 // import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
+import '../../services/shareed_prefe.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../start/start_screen.dart';
 
@@ -20,31 +23,27 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _progressAnimation;
   late Animation<double> _fadeAnimation;
 
-  // Removed manual native ad state
+  final NativeAdService _nativeAdService = NativeAdService();
 
   @override
   void initState() {
     super.initState();
-    
-    // Preload interstitial early so it is ready by the time splash finishes
-    
 
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
     );
 
-    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _progressAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -59,15 +58,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (status == AnimationStatus.completed) {
         bool hasSeenOnboarding = false;
         try {
-          final prefs = await SharedPreferences.getInstance();
-          hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+          hasSeenOnboarding = await SharedPrefs.hasSeenOnboarding();
         } catch (e) {
-          CommonUtils.printLog('Error reading onboarding status: $e');
+          // // CommonUtils.printLog('Error reading onboarding status: $e');
         }
 
         if (!mounted) return;
 
-        Widget targetScreen = hasSeenOnboarding ? const StartScreen() : const OnboardingScreen();
+        Widget targetScreen = hasSeenOnboarding
+            ? const StartScreen()
+            : const OnboardingScreen();
 
         void navigateToTarget() {
           if (!mounted) return;
@@ -78,6 +78,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           context: context,
           customAdIds: [AdIds.interSplashHF1, AdIds.interSplashLF2],
           onAdClosed: navigateToTarget,
+          onAdFailedToShow: navigateToTarget,
         );
       }
     });
@@ -88,6 +89,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void dispose() {
     _controller.dispose();
+    _nativeAdService.dispose();
     super.dispose();
   }
 
@@ -138,12 +140,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ),
                 ),
               ),
-              
+
               // Bottom Progress Bar
               Positioned(
                 bottom: 180,
                 left: 0,
-                right: 0,//ad
+                right: 0, //ad
                 child: Center(
                   child: Container(
                     width: 240,
@@ -180,36 +182,25 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ),
 
               // Medium Native Ad at Bottom
-              if (AdIds.showAdsEnabled)
-                Positioned(
-                  bottom: 6,
-                  left: 6,
-                  right: 6,
-                  height: 150,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 32,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: NativeAdService.instance.showAd(
-                      0, // Index 0 for splash single ad
-                      () => setState(() {}),
-                      customAdIds: [AdIds.nativeAdUnitId],
-                      factoryId: 'medium_ad_factory',
-                      screenName: 'AiSplashScreen_Medium',
-                      shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
-                    ),
-                  ),
+              Positioned(
+                bottom: 6,
+                left: 6,
+                right: 6,
+                child: _nativeAdService.buildNativeAdTile(
+                  0, // Index 0 for splash single ad
+                  () => setState(() {}),
+                  customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                  factoryId: Platform.isAndroid
+                      ? AppStrings.nativeAdFactoryMediumAndroid
+                      : AppStrings.nativeAdFactoryMediumIOS,
+                  height: 16.h,
+                  width: double.infinity,
+                  borderRadius: 12,
+                  backgroundColor: Colors.white,
+                  screenName: 'AiSplashScreen_Medium',
+                  shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
                 ),
+              ),
             ],
           ),
         ),

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../../utils/strings.dart';
 import '../../services/navigation_service.dart';
 
@@ -52,7 +52,7 @@ class _ProScreenState extends State<ProScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  
+
                   // Top Section: Badge, Title, and Image in a Stack
                   Stack(
                     clipBehavior: Clip.none,
@@ -61,7 +61,8 @@ class _ProScreenState extends State<ProScreen> {
                       Positioned(
                         right: -2,
                         top: 10,
-                        bottom: -40, // Allows the image to overflow downwards nicely
+                        bottom:
+                            -40, // Allows the image to overflow downwards nicely
                         width: size.width * 0.45,
                         child: Image.asset(
                           'assets/images/img_pro_screen_design.png',
@@ -76,14 +77,19 @@ class _ProScreenState extends State<ProScreen> {
                           left: 24,
                           top: 36,
                           bottom: 24,
-                          right: size.width * 0.45, // Prevent text from overlapping the image too much
+                          right:
+                              size.width *
+                              0.45, // Prevent text from overlapping the image too much
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Badge
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(12),
@@ -110,7 +116,7 @@ class _ProScreenState extends State<ProScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            
+
                             // Title
                             Text(
                               AppStrings.proTitle,
@@ -122,8 +128,9 @@ class _ProScreenState extends State<ProScreen> {
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            const SizedBox(height: 10), // Give extra space at the bottom of the stack
-                            
+                            const SizedBox(
+                              height: 10,
+                            ), // Give extra space at the bottom of the stack
                             // Subtitle placed below the image so it spans full width and doesn't overlap the 3D podium
                             Text(
                               AppStrings.proSubtitle,
@@ -140,11 +147,14 @@ class _ProScreenState extends State<ProScreen> {
                   ),
 
                   // const SizedBox(height: 0),
-                  
+
                   // Features Row
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 24),
-                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 24,
+                      horizontal: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
@@ -209,7 +219,7 @@ class _ProScreenState extends State<ProScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          
+
                           // Yearly Plan
                           Expanded(
                             child: GestureDetector(
@@ -234,13 +244,13 @@ class _ProScreenState extends State<ProScreen> {
                   ),
 
                   const SizedBox(height: 16),
-                  
+
                   // Billing Text
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
-                      isYearlySelected 
-                          ? 'You will be charged \$39.99/Year, billed\nautomatically until cancelled.' 
+                      isYearlySelected
+                          ? 'You will be charged \$39.99/Year, billed\nautomatically until cancelled.'
                           : 'You will be charged \$4.99/Week, billed\nautomatically until cancelled.',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.getStyle(
@@ -351,31 +361,31 @@ class _ProScreenState extends State<ProScreen> {
                   child: GestureDetector(
                     onTap: () => NavigationService.pop(context),
                     child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        width: 1.5,
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(40),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.6),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: AppColors.primary,
+                            size: 24,
+                          ),
+                        ),
                       ),
-                    ),
-                    child: const Icon(
-                      Icons.close,
-                      color: AppColors.primary,
-                      size: 24,
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          ),
-          ),
           ),
         ],
       ),
@@ -419,10 +429,14 @@ class _PlanCard extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
+            color: isSelected
+                ? AppColors.primary.withValues(alpha: 0.05)
+                : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.primary.withValues(alpha: 0.15),
+              color: isSelected
+                  ? AppColors.primary
+                  : AppColors.primary.withValues(alpha: 0.15),
               width: 2,
             ),
             boxShadow: isSelected
@@ -431,7 +445,7 @@ class _PlanCard extends StatelessWidget {
                       color: AppColors.primary.withValues(alpha: 0.15),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
-                    )
+                    ),
                   ]
                 : [],
           ),
@@ -467,7 +481,7 @@ class _PlanCard extends StatelessWidget {
             ],
           ),
         ),
-        
+
         // Best Value Badge
         if (isBestValue && badgeText != null)
           Positioned(
@@ -476,7 +490,10 @@ class _PlanCard extends StatelessWidget {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [AppColors.primary, Color(0xFF6B48FF)],
@@ -510,10 +527,7 @@ class _FeatureItem extends StatelessWidget {
   final String iconPath;
   final String title;
 
-  const _FeatureItem({
-    required this.iconPath,
-    required this.title,
-  });
+  const _FeatureItem({required this.iconPath, required this.title});
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../utils/strings.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import 'feedback_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_of_use_screen.dart';
@@ -26,13 +26,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _appVersion = '1.0.0';
 
   // Common Play Store Base URL for sharing and rating (easy to modify in the future)
-  static const String _playStoreBaseUrl = 'https://play.google.com/store/apps/details?id=';
-  
+  static const String _playStoreBaseUrl =
+      'https://play.google.com/store/apps/details?id=';
+
   // Common Default Fallback Package ID (used if dynamic package info is unavailable)
   static const String _fallbackPackageId = 'com.aivideoprompt';
-  
+
   // Common Default Fallback Full Play Store URL
-  static const String _fallbackPlayStoreUrl = '$_playStoreBaseUrl$_fallbackPackageId';
+  static const String _fallbackPlayStoreUrl =
+      '$_playStoreBaseUrl$_fallbackPackageId';
 
   @override
   void initState() {
@@ -49,7 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
       }
     } catch (e) {
-      CommonUtils.printLog('Error fetching app version: $e');
+      // CommonUtils.printLog('Error fetching app version: $e');
     }
   }
 
@@ -94,15 +96,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }
               }
             } catch (e) {
-              CommonUtils.printLog('Error opening Play Store from feedback: $e');
+              // CommonUtils.printLog(
+              //   'Error opening Play Store from feedback: $e',
+              // );
             }
           } else {
             // 1-3 stars → open Feedback screen
             if (context.mounted) {
-              NavigationService.push(
-                context,
-                FeedbackScreen(rating: rating),
-              );
+              NavigationService.push(context, FeedbackScreen(rating: rating));
             }
           }
         },
@@ -113,7 +114,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 120.0),
+      padding: const EdgeInsets.only(
+        left: 20.0,
+        right: 20.0,
+        top: 20.0,
+        bottom: 120.0,
+      ),
       children: [
         _buildHeaderCard(),
         const SizedBox(height: 20),
@@ -133,11 +139,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   );
                 } catch (e) {
-                  CommonUtils.printLog('Error sharing app: $e');
+                  // CommonUtils.printLog('Error sharing app: $e');
                   // Fallback share logic if package info fails
                   await SharePlus.instance.share(
                     ShareParams(
-                      text: '${AppStrings.settingsShareMessage}$_fallbackPlayStoreUrl',
+                      text:
+                          '${AppStrings.settingsShareMessage}$_fallbackPlayStoreUrl',
                     ),
                   );
                 }
@@ -152,10 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               imagePath: 'assets/images/ic_feedback.png',
               title: AppStrings.settingsFeedback,
               onTap: () {
-                NavigationService.push(
-                  context,
-                  const FeedbackScreen(),
-                );
+                NavigationService.push(context, const FeedbackScreen());
               },
               showDivider: false,
             ),
@@ -168,10 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               imagePath: 'assets/images/ic_privacy_policy.png',
               title: AppStrings.settingsPrivacyPolicy,
               onTap: () {
-                NavigationService.push(
-                  context,
-                  const PrivacyPolicyScreen(),
-                );
+                NavigationService.push(context, const PrivacyPolicyScreen());
               },
             ),
             if (Platform.isIOS)
@@ -179,10 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 imagePath: 'assets/images/ic_privacy_policy.png',
                 title: 'Terms of Use',
                 onTap: () {
-                  NavigationService.push(
-                    context,
-                    const TermsOfUseScreen(),
-                  );
+                  NavigationService.push(context, const TermsOfUseScreen());
                 },
               ),
             _buildSettingsTile(
@@ -212,10 +210,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary,
-            AppColors.secondary,
-          ],
+          colors: [AppColors.primary, AppColors.secondary],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
@@ -275,23 +270,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsGroup({
-    required List<Widget> items,
-  }) {
+  Widget _buildSettingsGroup({required List<Widget> items}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           decoration: BoxDecoration(
-            color: AppColors.cardBackground,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: AppColors.border.withValues(alpha: 0.45),
               width: 1,
             ),
           ),
-          child: Column(
-            children: items,
+          clipBehavior: Clip.antiAlias,
+          // Material carries the background so the ListTiles paint their
+          // ink/splashes on it (a colored DecoratedBox here would hide them).
+          child: Material(
+            color: AppColors.cardBackground,
+            child: Column(children: items),
           ),
         ),
       ],
@@ -308,14 +304,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: Image.asset(imagePath, color: AppColors.primary, width: 20, height: 20, fit: BoxFit.contain),
+            child: Image.asset(
+              imagePath,
+              color: AppColors.primary,
+              width: 20,
+              height: 20,
+              fit: BoxFit.contain,
+            ),
           ),
           title: Text(
             title,
@@ -325,7 +330,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               fontSize: 15,
             ),
           ),
-          trailing: trailing ?? const FaIcon(FontAwesomeIcons.chevronRight, color: AppColors.textMuted, size: 18),
+          trailing:
+              trailing ??
+              const FaIcon(
+                FontAwesomeIcons.chevronRight,
+                color: AppColors.textMuted,
+                size: 18,
+              ),
           onTap: onTap,
         ),
         if (showDivider)

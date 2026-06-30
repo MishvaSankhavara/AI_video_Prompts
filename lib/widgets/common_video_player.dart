@@ -7,9 +7,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../utils/colors.dart';
 import '../utils/common_utils.dart';
 import '../utils/strings.dart';
-import '../utils/text_app.dart';
+import 'text_app.dart';
 import 'shimmer_loading.dart';
-
 
 class CommonVideoPlayer extends StatefulWidget {
   final String videoUrl;
@@ -22,6 +21,10 @@ class CommonVideoPlayer extends StatefulWidget {
   final double? loadingTextSize;
   final ValueChanged<double>? onAspectRatioInitialized;
 
+  /// When false, only the thumbnail is shown — the video is never loaded or
+  /// played (no controller, no visibility tracking).
+  final bool playVideo;
+
   const CommonVideoPlayer({
     super.key,
     required this.videoUrl,
@@ -33,6 +36,7 @@ class CommonVideoPlayer extends StatefulWidget {
     this.showLoadingIndicator = true,
     this.loadingTextSize,
     this.onAspectRatioInitialized,
+    this.playVideo = true,
   });
 
   @override
@@ -63,9 +67,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
     try {
       final controller = VideoPlayerController.networkUrl(
         Uri.parse(widget.videoUrl.trim()),
-        videoPlayerOptions: VideoPlayerOptions(
-          mixWithOthers: true,
-        ),
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
       );
 
       _controller = controller;
@@ -92,7 +94,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         });
       }
     } catch (e) {
-      CommonUtils.printLog('Error initializing video: $e');
+      // CommonUtils.printLog('Error initializing video: $e');
       if (mounted) {
         setState(() {
           _hasError = true;
@@ -223,10 +225,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       imageBuilder: (context, imageProvider) {
         return Container(
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: imageProvider,
-              fit: widget.fit,
-            ),
+            image: DecorationImage(image: imageProvider, fit: widget.fit),
           ),
         );
       },
@@ -248,8 +247,12 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       child: FittedBox(
         fit: widget.fit,
         child: SizedBox(
-          width: _controller!.value.size.width > 0 ? _controller!.value.size.width : 9.0,
-          height: _controller!.value.size.height > 0 ? _controller!.value.size.height : 16.0,
+          width: _controller!.value.size.width > 0
+              ? _controller!.value.size.width
+              : 9.0,
+          height: _controller!.value.size.height > 0
+              ? _controller!.value.size.height
+              : 16.0,
           child: VideoPlayer(_controller!),
         ),
       ),
@@ -262,10 +265,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       left: 0,
       child: IgnorePointer(
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10.0,
-            vertical: 4.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
           decoration: BoxDecoration(
             color: AppColors.black.withValues(alpha: 0.5),
             borderRadius: const BorderRadius.only(
@@ -287,8 +287,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   bool get _showThumbnail => !_initialized || _hasError;
 
-  bool get _showVideo =>
-      _initialized && !_hasError && _controller != null;
+  bool get _showVideo => _initialized && !_hasError && _controller != null;
 
   bool get _showLoadingOverlay =>
       widget.showLoadingIndicator &&
@@ -298,6 +297,11 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    // Thumbnail-only mode: never initialize or play the video.
+    if (!widget.playVideo) {
+      return _buildThumbnail();
+    }
+
     return VisibilityDetector(
       key: widget.key ?? Key(widget.videoUrl),
       onVisibilityChanged: _handleVisibilityChanged,
@@ -325,7 +329,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                   color: Colors.transparent,
                   child: Center(
                     child: AnimatedOpacity(
-                      opacity: (_controller != null && _controller!.value.isPlaying) ? 0.0 : 1.0,
+                      opacity:
+                          (_controller != null && _controller!.value.isPlaying)
+                          ? 0.0
+                          : 1.0,
                       duration: const Duration(milliseconds: 300),
                       child: Container(
                         padding: const EdgeInsets.all(16),

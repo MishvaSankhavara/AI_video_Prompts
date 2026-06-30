@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
-import '../../utils/text_app.dart';
+import '../../widgets/text_app.dart';
 import '../../services/navigation_service.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   void initState() {
     super.initState();
-}
+  }
 
   @override
   void dispose() {
@@ -73,9 +73,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: CommonAppBar(
-        title: AppStrings.feedbackScreenTitle,
-      ),
+      appBar: CommonAppBar(title: AppStrings.feedbackScreenTitle),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -184,7 +182,8 @@ class ScaleButton extends StatefulWidget {
   State<ScaleButton> createState() => _ScaleButtonState();
 }
 
-class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStateMixin {
+class _ScaleButtonState extends State<ScaleButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -195,9 +194,10 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.96,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -217,10 +217,7 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
         }
       },
       onTapCancel: () => widget.onTap != null ? _controller.reverse() : null,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
     );
   }
 }

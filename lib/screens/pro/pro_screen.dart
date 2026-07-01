@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../widgets/text_app.dart';
@@ -36,6 +37,7 @@ class _ProScreenState extends State<ProScreen> {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
       body: Stack(
+        fit: StackFit.expand,
         children: [
           // Fixed Background Image
           Positioned.fill(
@@ -51,7 +53,7 @@ class _ProScreenState extends State<ProScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
 
                   // Top Section: Badge, Title, and Image in a Stack
                   Stack(
@@ -60,7 +62,7 @@ class _ProScreenState extends State<ProScreen> {
                       // 3D Design Image on the Right
                       Positioned(
                         right: -2,
-                        top: 10,
+                        top: 10.h,
                         bottom:
                             -40, // Allows the image to overflow downwards nicely
                         width: size.width * 0.45,
@@ -74,9 +76,9 @@ class _ProScreenState extends State<ProScreen> {
                       // Text Content on the Left
                       Padding(
                         padding: EdgeInsets.only(
-                          left: 24,
-                          top: 36,
-                          bottom: 24,
+                          left: 24.w,
+                          top: 36.h,
+                          bottom: 24.h,
                           right:
                               size.width *
                               0.45, // Prevent text from overlapping the image too much
@@ -86,58 +88,58 @@ class _ProScreenState extends State<ProScreen> {
                           children: [
                             // Badge
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 8,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 14.w,
+                                vertical: 8.h,
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Image.asset(
                                     'assets/images/ic_crown.png',
-                                    width: 16,
-                                    height: 16,
-                                    color: Colors.white,
+                                    width: 16.w,
+                                    height: 16.h,
+                                    color: AppColors.white,
                                   ),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8.w),
                                   Text(
                                     AppStrings.proUnlockPremium,
                                     style: AppTextStyles.getStyle(
-                                      color: Colors.white,
+                                      color: AppColors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 10,
+                                      fontSize: 10.sp,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
 
                             // Title
                             Text(
                               AppStrings.proTitle,
                               style: AppTextStyles.getStyle(
                                 color: AppColors.textPrimary,
-                                fontSize: 20,
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.w900,
-                                height: 1.1,
+                                height: 1.1.h,
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            const SizedBox(
-                              height: 10,
+                            SizedBox(
+                              height: 10.h,
                             ), // Give extra space at the bottom of the stack
                             // Subtitle placed below the image so it spans full width and doesn't overlap the 3D podium
                             Text(
                               AppStrings.proSubtitle,
                               style: AppTextStyles.getStyle(
                                 color: AppColors.textMuted,
-                                fontSize: 12,
-                                height: 1.5,
+                                fontSize: 12.sp,
+                                height: 1.5.h,
                               ),
                             ),
                           ],
@@ -146,23 +148,23 @@ class _ProScreenState extends State<ProScreen> {
                     ],
                   ),
 
-                  // const SizedBox(height: 0),
+                  // SizedBox(height: 0.h),
 
                   // Features Row
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 24),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 24,
-                      horizontal: 8,
+                    margin: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 24.h,
+                      horizontal: 8.w,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(24.r),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.primary.withValues(alpha: 0.05),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+                          blurRadius: 20.r,
+                          offset: Offset(0.w, 10.h),
                         ),
                       ],
                     ),
@@ -192,11 +194,11 @@ class _ProScreenState extends State<ProScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
 
                   // Subscription Plans
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: IntrinsicHeight(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -210,15 +212,15 @@ class _ProScreenState extends State<ProScreen> {
                                 });
                               },
                               child: _PlanCard(
-                                title: 'Weekly',
-                                price: '\$4.99',
-                                subtitle: 'per week',
+                                title: AppStrings.proPlanWeekly,
+                                price: AppStrings.proPriceWeekly,
+                                subtitle: AppStrings.proSubtitleWeekly,
                                 isSelected: !isYearlySelected,
                                 isBestValue: false,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
 
                           // Yearly Plan
                           Expanded(
@@ -229,12 +231,12 @@ class _ProScreenState extends State<ProScreen> {
                                 });
                               },
                               child: _PlanCard(
-                                title: 'Yearly',
-                                price: '\$39.99',
-                                subtitle: 'per year',
+                                title: AppStrings.proPlanYearly,
+                                price: AppStrings.proPriceYearly,
+                                subtitle: AppStrings.proSubtitleYearly,
                                 isSelected: isYearlySelected,
                                 isBestValue: true,
-                                badgeText: 'BEST DEAL',
+                                badgeText: AppStrings.proBestDealBadge,
                               ),
                             ),
                           ),
@@ -243,45 +245,45 @@ class _ProScreenState extends State<ProScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
 
                   // Billing Text
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Text(
                       isYearlySelected
-                          ? 'You will be charged \$39.99/Year, billed\nautomatically until cancelled.'
-                          : 'You will be charged \$4.99/Week, billed\nautomatically until cancelled.',
+                          ? AppStrings.proBillingYearly
+                          : AppStrings.proBillingWeekly,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
-                        height: 1.5,
+                        height: 1.5.h,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
 
                   // Continue Button
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Container(
                       width: double.infinity,
-                      height: 56,
+                      height: 56.h,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [AppColors.primary, Color(0xFF6B48FF)],
+                          colors: [AppColors.primary, AppColors.purpleAccent],
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                         ),
-                        borderRadius: BorderRadius.circular(28),
+                        borderRadius: BorderRadius.circular(28.r),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
+                            blurRadius: 20.r,
+                            offset: Offset(0.w, 8.h),
                           ),
                         ],
                       ),
@@ -290,17 +292,17 @@ class _ProScreenState extends State<ProScreen> {
                           // TODO: Implement purchase flow
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
+                          backgroundColor: AppColors.transparent,
+                          shadowColor: AppColors.transparent,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
+                            borderRadius: BorderRadius.circular(28.r),
                           ),
                         ),
                         child: Text(
-                          'Continue',
+                          AppStrings.proContinueBtn,
                           style: AppTextStyles.getStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+                            color: AppColors.white,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -308,38 +310,38 @@ class _ProScreenState extends State<ProScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
 
                   // Legal Links
                   /*Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Terms of Service',
+                        AppStrings.proTermsOfService,
                         style: AppTextStyles.getStyle(
                           color: AppColors.textMuted,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ).copyWith(decoration: TextDecoration.underline),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       Text(
-                        'Restore',
+                        AppStrings.proRestore,
                         style: AppTextStyles.getStyle(
                           color: AppColors.textMuted,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ).copyWith(decoration: TextDecoration.underline),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       Text(
-                        'Privacy Policy',
+                        AppStrings.proPrivacyPolicy,
                         style: AppTextStyles.getStyle(
                           color: AppColors.textMuted,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ).copyWith(decoration: TextDecoration.underline),
                       ),
                     ],
                   ),*/
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
                 ],
               ),
             ),
@@ -348,36 +350,36 @@ class _ProScreenState extends State<ProScreen> {
           // Fixed Top Right Glass Back Button
           Positioned(
             top: MediaQuery.of(context).padding.top + 6,
-            right: 24,
+            right: 24.w,
             child: IgnorePointer(
               ignoring: !_isCloseButtonVisible,
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 500),
-                opacity: _isCloseButtonVisible ? 1.0 : 0.0,
+                opacity: _isCloseButtonVisible ? 1 : 0,
                 child: AnimatedScale(
                   duration: const Duration(milliseconds: 800),
                   curve: Curves.elasticOut,
-                  scale: _isCloseButtonVisible ? 1.0 : 0.0,
+                  scale: _isCloseButtonVisible ? 1 : 0,
                   child: GestureDetector(
                     onTap: () => NavigationService.pop(context),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(40.r),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: EdgeInsets.all(6.r),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(40),
+                            color: AppColors.white.withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(40.r),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.6),
-                              width: 1.5,
+                              color: AppColors.white.withValues(alpha: 0.6),
+                              width: 1.5.w,
                             ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.close,
                             color: AppColors.primary,
-                            size: 24,
+                            size: 24.sp,
                           ),
                         ),
                       ),
@@ -394,10 +396,10 @@ class _ProScreenState extends State<ProScreen> {
 
   Widget _buildDivider() {
     return Container(
-      height: 40,
-      width: 1,
+      height: 40.h,
+      width: 1.w,
       color: AppColors.border.withValues(alpha: 0.5),
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
     );
   }
 }
@@ -427,24 +429,24 @@ class _PlanCard extends StatelessWidget {
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.05)
-                : Colors.white,
-            borderRadius: BorderRadius.circular(20),
+                : AppColors.white,
+            borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
               color: isSelected
                   ? AppColors.primary
                   : AppColors.primary.withValues(alpha: 0.15),
-              width: 2,
+              width: 2.w,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
                       color: AppColors.primary.withValues(alpha: 0.15),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
+                      blurRadius: 15.r,
+                      offset: Offset(0.w, 5.h),
                     ),
                   ]
                 : [],
@@ -457,25 +459,25 @@ class _PlanCard extends StatelessWidget {
                 title,
                 style: AppTextStyles.getStyle(
                   color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               Text(
                 price,
                 style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.w900,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 subtitle,
                 style: AppTextStyles.getStyle(
                   color: AppColors.textMuted,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                 ),
               ),
             ],
@@ -486,32 +488,32 @@ class _PlanCard extends StatelessWidget {
         if (isBestValue && badgeText != null)
           Positioned(
             top: -12,
-            left: 0,
-            right: 0,
+            left: 0.w,
+            right: 0.w,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 4.h,
                 ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [AppColors.primary, Color(0xFF6B48FF)],
+                    colors: [AppColors.primary, AppColors.purpleAccent],
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      blurRadius: 8.r,
+                      offset: Offset(0.w, 2.h),
                     ),
                   ],
                 ),
                 child: Text(
                   badgeText!,
                   style: AppTextStyles.getStyle(
-                    color: Colors.white,
-                    fontSize: 10,
+                    color: AppColors.white,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -536,8 +538,8 @@ class _FeatureItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: 44.w,
+            height: 44.h,
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
@@ -545,21 +547,21 @@ class _FeatureItem extends StatelessWidget {
             child: Center(
               child: Image.asset(
                 iconPath,
-                width: 24,
-                height: 24,
+                width: 24.w,
+                height: 24.h,
                 color: AppColors.primary,
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
             title,
             textAlign: TextAlign.center,
             style: AppTextStyles.getStyle(
               color: AppColors.textPrimary,
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w600,
-              height: 1.3,
+              height: 1.3.h,
             ),
           ),
         ],

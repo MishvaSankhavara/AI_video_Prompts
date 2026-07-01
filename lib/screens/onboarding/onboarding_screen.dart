@@ -1,7 +1,9 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../adsmanager/native ad/native_ad_service.dart';
 import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/ad_ids.dart';
@@ -11,7 +13,6 @@ import '../../services/shareed_prefe.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
-import '../../widgets/text_app.dart';
 import '../home/bottom_nav_bar_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -90,8 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor:
           AppColors.mainBackground, // White background matching app theme
       body: SafeArea(
-        top:
-            !isAdPage, // Expand full screen (above status bar area) on ad slide
+        top: false,
         bottom:
             !isAdPage, // Expand full screen (below navigation bar area) on ad slide
         child: Column(
@@ -111,13 +111,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     return _fullscreenAd.buildNativeAdTile(
                       0, // Fullscreen ad index 0
                       () => setState(() {}),
-                      customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                      customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
                       factoryId: Platform.isAndroid
                           ? AppStrings.nativeAdFactoryFullscreenAndroid
                           : AppStrings.nativeAdFactoryFullscreenIOS,
-                      height: 100.h,
+                      height: 1.sh,
                       width: double.infinity,
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.white,
                       screenName: 'AiOnboardingScreen_Fullscreen',
                       shimmer: ShimmerNativeAd.fullscreenNativeAdShimmer(),
                     );
@@ -126,50 +126,66 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   // Resolve onboarding page data: index 0,1 -> 0,1; index 3 -> 2
                   final pageIndex = index > 2 ? index - 1 : index;
                   final page = _pages[pageIndex];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  return Stack(
+                    fit: StackFit.expand,
                     children: [
-                      // Full-width Image
-                      Expanded(
-                        flex: 6,
+                      // Image taking full space
+                      Image.asset(
+                        page.imagePath,
+                        fit: BoxFit.fill,
+                      ),
+                      // Gradient fade effect at the bottom
+                      Positioned(
+                        bottom: 0.h,
+                        left: 0.w,
+                        right: 0.w,
+                        height: 250.h, // Height of the fade effect
                         child: Container(
-                          width: double.infinity,
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(page.imagePath),
-                              fit: BoxFit.cover,
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                AppColors.white,
+                                AppColors.white.withValues(alpha: 0.8),
+                                AppColors.white.withValues(alpha: 0),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                      // Text details (Left-aligned)
-                      Expanded(
-                        flex: 5,
+                      // Text details positioned at the bottom on top of the gradient
+                      Positioned(
+                        bottom: 0.h,
+                        left: 0.w,
+                        right: 0.w,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0,
-                            vertical: 16.0,
+                          padding: EdgeInsets.only(
+                            left: 24.w,
+                            right: 24.w,
+                            top: 16.h,
+                            bottom: 0.h,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const SizedBox(height: 12),
                               Text(
                                 page.title,
                                 style: AppTextStyles.getStyle(
                                   color: AppColors.textPrimary,
-                                  fontSize: 24,
+                                  fontSize: 20.sp,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: -0.5,
                                 ),
                               ),
-                              const SizedBox(height: 14),
+                              SizedBox(height: 14.h),
                               Text(
                                 page.subtitle,
                                 style: AppTextStyles.getStyle(
                                   color: AppColors.textMuted,
-                                  fontSize: 14,
-                                  height: 1.5,
+                                  fontSize: 12.sp,
+                                  height: 1.5.h,
                                 ),
                               ),
                             ],
@@ -185,24 +201,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             // Navigation Row (Dots on Left, Next/Start on Right) - Hidden on Ad Slide
             if (!isAdPage)
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 16.0,
+                padding: EdgeInsets.only(
+                  left: 24.w,
+                  right: 24.w,
+                  top: 0.h,
+                  bottom: 0.h,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Dot Indicators
                     Row(
-                      children: List.generate(4, (index) {
-                        final isActive = index == _currentPage;
+                      children: List.generate(3, (index) {
+                        final activeDotIndex = _currentPage > 2 ? _currentPage - 1 : _currentPage;
+                        final isActive = index == activeDotIndex;
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
-                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                          height: 8.0,
-                          width: isActive ? 24.0 : 8.0,
+                          margin: EdgeInsets.symmetric(horizontal: 4.w),
+                          height: 8.h,
+                          width: isActive ? 24 : 8,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
+                            borderRadius: BorderRadius.circular(4.r),
                             color: isActive
                                 ? AppColors
                                       .primary // Matches app theme primary color
@@ -228,15 +247,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors
                             .primary, // Matches app theme primary color
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
                         ),
                       ),
                       child: Text(
                         _currentPage == 3 ? 'Start' : 'Next',
                         style: AppTextStyles.getStyle(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -251,11 +270,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               _pageAds[_currentPage].buildNativeAdTile(
                 0,
                 () => setState(() {}),
-                customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
                 factoryId: Platform.isAndroid
                     ? AppStrings.nativeAdFactoryLargeAndroid
                     : AppStrings.nativeAdFactoryLargeIOS,
-                height: 34.h,
+                height: 0.34.sh,
                 width: double.infinity,
                 backgroundColor: AppColors.mainBackground,
                 screenName: 'AiOnboardingScreen_Large_$_currentPage',

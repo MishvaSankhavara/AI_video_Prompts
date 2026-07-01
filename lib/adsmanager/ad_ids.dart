@@ -3,12 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'ad_manager.dart';
 
 class AdIds {
-  /// Whether ads may be shown. Defaults to true and is set to false by
-  /// [RemoteConfigService] when the installed version is listed in the
-  /// `ads_disabled_versions` remote config value.
-  static bool showAdsEnabled = true;
-  static bool useTestAds = kDebugMode; // keep it in debug mode only
-
+  static bool useTestAds = kDebugMode; // Set to true to test ads in release mode. Change to false or kDebugMode when using live keys!
   // -------------------------------
   // COMMON TEST IDS
   // -------------------------------
@@ -24,9 +19,9 @@ class AdIds {
   static const String appOpenAndroidTestId =
       'ca-app-pub-3940256099942544/9257395921';
   static const String interstitialAndroidTestId =
-      'ca-app-pub-3940256099942544/1033173712abc';
+      'ca-app-pub-3940256099942544/1033173712';
   static const String rewardedAndroidTestId =
-      'ca-app-pub-3940256099942544/5224354917abc';
+      'ca-app-pub-3940256099942544/5224354917';
   static const String nativeAndroidTestId =
       'ca-app-pub-3940256099942544/2247696110';
 
@@ -43,8 +38,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Home Screen Interstitial HF 1
-  static String get interHomelHF1 => useTestAds
+  /// Interstitial 1
+  static String get interstitialAd1 => useTestAds
       ? Platform.isAndroid
             ? interstitialAndroidTestId // Test Ad - Android
             : interstitialIosTestId // Test Ad - ios
@@ -52,8 +47,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Home Screen Interstitial LF 1
-  static String get interHomeLF1 => useTestAds
+  /// Interstitial 2
+  static String get interstitialAd2 => useTestAds
       ? Platform.isAndroid
             ? interstitialAndroidTestId // Test Ad - Android
             : interstitialIosTestId // Test Ad - ios
@@ -61,8 +56,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Category Screen Interstitial HF 2
-  static String get interCategoryHF2 => useTestAds
+  /// Interstitial 3
+  static String get interstitialAd3 => useTestAds
       ? Platform.isAndroid
             ? interstitialAndroidTestId // Test Ad - Android
             : interstitialIosTestId // Test Ad - ios
@@ -70,8 +65,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Category Screen Interstitial LF 2
-  static String get interCategoryLF2 => useTestAds
+  /// Interstitial 4
+  static String get interstitialAd4 => useTestAds
       ? Platform.isAndroid
             ? interstitialAndroidTestId // Test Ad - Android
             : interstitialIosTestId // Test Ad - ios
@@ -79,8 +74,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Splash Screen Interstitial HF 1
-  static String get interSplashHF1 => useTestAds
+  /// Interstitial 5
+  static String get interstitialAd5 => useTestAds
       ? Platform.isAndroid
             ? interstitialAndroidTestId // Test Ad - Android
             : interstitialIosTestId // Test Ad - ios
@@ -88,8 +83,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Splash Screen Interstitial LF 2
-  static String get interSplashLF2 => useTestAds
+  /// Interstitial 6
+  static String get interstitialAd6 => useTestAds
       ? Platform.isAndroid
             ? interstitialAndroidTestId // Test Ad - Android
             : interstitialIosTestId // Test Ad - ios
@@ -97,8 +92,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Rewarded Ad HF
-  static String get rewardedHF => useTestAds
+  /// Rewarded 1
+  static String get rewardedAds1 => useTestAds
       ? Platform.isAndroid
             ? rewardedAndroidTestId // Test Ad - Android
             : rewardedIosTestId // Test Ad - ios
@@ -106,8 +101,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Rewarded Ad LF
-  static String get rewardedLF => useTestAds
+  /// Rewarded 2
+  static String get rewardedAds2 => useTestAds
       ? Platform.isAndroid
             ? rewardedAndroidTestId // Test Ad - Android
             : rewardedIosTestId // Test Ad - ios
@@ -115,8 +110,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Native Ad HF (primary – tried first)
-  static String get nativeHF => useTestAds
+  /// Native Ad 1
+  static String get nativeAd1 => useTestAds
       ? Platform.isAndroid
             ? nativeAndroidTestId // Test Ad - Android
             : nativeIosTestId // Test Ad - ios
@@ -124,8 +119,8 @@ class AdIds {
       ? "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Live Ad - Android
       : "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX"; // Live Ad - ios
 
-  /// Native Ad LF (fallback – tried if HF fails to load)
-  static String get nativeLF => useTestAds
+  /// Native Ad 2
+  static String get nativeAd2 => useTestAds
       ? Platform.isAndroid
             ? nativeAndroidTestId // Test Ad - Android
             : nativeIosTestId // Test Ad - ios

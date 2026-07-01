@@ -1,6 +1,8 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../adsmanager/native ad/native_ad_service.dart';
@@ -17,13 +19,14 @@ import '../../viewmodel/fetch_video_category.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
-import '../../widgets/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/common_video_player.dart';
 import '../../widgets/shimmer_loading.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
+import '../../services/remote_config_service.dart';
+import '../pro/pro_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class PromptDetailsScreen extends StatefulWidget {
@@ -96,8 +99,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
 
     _scaleAnimation =
         TweenSequence<double>([
-          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.025), weight: 50),
-          TweenSequenceItem(tween: Tween(begin: 1.025, end: 1.0), weight: 50),
+          TweenSequenceItem(tween: Tween(begin: 1, end: 1.025), weight: 50),
+          TweenSequenceItem(tween: Tween(begin: 1.025, end: 1), weight: 50),
         ]).animate(
           CurvedAnimation(parent: _btnController, curve: Curves.easeInOutQuad),
         );
@@ -107,7 +110,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
 
   void _onScroll() {
     if (_scrollController.hasClients) {
-      final isWhite = _scrollController.offset > 20.0;
+      final isWhite = _scrollController.offset > 20;
       if (isWhite != _isAppBarWhite) {
         setState(() {
           _isAppBarWhite = isWhite;
@@ -161,6 +164,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
           primaryButtonText: AppStrings.unlockDialogBuyPro,
           onPrimaryPressed: () {
             Navigator.pop(context);
+            NavigationService.push(context, const ProScreen());
           },
           secondaryButtonText: AppStrings.unlockDialogWatchAd,
           onSecondaryPressed: () {
@@ -176,7 +180,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
 
             RewardedAdService.showAd(
               context: context,
-              customAdIds: [AdIds.rewardedHF, AdIds.rewardedLF],
+              customAdIds: [AdIds.rewardedAds1, AdIds.rewardedAds2],
               onUserEarnedReward: () {},
               onAdClosed: grantUnlock,
               onAdFailedToShow: grantUnlock,
@@ -220,58 +224,57 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
         ? [AppColors.unLockButton, AppColors.secondary, AppColors.primary]
         : [AppColors.primary, AppColors.secondary, AppColors.primary];
 
-    return AnimatedBuilder(
-      animation: _btnController,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: isUnlock ? _scaleAnimation.value : 1.0,
-          child: Container(
-            width: double.infinity,
-            height: 62,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: gradientColors[1].withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  blurRadius: 0,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: Stack(
-                children: [
-                  // Base Gradient
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+    Widget buildContent(double shimmerValue, double scaleValue) {
+      return Transform.scale(
+        scale: scaleValue,
+        child: Container(
+          width: double.infinity,
+          height: 62.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18.r),
+            boxShadow: [
+              BoxShadow(
+                color: gradientColors[1].withValues(alpha: 0.3),
+                blurRadius: 20.r,
+                offset: Offset(0.w, 10.h),
+              ),
+              BoxShadow(
+                color: AppColors.white.withValues(alpha: 0.2),
+                blurRadius: 0.r,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24.r),
+            child: Stack(
+              children: [
+                // Base Gradient
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: gradientColors,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                     ),
                   ),
+                ),
 
-                  // Animated Liquid Shimmer
+                // Animated Liquid Shimmer
+                if (isUnlock)
                   Positioned.fill(
                     child: FractionallySizedBox(
-                      alignment: Alignment(_shimmerAnimation.value, 0),
+                      alignment: Alignment(shimmerValue, 0),
                       widthFactor: 0.7,
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Colors.white.withValues(alpha: 0.0),
-                              Colors.white.withValues(alpha: 0.35),
-                              Colors.white.withValues(alpha: 0.0),
+                              AppColors.white.withValues(alpha: 0),
+                              AppColors.white.withValues(alpha: 0.35),
+                              AppColors.white.withValues(alpha: 0),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -281,117 +284,129 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                     ),
                   ),
 
-                  // Glossy Top Highlight
+                // Glossy Top Highlight
+                if (isUnlock)
                   Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 33,
+                    top: 0.h,
+                    left: 0.w,
+                    right: 0.w,
+                    height: 33.h,
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.white.withValues(alpha: 0.15),
-                            Colors.white.withValues(alpha: 0.0),
+                            AppColors.white.withValues(alpha: 0.15),
+                            AppColors.white.withValues(alpha: 0),
                           ],
                         ),
                       ),
                     ),
                   ),
 
-                  // Interaction Layer
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: onTap,
-                      splashColor: Colors.white.withValues(alpha: 0.3),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.18),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                  width: 1,
-                                ),
-                              ),
-                              child: FaIcon(
-                                icon,
-                                size: 16,
-                                color: Colors.white,
+                // Interaction Layer
+                Material(
+                  color: AppColors.transparent,
+                  child: InkWell(
+                    onTap: onTap,
+                    splashColor: AppColors.white.withValues(alpha: 0.3),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10.r),
+                            decoration: BoxDecoration(
+                              color: AppColors.white.withValues(alpha: 0.18),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.white.withValues(alpha: 0.25),
+                                width: 1.w,
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Text(
-                              label,
-                              style: AppTextStyles.getStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: 1.5,
-                              ),
+                            child: FaIcon(
+                              icon,
+                              size: 16.sp,
+                              color: AppColors.white,
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: 16.w),
+                          Text(
+                            label,
+                            style: AppTextStyles.getStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.white,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    }
+
+    if (isUnlock) {
+      return AnimatedBuilder(
+        animation: _btnController,
+        builder: (context, child) {
+          return buildContent(_shimmerAnimation.value, _scaleAnimation.value);
+        },
+      );
+    } else {
+      return buildContent(0, 1);
+    }
   }
 
   Widget _buildLikeButton(FavoritesService favoritesService, bool isFav) {
     return Container(
-      width: 62,
-      height: 62,
+      width: 62.w,
+      height: 62.h,
       decoration: BoxDecoration(
-        color: isFav ? AppColors.primary : Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isFav ? AppColors.primary : AppColors.border,
-          width: 1.5,
-        ),
+        borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: isFav
-                ? AppColors.primary.withValues(alpha: 0.25)
-                : Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 10.r,
+            offset: Offset(0.w, 5.h),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              favoritesService.toggleFavorite(_currentItem);
-            },
-            splashColor: (isFav ? Colors.white : AppColors.primary).withValues(
-              alpha: 0.15,
-            ),
-            child: Center(
-              child: AnimatedScale(
-                scale: isFav ? 1.15 : 1.0,
-                duration: const Duration(milliseconds: 200),
-                child: FaIcon(
-                  isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
-                  color: isFav ? Colors.white : AppColors.primary,
-                  size: 22,
-                ),
+      child: Material(
+        color: AppColors.white,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.r),
+          side: BorderSide(
+            color: AppColors.border,
+            width: 1.5.w,
+          ),
+        ),
+        child: InkWell(
+          onTap: () {
+            favoritesService.toggleFavorite(_currentItem);
+          },
+          splashColor: AppColors.primary.withValues(
+            alpha: 0.15,
+          ),
+          child: Center(
+            child: AnimatedScale(
+              scale: isFav ? 1.15 : 1.15,
+              duration: const Duration(milliseconds: 200),
+              child: Image.asset(
+                isFav
+                    ? 'assets/images/ic_like.png'
+                    : 'assets/images/ic_like_border.png',
+                color: AppColors.primary,
+                width: 24.w,
+                height: 24.h,
               ),
             ),
           ),
@@ -402,10 +417,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
 
   Widget _buildBlurredBackground() {
     return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 540,
+      top: 0.h,
+      left: 0.w,
+      right: 0.w,
+      height: 540.h,
       child: ClipRect(
         child: Stack(
           children: [
@@ -426,7 +441,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
               child: BackdropFilter(
                 filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  color: Colors.white.withValues(
+                  color: AppColors.white.withValues(
                     alpha: 0.65,
                   ), // Light theme translucent overlay
                 ),
@@ -435,17 +450,17 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
             // Smooth gradient fade to white at the bottom to remove the partition line
             Positioned.fill(
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.transparent,
-                      Colors.white38,
-                      Colors.white70,
+                      AppColors.transparent,
+                      AppColors.white38,
+                      AppColors.white70,
                       AppColors.mainBackground,
                     ],
-                    stops: [0.0, 0.6, 0.85, 1.0],
+                    stops: [0, 0.6, 0.85, 1],
                   ),
                 ),
               ),
@@ -492,8 +507,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
       extendBodyBehindAppBar: true,
       appBar: CommonAppBar(
         title: '',
-        backgroundColor: _isAppBarWhite ? Colors.white : Colors.transparent,
-        surfaceTintColor: _isAppBarWhite ? Colors.white : Colors.transparent,
+        backgroundColor: _isAppBarWhite ? AppColors.white : AppColors.transparent,
+        surfaceTintColor: _isAppBarWhite ? AppColors.white : AppColors.transparent,
         actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
@@ -516,25 +531,25 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
           children: [
             _buildBlurredBackground(),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 12.0,
+              padding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 12.h,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: kToolbarHeight + 20),
+                  SizedBox(height: kToolbarHeight + 20),
                   Center(
                     child: Container(
-                      width: 300,
-                      height: 490,
+                      width: 300.w,
+                      height: 490.h,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(24.r),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 24,
-                            offset: const Offset(0, 12),
+                            color: AppColors.black.withValues(alpha: 0.12),
+                            blurRadius: 24.r,
+                            offset: Offset(0.w, 12.h),
                           ),
                         ],
                       ),
@@ -548,28 +563,37 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28.h),
                   Container(
-                    padding: const EdgeInsets.all(22),
+                    padding: EdgeInsets.all(22.r),
                     decoration: BoxDecoration(
                       color: AppColors.cardBackground.withValues(alpha: 0.9),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.border.withValues(alpha: 0.8),
-                        width: 1.2,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.r),
+                        topRight: Radius.circular(20.r),
+                        bottomLeft: Radius.circular((_isUnlocked || isFav) ? 20 : 0),
+                        bottomRight: Radius.circular((_isUnlocked || isFav) ? 20 : 0),
+                      ),
+                      border: Border(
+                        top: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w),
+                        left: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w),
+                        right: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w),
+                        bottom: (_isUnlocked || isFav)
+                            ? BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w)
+                            : BorderSide.none,
                       ),
                     ),
                     child: Text(
                       displayPrompt,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
-                        fontSize: 16,
-                        height: 1.55,
+                        fontSize: 16.sp,
+                        height: 1.55.h,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   if (!(_isUnlocked || isFav))
                     _buildActionButton(
                       onTap: _showUnlockDialog,
@@ -594,7 +618,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                                   backgroundColor: AppColors.primary,
                                   behavior: SnackBarBehavior.floating,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ),
                               );
@@ -603,27 +627,23 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                             label: AppStrings.detailsCopyPrompt,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12.w),
                         _buildLikeButton(favoritesService, isFav),
                       ],
                     ),
-                  if (AdIds.showAdsEnabled) ...[
-                    const SizedBox(height: 20),
+                  if (RemoteConfigService.instance.showAdsEnabled) ...[
+                    SizedBox(height: 20.h),
                     Container(
                       key: const ValueKey('prompt_details_native_ad'),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: AppColors.cardBackground.withValues(alpha: 0.9),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.border.withValues(alpha: 0.8),
-                          width: 1.2,
-                        ),
+                        borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                            color: AppColors.black.withValues(alpha: 0.03),
+                            blurRadius: 8.r,
+                            offset: Offset(0.w, 4.h),
                           ),
                         ],
                       ),
@@ -631,21 +651,22 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                       child: _nativeAdService.buildNativeAdTile(
                         0, // Using 0 as index for single ad
                         () => setState(() {}),
-                        customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                        customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
                         factoryId: Platform.isAndroid
                             ? AppStrings.nativeAdFactoryMediumAndroid
                             : AppStrings.nativeAdFactoryMediumIOS,
-                        height: 16.h,
+                        height: 0.16.sh,
                         screenName: 'AiPromptDetailsScreen_Medium',
                         shimmer: ShimmerNativeAd.mediumNativeAdShimmer(),
                       ),
                     ),
                   ],
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10.h),
                   if (_isUnlocked || isFav) ...[
                     _buildPromptGuidance(),
-                    const SizedBox(height: 15),
+                    SizedBox(height: 6.h),
                   ],
+                  /*
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -653,7 +674,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                         AppStrings.detailsExplore,
                         style: AppTextStyles.getStyle(
                           color: AppColors.textPrimary,
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -688,16 +709,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                           return Container(
                             decoration: BoxDecoration(
                               color: AppColors.cardBackground,
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(
-                                color: AppColors.border,
-                                width: 1,
-                              ),
+                              borderRadius: BorderRadius.circular(24.r),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.03),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
+                                  color: AppColors.black.withValues(alpha: 0.03),
+                                  blurRadius: 8.r,
+                                  offset: Offset(0.w, 4.h),
                                 ),
                               ],
                             ),
@@ -709,7 +726,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                               factoryId: Platform.isAndroid
                                   ? AppStrings.nativeAdFactoryGridAndroid
                                   : AppStrings.nativeAdFactoryGridIOS,
-                              height: 35.h,
+                              height: 0.35.sh,
                               screenName: 'AiPromptDetailsScreen_Grid',
                               shimmer:
                                   ShimmerNativeAd.gridViewNativeAdShimmer(),
@@ -740,8 +757,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                         );
                       },
                     ),
+                  */
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: 20.h),
                 ],
               ),
             ),
@@ -753,13 +771,13 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
 
   Widget _buildPromptGuidance() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       decoration: BoxDecoration(
         color: AppColors.cardBackground.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(28.r),
         border: Border.all(
           color: AppColors.border.withValues(alpha: 0.8),
-          width: 1.5,
+          width: 1.5.w,
         ),
       ),
       child: Column(
@@ -767,42 +785,42 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
         children: [
           Row(
             children: [
-              const FaIcon(
+              FaIcon(
                 FontAwesomeIcons.wandMagicSparkles,
                 color: AppColors.primary,
-                size: 22,
+                size: 22.sp,
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14.w),
               Text(
                 AppStrings.guidanceHeaderTitle,
                 style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 22),
+          SizedBox(height: 22.h),
           _buildStepRow(
             stepNumber: '1',
             title: AppStrings.guidanceStep1Title,
             description: AppStrings.guidanceStep1Desc,
-            gradientColors: [const Color(0xFF0D9488), const Color(0xFF14B8A6)],
+            gradientColors: const [AppColors.teal600, AppColors.teal400],
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18.h),
           _buildStepRow(
             stepNumber: '2',
             title: AppStrings.guidanceStep2Title,
             description: AppStrings.guidanceStep2Desc,
-            gradientColors: [const Color(0xFF4F46E5), const Color(0xFF6366F1)],
+            gradientColors: const [AppColors.indigo600, AppColors.indigo500],
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18.h),
           _buildStepRow(
             stepNumber: '3',
             title: AppStrings.guidanceStep3Title,
             description: AppStrings.guidanceStep3Desc,
-            gradientColors: [const Color(0xFF8B5CF6), const Color(0xFFA78BFA)],
+            gradientColors: const [AppColors.violet500, AppColors.violet400],
           ),
         ],
       ),
@@ -819,31 +837,31 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 30,
-          height: 30,
+          width: 30.w,
+          height: 30.h,
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: gradientColors),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
                 color: gradientColors[0].withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+                blurRadius: 8.r,
+                offset: Offset(0.w, 4.h),
               ),
             ],
           ),
           child: Center(
             child: Text(
               stepNumber,
-              style: const TextStyle(
-                color: Colors.white,
+              style: AppTextStyles.getStyle(
+                color: AppColors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
+                fontSize: 13.sp,
               ),
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -852,17 +870,17 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                 title,
                 style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5.h),
               Text(
                 description,
                 style: AppTextStyles.getStyle(
                   color: AppColors.textMuted,
-                  fontSize: 13,
-                  height: 1.4,
+                  fontSize: 13.sp,
+                  height: 1.4.h,
                 ),
               ),
             ],

@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../adsmanager/interstitial_ad_service.dart';
@@ -9,7 +11,8 @@ import '../../utils/colors.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/shimmer_grid_card.dart';
 import '../category/category_details_screen.dart';
-import '../../widgets/text_app.dart';
+import '../../utils/strings.dart';
+
 
 /// Home tab content: the grid of video categories.
 class HomeScreen extends StatelessWidget {
@@ -21,11 +24,11 @@ class HomeScreen extends StatelessWidget {
 
     if (categoryVM.isLoading) {
       return GridView.builder(
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 12,
-          bottom: 150,
+        padding: EdgeInsets.only(
+          left: 16.w,
+          right: 16.w,
+          top: 12.h,
+          bottom: 150.h,
         ),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -48,14 +51,14 @@ class HomeScreen extends StatelessWidget {
     if (categoryVM.categories.isEmpty) {
       return Center(
         child: Text(
-          'No categories available.',
+          AppStrings.homeNoCategories,
           style: AppTextStyles.getStyle(color: AppColors.textMuted),
         ),
       );
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 150),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h, bottom: 150.h),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio
@@ -66,7 +69,7 @@ class HomeScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final category = categoryVM.categories[index];
         if (category.items.isEmpty) {
-          return const SizedBox.shrink();
+          return SizedBox.shrink();
         }
         final firstItem = category.items.first;
         final isPremium = index == 0 || index == 1; // Mark some as premium
@@ -89,7 +92,7 @@ class HomeScreen extends StatelessWidget {
 
             InterstitialAdService.showAd(
               context: context,
-              customAdIds: [AdIds.interHomelHF1, AdIds.interHomeLF1],
+              customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
               screenName: 'HomeScreen',
               onAdClosed: openCategory,
               onAdFailedToShow: openCategory,

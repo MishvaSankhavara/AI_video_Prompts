@@ -1,7 +1,8 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import '../models/video_category.dart';
 import '../utils/colors.dart';
-import 'text_app.dart';
 import 'common_video_player.dart';
 
 class PromptGridCard extends StatelessWidget {
@@ -31,13 +32,13 @@ class PromptGridCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.border, width: 1),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: AppColors.border, width: 1.w),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: AppColors.black.withValues(alpha: 0.03),
+              blurRadius: 8.r,
+              offset: Offset(0.w, 4.h),
             ),
           ],
         ),
@@ -60,16 +61,16 @@ class PromptGridCard extends StatelessWidget {
             if (categoryName.isNotEmpty)
               Positioned.fill(
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.transparent,
-                        Colors.black38,
-                        Colors.black87,
+                        AppColors.transparent,
+                        AppColors.black38,
+                        AppColors.black87,
                       ],
-                      stops: [0.6, 0.82, 1.0],
+                      stops: [0.6, 0.82, 1],
                     ),
                   ),
                 ),
@@ -78,15 +79,15 @@ class PromptGridCard extends StatelessWidget {
             // Text Title (Category Name / Prompt Tag)
             if (categoryName.isNotEmpty)
               Positioned(
-                bottom: 16,
-                left: 12,
-                right: 12,
+                bottom: 16.h,
+                left: 12.w,
+                right: 12.w,
                 child: Text(
                   categoryName,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.getStyle(
-                    color: Colors.white,
-                    fontSize: 15,
+                    color: AppColors.white,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.1,
                   ),

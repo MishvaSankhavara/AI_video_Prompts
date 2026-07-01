@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
@@ -23,7 +25,7 @@ class LoadingDialog extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.55),
+      barrierColor: AppColors.black.withValues(alpha: 0.55),
       builder: (_) => LoadingDialog(text: text),
     );
   }
@@ -43,38 +45,37 @@ class LoadingDialog extends StatelessWidget {
       canPop: false, // Prevent dismissal via the back button.
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 24.h),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 15,
-                spreadRadius: 2,
+                color: AppColors.black.withValues(alpha: 0.1),
+                blurRadius: 15.r,
+                spreadRadius: 2.r,
               ),
             ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(
-                width: 38,
-                height: 38,
+              SizedBox(
+                width: 38.w,
+                height: 38.h,
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                   strokeWidth: 3.5,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Text(
                 text,
-                style: const TextStyle(
+                style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.none,
-                  fontFamily: 'Outfit',
                 ),
               ),
             ],

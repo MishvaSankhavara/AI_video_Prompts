@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -116,57 +118,18 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                 NavigationService.push(context, const ProScreen());
               },
               child: Padding(
-                padding: const EdgeInsets.only(right: 16.0),
+                padding: EdgeInsets.only(right: 16.w),
                 child: Image.asset(
                   'assets/images/img_crown.png',
-                  width: 32,
-                  height: 32,
+                  width: 32.w,
+                  height: 32.h,
                   fit: BoxFit.contain,
                 ),
               ),
             ),
           ],
         ),
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 350),
-          switchInCurve: Curves.easeOutCubic,
-          switchOutCurve: Curves.easeOutCubic,
-          layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
-            return Stack(
-              children: <Widget>[
-                ...previousChildren,
-                if (currentChild != null) currentChild,
-              ],
-            );
-          },
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            final key = child.key as ValueKey<int>?;
-            final childIndex = key?.value ?? 0;
-            final isIncoming = childIndex == _currentIndex;
-            final isMovingRight = _currentIndex > _previousIndex;
-
-            Offset beginOffset;
-            if (isIncoming) {
-              beginOffset = Offset(isMovingRight ? 0.3 : -0.3, 0.0);
-            } else {
-              beginOffset = Offset(isMovingRight ? -0.3 : 0.3, 0.0);
-            }
-
-            final offsetAnimation = Tween<Offset>(
-              begin: beginOffset,
-              end: Offset.zero,
-            ).animate(animation);
-
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(position: offsetAnimation, child: child),
-            );
-          },
-          child: KeyedSubtree(
-            key: ValueKey<int>(_currentIndex),
-            child: _bodyForIndex(_currentIndex),
-          ),
-        ),
+        body: _bodyForIndex(_currentIndex),
         bottomNavigationBar: _buildBottomBar(),
       ),
     );
@@ -179,19 +142,19 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 16.0),
+        padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 16.h),
         child: Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          height: 64.h,
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(35.0),
-            border: Border.all(color: AppColors.border, width: 1.0),
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(35.r),
+            border: Border.all(color: AppColors.border, width: 1.w),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withValues(alpha: 0.05),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+                blurRadius: 16.r,
+                offset: Offset(0.w, 6.h),
               ),
             ],
           ),
@@ -205,16 +168,16 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.fastOutSlowIn,
                     left: tabWidth * activeIndex,
-                    top: 6,
-                    bottom: 6,
+                    top: 6.h,
+                    bottom: 6.h,
                     width: tabWidth,
                     child: Container(
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(30.r),
                         border: Border.all(
                           color: AppColors.primary.withValues(alpha: 0.3),
-                          width: 0.5,
+                          width: 0.5.w,
                         ),
                       ),
                     ),
@@ -272,7 +235,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
         child: AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 300),
           curve: Curves.fastOutSlowIn,
-          style: TextStyle(
+          style: AppTextStyles.getStyle(
             color: color,
             fontSize: isActive ? 12 : 11,
             fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
@@ -282,8 +245,8 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
             children: [
               TweenAnimationBuilder<double>(
                 tween: Tween<double>(
-                  begin: isActive ? 1.0 : 0.0,
-                  end: isActive ? 1.0 : 0.0,
+                  begin: isActive ? 1 : 0,
+                  end: isActive ? 1 : 0,
                 ),
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.fastOutSlowIn,
@@ -295,13 +258,13 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                       AppColors.primary,
                       value,
                     ),
-                    height: 22 + (2 * value),
-                    width: 22 + (2 * value),
+                    height: 22.h + (2 * value),
+                    width: 22.w + (2 * value),
                     fit: BoxFit.contain,
                   );
                 },
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(text),
             ],
           ),

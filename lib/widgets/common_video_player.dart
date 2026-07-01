@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,7 +9,6 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../utils/colors.dart';
 import '../utils/common_utils.dart';
 import '../utils/strings.dart';
-import 'text_app.dart';
 import 'shimmer_loading.dart';
 
 class CommonVideoPlayer extends StatefulWidget {
@@ -79,7 +80,7 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       widget.onAspectRatioInitialized?.call(controller.value.aspectRatio);
 
       await controller.setLooping(widget.isLooping);
-      await controller.setVolume(widget.isMuted ? 0.0 : 1.0);
+      await controller.setVolume(widget.isMuted ? 0 : 1);
 
       controller.addListener(_onControllerUpdate);
 
@@ -231,12 +232,12 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
       },
       placeholder: (context, url) => const ShimmerLoading(),
       errorWidget: (context, url, error) => Container(
-        color: Colors.grey,
+        color: AppColors.grey,
         alignment: Alignment.center,
-        child: const FaIcon(
+        child: FaIcon(
           FontAwesomeIcons.videoSlash,
           color: AppColors.white,
-          size: 24,
+          size: 24.sp,
         ),
       ),
     );
@@ -249,10 +250,10 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
         child: SizedBox(
           width: _controller!.value.size.width > 0
               ? _controller!.value.size.width
-              : 9.0,
+              : 9,
           height: _controller!.value.size.height > 0
               ? _controller!.value.size.height
-              : 16.0,
+              : 16,
           child: VideoPlayer(_controller!),
         ),
       ),
@@ -261,15 +262,15 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
 
   Widget _buildLoadingOverlay() {
     return Positioned(
-      top: 0,
-      left: 0,
+      top: 0.h,
+      left: 0.w,
       child: IgnorePointer(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
           decoration: BoxDecoration(
             color: AppColors.black.withValues(alpha: 0.5),
-            borderRadius: const BorderRadius.only(
-              bottomRight: Radius.circular(12),
+            borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(12.r),
             ),
           ),
           child: Text(
@@ -326,24 +327,24 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
                   }
                 },
                 child: Container(
-                  color: Colors.transparent,
+                  color: AppColors.transparent,
                   child: Center(
                     child: AnimatedOpacity(
                       opacity:
                           (_controller != null && _controller!.value.isPlaying)
-                          ? 0.0
-                          : 1.0,
+                          ? 0
+                          : 1,
                       duration: const Duration(milliseconds: 300),
                       child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
-                          color: Colors.black54,
+                        padding: EdgeInsets.all(16.r),
+                        decoration: BoxDecoration(
+                          color: AppColors.black54,
                           shape: BoxShape.circle,
                         ),
-                        child: const FaIcon(
+                        child: FaIcon(
                           FontAwesomeIcons.play,
-                          color: Colors.white,
-                          size: 30,
+                          color: AppColors.white,
+                          size: 30.sp,
                         ),
                       ),
                     ),

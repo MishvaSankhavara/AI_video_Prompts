@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextStyles {
   // Base TextStyle helper using Google Fonts (Plus Jakarta Sans)
@@ -9,6 +10,7 @@ class AppTextStyles {
     Color? color,
     double? height,
     double? letterSpacing,
+    TextDecoration? decoration,
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize,
@@ -16,16 +18,17 @@ class AppTextStyles {
       color: color,
       height: height,
       letterSpacing: letterSpacing,
+      decoration: decoration,
     );
   }
 
   // Unified pre-defined typography styles
-  static TextStyle get displayLarge => getStyle(fontSize: 32, fontWeight: FontWeight.bold);
-  static TextStyle get titleLarge => getStyle(fontSize: 22, fontWeight: FontWeight.bold);
-  static TextStyle get titleMedium => getStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  static TextStyle get bodyLarge => getStyle(fontSize: 16, fontWeight: FontWeight.w500);
-  static TextStyle get bodyMedium => getStyle(fontSize: 14, fontWeight: FontWeight.normal);
-  static TextStyle get labelLarge => getStyle(fontSize: 16, fontWeight: FontWeight.bold);
+  static TextStyle get displayLarge => getStyle(fontSize: 32.sp, fontWeight: FontWeight.bold);
+  static TextStyle get titleLarge => getStyle(fontSize: 22.sp, fontWeight: FontWeight.bold);
+  static TextStyle get titleMedium => getStyle(fontSize: 18.sp, fontWeight: FontWeight.bold);
+  static TextStyle get bodyLarge => getStyle(fontSize: 16.sp, fontWeight: FontWeight.w500);
+  static TextStyle get bodyMedium => getStyle(fontSize: 14.sp, fontWeight: FontWeight.normal);
+  static TextStyle get labelLarge => getStyle(fontSize: 16.sp, fontWeight: FontWeight.bold);
 
   // Converts a base TextTheme to use the Google Fonts family globally
   static TextTheme getTextTheme(TextTheme baseTheme) {

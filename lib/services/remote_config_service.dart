@@ -12,6 +12,10 @@ class RemoteConfigService {
 
   RemoteConfigService._internal();
 
+  /// Whether ads may be shown. Defaults to true and is set to false
+  /// when the installed version is listed in the `ads_disabled_versions` remote config value.
+  bool showAdsEnabled = true;
+
   Future<void> initialize() async {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
@@ -44,14 +48,14 @@ class RemoteConfigService {
             .toList();
 
         // Disable ads when this build's version is in the remote list.
-        AdIds.showAdsEnabled = !disabledVersions.contains(currentVersion);
+        showAdsEnabled = !disabledVersions.contains(currentVersion);
       } else {
         // No versions listed -> ads stay enabled.
-        AdIds.showAdsEnabled = true;
+        showAdsEnabled = true;
       }
     } catch (e) {
       // On any failure, keep ads enabled (safe default).
-      AdIds.showAdsEnabled = true;
+      showAdsEnabled = true;
     }
   }
 }

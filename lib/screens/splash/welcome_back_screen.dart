@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../adsmanager/app_open_ad_service.dart';
@@ -6,7 +8,6 @@ import '../../adsmanager/ad_ids.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
-import '../../widgets/text_app.dart';
 import '../home/bottom_nav_bar_screen.dart';
 
 class WelcomeBackScreen extends StatefulWidget {
@@ -33,21 +34,21 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
     );
 
     _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.2, 0.6, curve: Curves.easeIn),
       ),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
+        curve: const Interval(0, 0.6, curve: Curves.easeOutBack),
       ),
     );
 
@@ -92,13 +93,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               AppColors.white,
-              Color(0xFFFBF2FA), // Premium soft lavender-pink tint
+              AppColors.softPink, // Premium soft lavender-pink tint
             ],
           ),
         ),
@@ -109,14 +110,14 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
               top: -100,
               left: -50,
               child: Container(
-                width: 320,
-                height: 320,
+                width: 320.w,
+                height: 320.h,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
                       AppColors.primary.withValues(alpha: 0.08),
-                      AppColors.primary.withValues(alpha: 0.0),
+                      AppColors.primary.withValues(alpha: 0),
                     ],
                   ),
                 ),
@@ -128,14 +129,14 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
               bottom: -50,
               right: -50,
               child: Container(
-                width: 280,
-                height: 280,
+                width: 280.w,
+                height: 280.h,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
                       AppColors.secondary.withValues(alpha: 0.06),
-                      AppColors.secondary.withValues(alpha: 0.0),
+                      AppColors.secondary.withValues(alpha: 0),
                     ],
                   ),
                 ),
@@ -146,7 +147,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
             SafeArea(
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -156,23 +157,23 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                         child: FadeTransition(
                           opacity: _fadeAnimation,
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(32),
+                            borderRadius: BorderRadius.circular(32.r),
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                               child: Container(
-                                padding: const EdgeInsets.all(32.0),
+                                padding: EdgeInsets.all(32.w),
                                 decoration: BoxDecoration(
                                   color: AppColors.white.withValues(
                                     alpha: 0.45,
                                   ),
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(32.r),
                                   boxShadow: [
                                     BoxShadow(
                                       color: AppColors.primary.withValues(
                                         alpha: 0.03,
                                       ),
-                                      blurRadius: 20,
-                                      spreadRadius: 2,
+                                      blurRadius: 20.r,
+                                      spreadRadius: 2.r,
                                     ),
                                   ],
                                 ),
@@ -187,26 +188,26 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                                             color: AppColors.primary.withValues(
                                               alpha: 0.06,
                                             ),
-                                            blurRadius: 30,
-                                            spreadRadius: 2,
+                                            blurRadius: 30.r,
+                                            spreadRadius: 2.r,
                                           ),
                                         ],
                                       ),
                                       child: Image.asset(
                                         'assets/images/logo.png',
-                                        width: 130,
-                                        height: 130,
+                                        width: 130.w,
+                                        height: 130.h,
                                         fit: BoxFit.contain,
                                       ),
                                     ),
-                                    const SizedBox(height: 28),
+                                    SizedBox(height: 28.h),
                                     // Welcome Text
                                     Text(
                                       AppStrings.welcomeBackTitle,
                                       textAlign: TextAlign.center,
                                       style: AppTextStyles.getStyle(
                                         color: AppColors.textPrimary,
-                                        fontSize: 28,
+                                        fontSize: 28.sp,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.8,
                                       ),
@@ -219,17 +220,17 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                         ),
                       ),
 
-                      const SizedBox(height: 70),
+                      SizedBox(height: 70.h),
 
                       // Sleek glowing progress indicator
                       FadeTransition(
                         opacity: _fadeAnimation,
                         child: Container(
-                          width: 200,
-                          height: 4,
+                          width: 200.w,
+                          height: 4.h,
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10.r),
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: AnimatedBuilder(
@@ -247,7 +248,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                                           AppColors.primary,
                                         ],
                                       ),
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
                                 ),

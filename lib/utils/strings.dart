@@ -33,6 +33,7 @@ class AppStrings {
   static const String feedbackThankYou = 'Thank you for your feedback!';
   static const String feedbackEmpty =
       'Please write your feedback before submitting.';
+  static const String feedbackWhatToImprove = 'What can we improve?';
 
   // Onboarding Screen strings
   static const String onboardingSkip = 'Skip';
@@ -56,6 +57,10 @@ class AppStrings {
   static const String tabHome = 'Home';
   static const String tabFavorite = 'Favorite';
   static const String tabSettings = 'Settings';
+  
+  static const String homeNoCategories = 'No categories available.';
+  static const String favoriteNoFavoritesTitle = 'No Favorites Yet';
+  static const String favoriteNoFavoritesSubtitle = 'Saved templates will appear here.';
 
   // Prompt Guidance strings
   static const String guidanceHeaderTitle = 'How to Use Prompt';
@@ -85,6 +90,7 @@ class AppStrings {
   static const String detailsViewMore = 'View More';
   static const String detailsNoRecommendations =
       'No recommendations available.';
+  static const String categoryNoTemplates = 'No templates found in this category.';
   static const String categoryFavorites = 'Favorites';
   static const String categoryDefaultFallback = 'Category';
   static const String truncationSuffix = '....';
@@ -134,6 +140,7 @@ class AppStrings {
   static const String settingsRateApp = 'Rate App';
   static const String settingsFeedback = 'Feedback';
   static const String settingsPrivacyPolicy = 'Privacy Policy';
+  static const String settingsTermsOfUse = 'Terms of Use';
   static const String settingsAppVersion = 'App Version';
   static const String settingsHeaderSubtitle =
       'Unleash Your Cinematic Creativity';
@@ -141,6 +148,23 @@ class AppStrings {
       'Check out this amazing AI Video Prompt app: ';
   static const String settingsPlayStoreError = 'Could not open Play Store.';
   static const String loading = 'Loading..';
+
+  // Privacy Policy Screen
+  static const String privacyPolicyComingSoon =
+      'Our privacy policy will be available here soon. Thank you for your patience!';
+  static const String privacyPolicyViewOnline = 'View Privacy Policy Online';
+  static const String privacyPolicyNoWebView =
+      'This device or platform does not support inline web browsing. Tapping the button below will open our privacy policy website in your system browser.';
+  static const String privacyPolicyOpenWeb = 'Open Policy Website';
+
+  // Terms of Use Screen
+  static const String termsOfUseTitle = 'Terms of Use';
+  static const String termsOfUseComingSoon =
+      'Our terms of use will be available here soon. Thank you for your patience!';
+  static const String termsOfUseViewOnline = 'View Terms of Use Online';
+  static const String termsOfUseNoWebView =
+      'This device or platform does not support inline web browsing. Tapping the button below will open our terms of use website in your system browser.';
+  static const String termsOfUseOpenWeb = 'Open Terms Website';
 
   // Ad loading dialog text
   static const String loadingAd = 'Loading Ad...';
@@ -180,4 +204,25 @@ class AppStrings {
   static const String proFeature2 = 'Remove\nAds';
   static const String proFeature3 = 'Exclusive\nPrompts';
   static const String proFeature4 = 'Unlimited\nAccess';
+  
+  static const String proPlanWeekly = 'Weekly';
+  static const String proPriceWeekly = '\$4.99';
+  static const String proSubtitleWeekly = 'per week';
+  static const String proPlanYearly = 'Yearly';
+  static const String proPriceYearly = '\$39.99';
+  static const String proSubtitleYearly = 'per year';
+  static const String proBestDealBadge = 'BEST DEAL';
+  static const String proBillingYearly =
+      'You will be charged \$39.99/Year, billed\nautomatically until cancelled.';
+  static const String proBillingWeekly =
+      'You will be charged \$4.99/Week, billed\nautomatically until cancelled.';
+  static const String proContinueBtn = 'Continue';
+  static const String proTermsOfService = 'Terms of Service';
+  static const String proRestore = 'Restore';
+  static const String proPrivacyPolicy = 'Privacy Policy';
+
+  // Start Screen strings
+  static const String startScreenSubtitle =
+      'Ready to create amazing videos with AI? Dive right back into the prompts.';
+  static const String startScreenButton = 'Start Exploring';
 }

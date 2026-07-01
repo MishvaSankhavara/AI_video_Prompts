@@ -1,12 +1,15 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../services/favorites_service.dart';
 import '../../utils/colors.dart';
-import '../../widgets/text_app.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../category/prompt_details_screen.dart';
 import '../../services/navigation_service.dart';
+import '../../utils/strings.dart';
+
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -22,25 +25,25 @@ class FavoriteScreen extends StatelessWidget {
           children: [
             Image.asset(
               'assets/images/ic_like.png',
-              width: 64,
-              height: 64,
+              width: 64.w,
+              height: 64.h,
               color: AppColors.primary,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
-              'No Favorites Yet',
+              AppStrings.favoriteNoFavoritesTitle,
               style: AppTextStyles.getStyle(
                 color: AppColors.textPrimary,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
-              'Saved templates will appear here.',
+              AppStrings.favoriteNoFavoritesSubtitle,
               style: AppTextStyles.getStyle(
                 color: AppColors.textMuted,
-                fontSize: 13,
+                fontSize: 13.sp,
               ),
             ),
           ],
@@ -49,7 +52,7 @@ class FavoriteScreen extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 150),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h, bottom: 150.h),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio

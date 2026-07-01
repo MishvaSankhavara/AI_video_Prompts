@@ -1,9 +1,10 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
-import '../../widgets/text_app.dart';
 import '../../services/navigation_service.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -75,24 +76,24 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       backgroundColor: AppColors.mainBackground,
       appBar: CommonAppBar(title: AppStrings.feedbackScreenTitle),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'What can we improve?',
+              AppStrings.feedbackWhatToImprove,
               style: AppTextStyles.getStyle(
                 color: AppColors.textPrimary,
-                fontSize: 17,
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             // Text area
             Container(
               decoration: BoxDecoration(
                 color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: TextField(
                 controller: _controller,
@@ -100,66 +101,66 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 maxLength: 500,
                 style: AppTextStyles.getStyle(
                   color: AppColors.textPrimary,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                 ),
                 decoration: InputDecoration(
                   hintText: AppStrings.feedbackHint,
                   hintStyle: AppTextStyles.getStyle(
                     color: AppColors.textMuted.withValues(alpha: 0.6),
-                    fontSize: 15,
+                    fontSize: 15.sp,
                   ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.all(16),
+                  contentPadding: EdgeInsets.all(16.r),
                   counterStyle: AppTextStyles.getStyle(
                     color: AppColors.textMuted,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 28),
+            SizedBox(height: 28.h),
             // Submit button
             ScaleButton(
               onTap: _isSubmitting ? null : _submitFeedback,
               child: Container(
                 width: double.infinity,
-                height: 54,
+                height: 54.h,
                 decoration: BoxDecoration(
                   gradient: _isSubmitting
                       ? null
                       : const LinearGradient(
-                          colors: [Color(0xFFB8308F), AppColors.primary],
+                          colors: [AppColors.buttonGradientStart, AppColors.primary],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                   color: _isSubmitting ? AppColors.border : null,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30.r),
                   boxShadow: _isSubmitting
                       ? null
                       : [
                           BoxShadow(
                             color: AppColors.primary.withValues(alpha: 0.25),
-                            blurRadius: 14,
-                            offset: const Offset(0, 6),
+                            blurRadius: 14.r,
+                            offset: Offset(0.w, 6.h),
                           ),
                         ],
                 ),
                 alignment: Alignment.center,
                 child: _isSubmitting
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
+                    ? SizedBox(
+                        height: 20.h,
+                        width: 20.w,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       )
                     : Text(
                         AppStrings.feedbackSubmit,
                         style: AppTextStyles.getStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.white,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -195,7 +196,7 @@ class _ScaleButtonState extends State<ScaleButton>
       duration: const Duration(milliseconds: 100),
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.96,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }

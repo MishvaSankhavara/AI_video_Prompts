@@ -33,4 +33,36 @@ class AppColors {
   //Button Gradient
   static const Color buttonGradientStart = Color(0xFFB8308F);
   static const Color buttonGradientEnd = Color(0xFF5D1049);
+
+  // Auto-generated colors
+  static const Color white38 = Colors.white38;
+  static const Color white70 = Colors.white70;
+  static const Color transparent = Colors.transparent;
+  static const Color black54 = Colors.black54;
+  static const Color black38 = Colors.black38;
+  static const Color black87 = Colors.black87;
+  // static const Color white = Colors.white;
+  static const Color grey = Colors.grey;
+
+  //prompt usage guidance points
+  static const Color teal600 = Color(0xFF0D9488);
+  static const Color teal400 = Color(0xFF14B8A6);
+  static const Color indigo600 = Color(0xFF4F46E5);
+  static const Color indigo500 = Color(0xFF6366F1);
+  static const Color violet500 = Color(0xFF8B5CF6);
+  static const Color violet400 = Color(0xFFA78BFA);
+  
+  static const Color purpleAccent = Colors.purpleAccent;
+  static const Color softPink = Color(0xFFFBF2FA);
+  static const Color amber500 = Color(0xFFFFC107);
+
+  // static const Color colorFF6366F1 = Color(0xFF6366F1);
+  // static const Color colorFFFFC107 = Color(0xFFFFC107);
+  // static const Color colorFF14B8A6 = Color(0xFF14B8A6);
+  // static const Color colorFF0D9488 = Color(0xFF0D9488);
+  // static const Color colorFF6B48FF = Color(0xFF6B48FF);
+  // static const Color colorFF8B5CF6 = Color(0xFF8B5CF6);
+  // static const Color colorFF4F46E5 = Color(0xFF4F46E5);
+  // static const Color colorFFFBF2FA = Color(0xFFFBF2FA);
+  // static const Color colorFFA78BFA = Color(0xFFA78BFA);
 }

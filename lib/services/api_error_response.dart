@@ -1,9 +1,10 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../utils/colors.dart';
 import '../utils/strings.dart';
-import '../widgets/text_app.dart';
 
 /// Shared error state shown whenever an API call fails.
 ///
@@ -49,29 +50,29 @@ class ApiErrorResponse extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(24.r),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FaIcon(icon, size: 64, color: AppColors.textMuted),
-            const SizedBox(height: 16),
+            FaIcon(icon, size: 64.sp, color: AppColors.textMuted),
+            SizedBox(height: 16.h),
             Text(
               title,
               textAlign: TextAlign.center,
               style: AppTextStyles.getStyle(
                 color: AppColors.textPrimary,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
               ),
-              child: const Text(AppStrings.tryAgain),
+              child: Text(AppStrings.tryAgain),
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/utils/strings.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -86,44 +88,44 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
-      appBar: const CommonAppBar(title: 'Terms of Use'),
+      appBar: const CommonAppBar(title: AppStrings.termsOfUseTitle),
       body: _termsOfUseUrl.isEmpty
           ? Center(
               child: Padding(
-                padding: const EdgeInsets.all(32.0),
+                padding: EdgeInsets.all(32.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 80,
-                      height: 80,
+                      width: 80.w,
+                      height: 80.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.cardBackground,
                       ),
-                      child: const FaIcon(
+                      child: FaIcon(
                         FontAwesomeIcons.lock,
-                        size: 40,
+                        size: 40.sp,
                         color: AppColors.primary,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
                     Text(
-                      'Terms of Use',
+                      AppStrings.termsOfUseTitle,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
-                      'Our terms of use will be available here soon. Thank you for your patience!',
+                      AppStrings.termsOfUseComingSoon,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
-                        fontSize: 14,
-                        height: 1.5,
+                        fontSize: 14.sp,
+                        height: 1.5.h,
                       ),
                     ),
                   ],
@@ -135,7 +137,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
               children: [
                 WebViewWidget(controller: _webViewController),
                 if (_isLoading)
-                  const Center(
+                  Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                         AppColors.primary,
@@ -146,58 +148,58 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
             )
           : Center(
               child: Padding(
-                padding: const EdgeInsets.all(32.0),
+                padding: EdgeInsets.all(32.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const FaIcon(
+                    FaIcon(
                       FontAwesomeIcons.globe,
-                      size: 72,
+                      size: 72.sp,
                       color: AppColors.textMuted,
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
                     Text(
-                      'View Terms of Use Online',
+                      AppStrings.termsOfUseViewOnline,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textPrimary,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
-                      'This device or platform does not support inline web browsing. Tapping the button below will open our terms of use website in your system browser.',
+                      AppStrings.termsOfUseNoWebView,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
-                        fontSize: 14,
-                        height: 1.5,
+                        fontSize: 14.sp,
+                        height: 1.5.h,
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
                     ElevatedButton.icon(
                       onPressed: _launchUrl,
                       icon: const FaIcon(
                         FontAwesomeIcons.arrowUpRightFromSquare,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                       label: Text(
-                        'Open Terms Website',
+                        AppStrings.termsOfUseOpenWeb,
                         style: AppTextStyles.getStyle(
-                          color: Colors.white,
+                          color: AppColors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 14,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 14.h,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
                         elevation: 0,
                       ),

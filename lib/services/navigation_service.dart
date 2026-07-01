@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// - Pushing: Slides up from bottom to top.
 /// - Popping (Back Button): Slides out from left to right.
@@ -16,7 +17,7 @@ class NavigationService {
         final isPopping = animation.status == AnimationStatus.reverse;
 
         // Slide from bottom on push, slide out to the right on pop
-        final begin = isPopping ? const Offset(1.0, 0.0) : const Offset(0.0, 1.0);
+        final begin = isPopping ? Offset(1.w, 0.h) : Offset(0.w, 1.h);
         const end = Offset.zero;
         const curve = Curves.easeInOutCubic;
 
@@ -24,7 +25,7 @@ class NavigationService {
         final offsetAnimation = animation.drive(tween);
 
         // Elegant fade transition
-        final fadeTween = Tween<double>(begin: 0.0, end: 1.0);
+        final fadeTween = Tween<double>(begin: 0, end: 1);
         final fadeAnimation = animation.drive(fadeTween);
 
         return SlideTransition(

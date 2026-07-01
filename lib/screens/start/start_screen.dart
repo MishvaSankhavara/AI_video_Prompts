@@ -1,14 +1,15 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../adsmanager/native ad/native_ad_service.dart';
 import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
-import '../../widgets/text_app.dart';
 import '../home/bottom_nav_bar_screen.dart';
 
 class StartScreen extends StatefulWidget {
@@ -48,18 +49,18 @@ class _StartScreenState extends State<StartScreen> {
                       fit: BoxFit.cover,
                     ),
                     Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: 180, // Height of the fade effect
+                      bottom: 0.h,
+                      left: 0.w,
+                      right: 0.w,
+                      height: 180.h, // Height of the fade effect
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                             colors: [
-                              Colors.white,
-                              Colors.white.withValues(alpha: 0.0),
+                              AppColors.white,
+                              AppColors.white.withValues(alpha: 0),
                             ],
                           ),
                         ),
@@ -74,25 +75,25 @@ class _StartScreenState extends State<StartScreen> {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
-                      'Ready to create amazing videos with AI? Dive right back into the prompts.',
+                      AppStrings.startScreenSubtitle,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
 
                     // Start Exploring Button
                     SizedBox(
                       width: double.infinity,
-                      height: 56,
+                      height: 46.h,
                       child: ElevatedButton(
                         onPressed: () {
                           NavigationService.pushReplacement(
@@ -102,18 +103,18 @@ class _StartScreenState extends State<StartScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(16.r),
                           ),
                           elevation: 0,
                         ),
                         child: Text(
-                          'Start Exploring',
+                          AppStrings.startScreenButton,
                           style: AppTextStyles.getStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.white,
                           ),
                         ),
                       ),
@@ -127,15 +128,15 @@ class _StartScreenState extends State<StartScreen> {
             _nativeAdService.buildNativeAdTile(
               0, // Index 0 for start screen single ad
               () => setState(() {}),
-              customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+              customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
               factoryId: Platform.isAndroid
                   ? AppStrings.nativeAdFactoryLargeAndroid
                   : AppStrings.nativeAdFactoryLargeIOS,
-              height: 34.h,
+              height: 0.34.sh,
               width: double.infinity,
               borderRadius: 16,
               backgroundColor: AppColors.cardBackground,
-              margin: const EdgeInsets.only(bottom: 6, left: 6, right: 6),
+              margin: EdgeInsets.only(bottom: 6.h, left: 6.w, right: 6.w),
               screenName: 'AiStartScreen_Large',
               shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
             ),

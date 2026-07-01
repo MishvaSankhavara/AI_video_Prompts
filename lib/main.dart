@@ -18,7 +18,7 @@ import 'widgets/text_app.dart';
 import 'adsmanager/ad_manager.dart';
 import 'adsmanager/app_open_ad_service.dart';
 import 'adsmanager/ad_ids.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'services/remote_config_service.dart';
 import 'services/notification_service.dart';
 
@@ -122,8 +122,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveSizer(
-      builder: (context, orientation, screenType) {
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
         return MaterialApp(
           title: AppStrings.appName,
           navigatorKey: navigatorKey,

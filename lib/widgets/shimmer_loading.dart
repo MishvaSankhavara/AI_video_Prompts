@@ -1,3 +1,5 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../utils/colors.dart';
@@ -14,15 +16,15 @@ class ShimmerLoading extends StatelessWidget {
           baseColor: AppColors.shimmerBase,
           highlightColor: AppColors.shimmerHighlight,
           child: Container(
-            color: Colors.white,
+            color: AppColors.white,
           ),
         ),
         Center(
           child: Text(
             "AI Video Prompts",
-            style: TextStyle(
-              color: Colors.grey.withValues(alpha: 0.4),
-              fontSize: 14,
+            style: AppTextStyles.getStyle(
+              color: AppColors.grey.withValues(alpha: 0.4),
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),

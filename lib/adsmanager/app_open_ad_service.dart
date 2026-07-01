@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../utils/common_utils.dart';
+import '../services/remote_config_service.dart';
 import 'ad_ids.dart';
 
 class AppOpenAdService {
@@ -14,7 +15,7 @@ class AppOpenAdService {
     VoidCallback? onAdFailedToShow,
   }) {
     // Ads disabled (e.g. via remote config) -> skip the ad, continue app flow.
-    if (!AdIds.showAdsEnabled) {
+    if (!RemoteConfigService.instance.showAdsEnabled) {
       onAdClosed?.call();
       return;
     }

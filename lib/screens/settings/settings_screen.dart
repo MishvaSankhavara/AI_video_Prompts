@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,7 +24,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _appVersion = '1.0.0';
+  String _appVersion = '1.00';
 
   // Common Play Store Base URL for sharing and rating (easy to modify in the future)
   static const String _playStoreBaseUrl =
@@ -114,15 +115,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.only(
-        left: 20.0,
-        right: 20.0,
-        top: 20.0,
-        bottom: 120.0,
+      padding: EdgeInsets.only(
+        left: 20.w,
+        right: 20.w,
+        top: 20.h,
+        bottom: 120.h,
       ),
       children: [
         _buildHeaderCard(),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
@@ -165,7 +166,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
@@ -178,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (Platform.isIOS)
               _buildSettingsTile(
                 imagePath: 'assets/images/ic_privacy_policy.png',
-                title: 'Terms of Use',
+                title: AppStrings.settingsTermsOfUse,
                 onTap: () {
                   NavigationService.push(context, const TermsOfUseScreen());
                 },
@@ -191,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: AppTextStyles.getStyle(
                   color: AppColors.textMuted,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
               ),
               showDivider: false,
@@ -205,41 +206,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildHeaderCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [AppColors.primary, AppColors.secondary],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.15),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            blurRadius: 15.r,
+            offset: Offset(0.w, 8.h),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: EdgeInsets.all(4.r),
             decoration: BoxDecoration(
               color: AppColors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(40.r),
               child: Image.asset(
                 'assets/images/logo.png',
-                width: 60,
-                height: 60,
+                width: 60.w,
+                height: 60.h,
                 fit: BoxFit.contain,
               ),
             ),
           ),
-          const SizedBox(width: 20),
+          SizedBox(width: 20.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,17 +249,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   AppStrings.appName,
                   style: AppTextStyles.getStyle(
                     color: AppColors.white,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.3,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   AppStrings.settingsHeaderSubtitle,
                   style: AppTextStyles.getStyle(
                     color: AppColors.white.withValues(alpha: 0.75),
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -276,10 +277,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(24.r),
             border: Border.all(
               color: AppColors.border.withValues(alpha: 0.45),
-              width: 1,
+              width: 1.w,
             ),
           ),
           clipBehavior: Clip.antiAlias,
@@ -304,12 +305,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 4,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 20.w,
+            vertical: 4.h,
           ),
           leading: Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
@@ -317,8 +318,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Image.asset(
               imagePath,
               color: AppColors.primary,
-              width: 20,
-              height: 20,
+              width: 20.w,
+              height: 20.h,
               fit: BoxFit.contain,
             ),
           ),
@@ -327,23 +328,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: AppTextStyles.getStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
-              fontSize: 15,
+              fontSize: 15.sp,
             ),
           ),
           trailing:
               trailing ??
-              const FaIcon(
+              FaIcon(
                 FontAwesomeIcons.chevronRight,
                 color: AppColors.textMuted,
-                size: 18,
+                size: 18.sp,
               ),
           onTap: onTap,
         ),
         if (showDivider)
           Padding(
-            padding: const EdgeInsets.only(left: 64.0, right: 20.0),
+            padding: EdgeInsets.only(left: 64.w, right: 20.w),
             child: Divider(
-              height: 1,
+              height: 1.h,
               thickness: 0.8,
               color: AppColors.border.withValues(alpha: 0.4),
             ),

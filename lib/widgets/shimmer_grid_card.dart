@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utils/colors.dart';
 
 class ShimmerGridCard extends StatefulWidget {
@@ -62,7 +63,7 @@ class _ShimmerGridCardState extends State<ShimmerGridCard>
                       AppColors.shimmerHighlight,
                       AppColors.shimmerBase,
                     ],
-                    stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
+                    stops: const [0, 0.35, 0.5, 0.65, 1],
                     transform: _HorizontalSlidingTransform(
                       slidePercent: _controller.value,
                     ),
@@ -88,6 +89,6 @@ class _HorizontalSlidingTransform extends GradientTransform {
   Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
     // Move from -width to +width so the highlight sweeps fully across
     final double tx = -bounds.width + (slidePercent * 2 * bounds.width);
-    return Matrix4.translationValues(tx, 0.0, 0.0);
+    return Matrix4.translationValues(tx, 0, 0);
   }
 }

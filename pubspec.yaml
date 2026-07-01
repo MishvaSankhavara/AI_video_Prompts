@@ -47,7 +47,6 @@ dependencies:
   firebase_analytics: ^12.4.2
   google_nav_bar: ^5.0.7
   cached_network_image: ^3.4.1
-  responsive_sizer: ^3.3.1
   visibility_detector: ^0.4.0+2
   font_awesome_flutter: ^11.0.0
   google_mobile_ads: ^9.0.0
@@ -59,6 +58,7 @@ dependencies:
   flutter_timezone: ^5.1.0
   firebase_crashlytics: ^5.2.4
   shimmer: ^3.0.0
+  flutter_screenutil: ^5.9.3
 
 dev_dependencies:
   flutter_test:

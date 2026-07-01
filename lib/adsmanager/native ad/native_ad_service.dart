@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../services/remote_config_service.dart';
 import '../../utils/common_utils.dart';
+// import '../services/remote_config_service.dart';
 import '../ad_ids.dart';
 
 /// Native ad service.
@@ -21,7 +24,7 @@ class NativeAdService {
   bool _disposed = false;
 
   /// Whether native ads may be shown at all.
-  bool get canShowAds => AdIds.showAdsEnabled;
+  bool get canShowAds => RemoteConfigService.instance.showAdsEnabled;
 
   /// Disposes every ad held by this service. Call from the host screen's
   /// [State.dispose] so the loaded `NativeAd` platform views are released.
@@ -148,7 +151,7 @@ class NativeAdService {
     Widget? shimmer,
   }) {
     // Absolute block: no ad, no shimmer, no space.
-    if (!canShowAds) return const SizedBox.shrink();
+    if (!canShowAds) return SizedBox.shrink();
 
     // Kick off loading on first build for this slot.
     if (!_loadedAdIndices.contains(adIndex) &&
@@ -165,13 +168,13 @@ class NativeAdService {
 
     // Every ad id failed -> collapse entirely, no blank space.
     if (_failedAdIndices.contains(adIndex)) {
-      return const SizedBox.shrink();
+      return SizedBox.shrink();
     }
 
     final ad = _nativeAds[adIndex];
     final Widget content = (_loadedAdIndices.contains(adIndex) && ad != null)
         ? AdWidget(ad: ad)
-        : (shimmer ?? const SizedBox.shrink());
+        : (shimmer ?? SizedBox.shrink());
 
     // Styled, sized container owned by the service so screens stay UI-free.
     return Container(

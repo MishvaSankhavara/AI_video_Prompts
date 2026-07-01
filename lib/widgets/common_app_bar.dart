@@ -1,7 +1,8 @@
+import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../utils/colors.dart';
-import 'text_app.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -17,8 +18,8 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = true,
     this.onBackPressed,
     this.actions,
-    this.backgroundColor = Colors.white,
-    this.surfaceTintColor = Colors.white,
+    this.backgroundColor = AppColors.white,
+    this.surfaceTintColor = AppColors.white,
   });
 
   @override
@@ -29,15 +30,15 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: AppTextStyles.getStyle(
           color: AppColors.textPrimary,
           fontWeight: FontWeight.bold,
-          fontSize: 18,
+          fontSize: 18.sp,
         ),
       ),
       leading: showBackButton
           ? IconButton(
-              icon: const FaIcon(
+              icon: FaIcon(
                 FontAwesomeIcons.chevronLeft,
                 color: AppColors.textPrimary,
-                size: 18,
+                size: 18.sp,
               ),
               onPressed: onBackPressed ?? () => Navigator.pop(context),
             )

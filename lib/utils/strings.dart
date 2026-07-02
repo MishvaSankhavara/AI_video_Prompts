@@ -143,6 +143,8 @@ class AppStrings {
   static const String settingsFeedback = 'Feedback';
   static const String settingsPrivacyPolicy = 'Privacy Policy';
   static const String settingsTermsOfUse = 'Terms of Use';
+  static const String settingsSupport = 'Support';
+  static const String settingsCancelSubscription = 'Cancel Subscription';
   static const String settingsAppVersion = 'App Version';
   static const String settingsHeaderSubtitle =
       'Unleash Your Cinematic Creativity';

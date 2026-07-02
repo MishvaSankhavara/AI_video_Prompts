@@ -185,6 +185,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             _buildSettingsTile(
+              imagePath: 'assets/images/ic_feedback.png',
+              title: AppStrings.settingsSupport,
+              onTap: () async {
+                final Uri emailLaunchUri = Uri(
+                  scheme: 'mailto',
+                  path: 'support@example.com', // Replace with real support email
+                  query: 'subject=App Support Request', 
+                );
+                try {
+                  if (await canLaunchUrl(emailLaunchUri)) {
+                    await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+                  }
+                } catch (e) {
+                  // Fallback to feedback screen
+                  if (context.mounted) {
+                    NavigationService.push(context, const FeedbackScreen());
+                  }
+                }
+              },
+            ),
+            _buildSettingsTile(
+              imagePath: 'assets/images/ic_crown.png',
+              title: AppStrings.settingsCancelSubscription,
+              // onTap: 
+              // () async {
+              //   try {
+              //     final packageInfo = await PackageInfo.fromPlatform();
+              //     final String url = Platform.isAndroid
+              //       ? 'https://play.google.com/store/account/subscriptions?package=${packageInfo.packageName}'
+              //       : 'https://apps.apple.com/account/subscriptions';
+              //     final uri = Uri.parse(url);
+              //     if (await canLaunchUrl(uri)) {
+              //       await launchUrl(uri, mode: LaunchMode.externalApplication);
+              //     }
+              //   } catch (e) {
+              //     // Ignore
+              //   }
+              // },
+            ),
+            _buildSettingsTile(
               imagePath: 'assets/images/ic_app_version.png',
               title: AppStrings.settingsAppVersion,
               trailing: AppText(

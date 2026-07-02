@@ -74,6 +74,7 @@ class FavoriteScreen extends StatelessWidget {
                 categoryItems: favorites,
                 categoryName: 'Favorites',
                 categoryId: 999,
+                isFromSaved: true,
               ),
             );
           },

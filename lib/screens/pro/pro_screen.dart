@@ -271,7 +271,7 @@ class _ProScreenState extends State<ProScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Container(
                       width: double.infinity,
-                      height: 56.h,
+                      height: 50.h,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [AppColors.primary, AppColors.purpleAccent],

@@ -34,6 +34,7 @@ class PromptDetailsScreen extends StatefulWidget {
   final List<VideoItem> categoryItems;
   final String categoryName;
   final int categoryId;
+  final bool isFromSaved;
 
   const PromptDetailsScreen({
     super.key,
@@ -41,6 +42,7 @@ class PromptDetailsScreen extends StatefulWidget {
     required this.categoryItems,
     required this.categoryName,
     required this.categoryId,
+    this.isFromSaved = false,
   });
 
   @override
@@ -229,7 +231,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
         scale: scaleValue,
         child: Container(
           width: double.infinity,
-          height: 62.h,
+          height: 50.h,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18.r),
             boxShadow: [
@@ -367,8 +369,10 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
 
   Widget _buildLikeButton(FavoritesService favoritesService, bool isFav) {
     return Container(
-      width: 62.w,
-      height: 62.h,
+      // width: 62.w,
+      // height: 62.h,
+      width: 50.w,
+      height: 50.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
@@ -398,7 +402,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
           ),
           child: Center(
             child: AnimatedScale(
-              scale: isFav ? 1.15 : 1.15,
+              scale: isFav ? 1.12 : 1.10,
               duration: const Duration(milliseconds: 200),
               child: Image.asset(
                 isFav
@@ -666,8 +670,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                     _buildPromptGuidance(),
                     SizedBox(height: 6.h),
                   ],
-                  /*
-                  Row(
+                                    if (!widget.isFromSaved) ...[
+Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -722,7 +726,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                             child: _nativeAdService.buildNativeAdTile(
                               index,
                               () => setState(() {}),
-                              customAdIds: [AdIds.nativeHF, AdIds.nativeLF],
+                              customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
                               factoryId: Platform.isAndroid
                                   ? AppStrings.nativeAdFactoryGridAndroid
                                   : AppStrings.nativeAdFactoryGridIOS,
@@ -757,7 +761,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                         );
                       },
                     ),
-                  */
+                  ],
 
                   SizedBox(height: 20.h),
                 ],

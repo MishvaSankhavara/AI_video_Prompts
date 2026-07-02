@@ -124,7 +124,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               onTap: _isSubmitting ? null : _submitFeedback,
               child: Container(
                 width: double.infinity,
-                height: 54.h,
+                height: 50.h,
                 decoration: BoxDecoration(
                   gradient: _isSubmitting
                       ? null

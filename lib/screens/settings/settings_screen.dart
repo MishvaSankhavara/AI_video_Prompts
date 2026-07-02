@@ -24,7 +24,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _appVersion = '1.00';
+  String _appVersion = '1.0.0';
 
   // Common Play Store Base URL for sharing and rating (easy to modify in the future)
   static const String _playStoreBaseUrl =

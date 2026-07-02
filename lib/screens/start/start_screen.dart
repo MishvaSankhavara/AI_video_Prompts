@@ -84,7 +84,7 @@ class _StartScreenState extends State<StartScreen> {
                       AppStrings.startScreenSubtitle,
                       style: AppTextStyles.getStyle(
                         color: AppColors.textMuted,
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -93,7 +93,7 @@ class _StartScreenState extends State<StartScreen> {
                     // Start Exploring Button
                     SizedBox(
                       width: double.infinity,
-                      height: 46.h,
+                      height: 50.h,
                       child: ElevatedButton(
                         onPressed: () {
                           NavigationService.pushReplacement(

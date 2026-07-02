@@ -59,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: AppText(message),
         backgroundColor: AppColors.primary,
         duration: const Duration(seconds: 2),
       ),
@@ -187,13 +187,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildSettingsTile(
               imagePath: 'assets/images/ic_app_version.png',
               title: AppStrings.settingsAppVersion,
-              trailing: Text(
+              trailing: AppText(
                 _appVersion,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
-                ),
+                textColor: AppColors.textMuted,
+                textWeight: FontWeight.bold,
+                textSize: 14.sp,
               ),
               showDivider: false,
             ),
@@ -245,23 +243,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   AppStrings.appName,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.3,
-                  ),
+                  textColor: AppColors.white,
+                  textSize: 20.sp,
+                  textWeight: FontWeight.bold,
+                  lettersSpace: 0.3,
                 ),
                 SizedBox(height: 4.h),
-                Text(
+                AppText(
                   AppStrings.settingsHeaderSubtitle,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.white.withValues(alpha: 0.75),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  textColor: AppColors.white.withValues(alpha: 0.75),
+                  textSize: 12.sp,
+                  textWeight: FontWeight.w500,
                 ),
               ],
             ),
@@ -305,10 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       children: [
         ListTile(
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-            vertical: 4.h,
-          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
           leading: Container(
             padding: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -323,13 +314,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               fit: BoxFit.contain,
             ),
           ),
-          title: Text(
+          title: AppText(
             title,
-            style: AppTextStyles.getStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
-              fontSize: 15.sp,
-            ),
+            textColor: AppColors.textPrimary,
+            textWeight: FontWeight.w600,
+            textSize: 15.sp,
           ),
           trailing:
               trailing ??

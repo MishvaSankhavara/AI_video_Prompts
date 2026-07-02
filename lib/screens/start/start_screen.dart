@@ -80,13 +80,11 @@ class _StartScreenState extends State<StartScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 12.h),
-                    Text(
+                    AppText(
                       AppStrings.startScreenSubtitle,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 14.sp,
-                      ),
-                      textAlign: TextAlign.center,
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textMuted,
+                      textSize: 14.sp,
                     ),
                     SizedBox(height: 20.h),
 
@@ -109,13 +107,11 @@ class _StartScreenState extends State<StartScreen> {
                           ),
                           elevation: 0,
                         ),
-                        child: Text(
+                        child: AppText(
                           AppStrings.startScreenButton,
-                          style: AppTextStyles.getStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.white,
-                          ),
+                          textSize: 18.sp,
+                          textWeight: FontWeight.bold,
+                          textColor: AppColors.white,
                         ),
                       ),
                     ),

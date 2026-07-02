@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'ad_manager.dart';
 
 class AdIds {
-  static bool useTestAds = kDebugMode; // Set to true to test ads in release mode. Change to false or kDebugMode when using live keys!
+  static bool useTestAds =
+      kDebugMode; // Set to true to test ads in release mode. Change to false or kDebugMode when using live keys!
   // -------------------------------
   // COMMON TEST IDS
   // -------------------------------

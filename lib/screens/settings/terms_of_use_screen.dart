@@ -110,23 +110,19 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                       ),
                     ),
                     SizedBox(height: 24.h),
-                    Text(
+                    AppText(
                       AppStrings.termsOfUseTitle,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      textColor: AppColors.textPrimary,
+                      textSize: 20.sp,
+                      textWeight: FontWeight.bold,
                     ),
                     SizedBox(height: 12.h),
-                    Text(
+                    AppText(
                       AppStrings.termsOfUseComingSoon,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 14.sp,
-                        height: 1.5.h,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textMuted,
+                      textSize: 14.sp,
+                      fontHeight: 1.5.h,
                     ),
                   ],
                 ),
@@ -158,24 +154,20 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                       color: AppColors.textMuted,
                     ),
                     SizedBox(height: 24.h),
-                    Text(
+                    AppText(
                       AppStrings.termsOfUseViewOnline,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textPrimary,
+                      textSize: 20.sp,
+                      textWeight: FontWeight.bold,
                     ),
                     SizedBox(height: 12.h),
-                    Text(
+                    AppText(
                       AppStrings.termsOfUseNoWebView,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 14.sp,
-                        height: 1.5.h,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textMuted,
+                      textSize: 14.sp,
+                      fontHeight: 1.5.h,
                     ),
                     SizedBox(height: 32.h),
                     ElevatedButton.icon(
@@ -184,13 +176,11 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
                         FontAwesomeIcons.arrowUpRightFromSquare,
                         color: AppColors.white,
                       ),
-                      label: Text(
+                      label: AppText(
                         AppStrings.termsOfUseOpenWeb,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.sp,
-                        ),
+                        textColor: AppColors.white,
+                        textWeight: FontWeight.bold,
+                        textSize: 15.sp,
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,

@@ -21,6 +21,8 @@ import 'adsmanager/ad_ids.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'services/remote_config_service.dart';
 import 'services/notification_service.dart';
+import 'services/fcm_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -43,7 +45,10 @@ void main() async {
 
     await RemoteConfigService.instance.initialize();
 
-    // Initialize notifications and schedule random Firebase alerts
+    // Initialize FCM and local notifications
+    await FcmService.instance.initialize();
+    await FcmService.instance.requestPermissions();
+
     await NotificationService.instance.initialize();
     await NotificationService.instance.requestPermissions();
     NotificationService.instance.scheduleDailyNotifications();
@@ -143,7 +148,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               secondary: AppColors.secondary,
               surface: AppColors.cardBackground,
             ),
-            textTheme: AppTextStyles.getTextTheme(ThemeData.light().textTheme),
+            textTheme: GoogleFonts.plusJakartaSansTextTheme(
+              ThemeData.light().textTheme,
+            ),
             useMaterial3: true,
           ),
           home: const SplashScreen(),

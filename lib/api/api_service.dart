@@ -9,7 +9,9 @@ class ApiService {
   ApiService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<List<VideoCategory>> fetchVideoCategories() async {
-    final url = Uri.parse('${ApiConst.baseUrl}${ApiConst.getAiVideoCategories}');
+    final url = Uri.parse(
+      '${ApiConst.baseUrl}${ApiConst.getAiVideoCategories}',
+    );
 
     try {
       final response = await _client.get(
@@ -26,7 +28,9 @@ class ApiService {
           final list = decodedData['data'] as List? ?? [];
           return list.map((json) => VideoCategory.fromJson(json)).toList();
         } else {
-          throw Exception(decodedData['message'] ?? 'Failed to load video categories');
+          throw Exception(
+            decodedData['message'] ?? 'Failed to load video categories',
+          );
         }
       } else {
         throw Exception('Server error: ${response.statusCode}');
@@ -37,7 +41,9 @@ class ApiService {
   }
 
   Future<List<VideoItem>> fetchVideosByCategoryId(int categoryId) async {
-    final url = Uri.parse('${ApiConst.baseUrl}${ApiConst.getAiVideoByCategoryId}');
+    final url = Uri.parse(
+      '${ApiConst.baseUrl}${ApiConst.getAiVideoByCategoryId}',
+    );
 
     try {
       final response = await _client.post(
@@ -47,9 +53,7 @@ class ApiService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: json.encode({
-          'category_id': categoryId,
-        }),
+        body: json.encode({'category_id': categoryId}),
       );
 
       if (response.statusCode == 200) {
@@ -58,7 +62,9 @@ class ApiService {
           final list = decodedData['data'] as List? ?? [];
           return list.map((json) => VideoItem.fromJson(json)).toList();
         } else {
-          throw Exception(decodedData['message'] ?? 'Failed to load category videos');
+          throw Exception(
+            decodedData['message'] ?? 'Failed to load category videos',
+          );
         }
       } else {
         throw Exception('Server error: ${response.statusCode}');

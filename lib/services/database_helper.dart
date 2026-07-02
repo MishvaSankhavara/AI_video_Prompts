@@ -23,11 +23,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final pathString = join(dbPath, 'favorites.db');
 
-    return await openDatabase(
-      pathString,
-      version: 1,
-      onCreate: _onCreate,
-    );
+    return await openDatabase(pathString, version: 1, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -44,25 +40,17 @@ class DatabaseHelper {
   Future<void> insertFavorite(VideoItem item) async {
     final db = await database;
     // Only persist the columns the favorites table actually keeps.
-    await db.insert(
-      'favorites',
-      {
-        'id': item.id,
-        'ai_prompt': item.aiPrompt,
-        'video_thumbnail': item.videoThumbnail,
-        'video_thumbnail_full_url': item.videoThumbnailFullUrl,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('favorites', {
+      'id': item.id,
+      'ai_prompt': item.aiPrompt,
+      'video_thumbnail': item.videoThumbnail,
+      'video_thumbnail_full_url': item.videoThumbnailFullUrl,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> deleteFavorite(int id) async {
     final db = await database;
-    await db.delete(
-      'favorites',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.delete('favorites', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<VideoItem>> getFavorites() async {

@@ -125,27 +125,23 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                 ),
                 SizedBox(height: 24.h),
                 // Title
-                Text(
+                AppText(
                   widget.title,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.2,
-                  ),
+                  textAlignment: TextAlign.center,
+                  textColor: AppColors.textPrimary,
+                  textSize: 20.sp,
+                  textWeight: FontWeight.bold,
+                  lettersSpace: 0.2,
                 ),
                 SizedBox(height: 12.h),
                 // Subtitle
-                Text(
+                AppText(
                   widget.subtitle,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 14.sp,
-                    height: 1.45.h,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  textAlignment: TextAlign.center,
+                  textColor: AppColors.textMuted,
+                  textSize: 14.sp,
+                  fontHeight: 1.45.h,
+                  textWeight: FontWeight.w500,
                 ),
                 if (widget.showRatingStars) ...[
                   SizedBox(height: 24.h),
@@ -221,16 +217,14 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                                 ],
                         ),
                         alignment: Alignment.center,
-                        child: Text(
+                        child: AppText(
                           widget.primaryButtonText,
-                          style: AppTextStyles.getStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: isPrimaryDisabled
-                                ? AppColors.textMuted.withValues(alpha: 0.6)
-                                : AppColors.white,
-                            letterSpacing: 0.5,
-                          ),
+                          textSize: 14.sp,
+                          textWeight: FontWeight.bold,
+                          textColor: isPrimaryDisabled
+                              ? AppColors.textMuted.withValues(alpha: 0.6)
+                              : AppColors.white,
+                          lettersSpace: 0.5,
                         ),
                       ),
                     );
@@ -256,16 +250,14 @@ class _CustomAppDialogState extends State<CustomAppDialog> {
                                   ),
                                 ),
                                 alignment: Alignment.center,
-                                child: Text(
+                                child: AppText(
                                   widget.secondaryButtonText!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.getStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
-                                    letterSpacing: 0.5,
-                                  ),
+                                  maxLinesCount: 1,
+                                  fontOverflow: TextOverflow.ellipsis,
+                                  textSize: 14.sp,
+                                  textWeight: FontWeight.bold,
+                                  textColor: AppColors.primary,
+                                  lettersSpace: 0.5,
                                 ),
                               ),
                             ),

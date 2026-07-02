@@ -16,7 +16,6 @@ class InterstitialAdService {
     VoidCallback? onAdClosed,
     VoidCallback? onAdFailedToShow,
   }) {
-
     // Ads disabled (e.g. via remote config) -> skip the ad, continue app flow.
     if (!RemoteConfigService.instance.showAdsEnabled) {
       onAdFailedToShow?.call();
@@ -48,29 +47,39 @@ class InterstitialAdService {
     }
 
     final adUnitId = adIds[index];
-    CommonUtils.printLog('InterstitialAdService: Attempting to load Interstitial Ad ID: $adUnitId');
+    CommonUtils.printLog(
+      'InterstitialAdService: Attempting to load Interstitial Ad ID: $adUnitId',
+    );
 
     InterstitialAd.load(
       adUnitId: adUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
-          CommonUtils.printLog('InterstitialAdService: Interstitial loaded successfully ID: $adUnitId');
+          CommonUtils.printLog(
+            'InterstitialAdService: Interstitial loaded successfully ID: $adUnitId',
+          );
 
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              CommonUtils.printLog('InterstitialAdService: Interstitial dismissed.');
+              CommonUtils.printLog(
+                'InterstitialAdService: Interstitial dismissed.',
+              );
               onAdClosed?.call();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
-              CommonUtils.printLog('InterstitialAdService: Interstitial failed to show: $error');
+              CommonUtils.printLog(
+                'InterstitialAdService: Interstitial failed to show: $error',
+              );
               LoadingDialog.hide();
               onAdFailedToShow?.call();
             },
             onAdShowedFullScreenContent: (ad) {
-              CommonUtils.printLog('InterstitialAdService: Interstitial displayed.');
+              CommonUtils.printLog(
+                'InterstitialAdService: Interstitial displayed.',
+              );
               LoadingDialog.hide();
             },
           );
@@ -78,7 +87,9 @@ class InterstitialAdService {
           ad.show();
         },
         onAdFailedToLoad: (error) {
-          CommonUtils.printLog('InterstitialAdService: Interstitial failed to load ID: $adUnitId ($error). Trying next...');
+          CommonUtils.printLog(
+            'InterstitialAdService: Interstitial failed to load ID: $adUnitId ($error). Trying next...',
+          );
           _loadAndShow(adIds, index + 1, onAdClosed, onAdFailedToShow);
         },
       ),

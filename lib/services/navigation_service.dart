@@ -21,7 +21,10 @@ class NavigationService {
         const end = Offset.zero;
         const curve = Curves.easeInOutCubic;
 
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
         final offsetAnimation = animation.drive(tween);
 
         // Elegant fade transition
@@ -30,10 +33,7 @@ class NavigationService {
 
         return SlideTransition(
           position: offsetAnimation,
-          child: FadeTransition(
-            opacity: fadeAnimation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: fadeAnimation, child: child),
         );
       },
       transitionDuration: const Duration(milliseconds: 400),
@@ -47,16 +47,20 @@ class NavigationService {
   }
 
   /// Replaces the current screen with a new screen.
-  static Future<T?> pushReplacement<T, TO>(BuildContext context, Widget screen) {
-    return Navigator.of(context).pushReplacement<T, TO>(_createRoute<T>(screen));
+  static Future<T?> pushReplacement<T, TO>(
+    BuildContext context,
+    Widget screen,
+  ) {
+    return Navigator.of(
+      context,
+    ).pushReplacement<T, TO>(_createRoute<T>(screen));
   }
 
   /// Pushes a new screen and removes all previous routes from the stack.
   static Future<T?> pushAndRemoveUntil<T>(BuildContext context, Widget screen) {
-    return Navigator.of(context).pushAndRemoveUntil<T>(
-      _createRoute<T>(screen),
-      (route) => false,
-    );
+    return Navigator.of(
+      context,
+    ).pushAndRemoveUntil<T>(_createRoute<T>(screen), (route) => false);
   }
 
   /// Pops the current screen off the navigator stack.

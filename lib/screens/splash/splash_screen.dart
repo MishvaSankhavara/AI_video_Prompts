@@ -133,14 +133,12 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       SizedBox(height: 1.h),
                       // Text Title
-                      Text(
+                      AppText(
                         AppStrings.appName,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 26.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
+                        textColor: AppColors.textPrimary,
+                        textSize: 26.sp,
+                        textWeight: FontWeight.bold,
+                        lettersSpace: 0.5,
                       ),
                     ],
                   ),

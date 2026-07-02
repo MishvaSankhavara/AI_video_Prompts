@@ -6,6 +6,7 @@ import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final int? rating;
@@ -36,7 +37,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     if (text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppStrings.feedbackEmpty),
+          content: AppText(AppStrings.feedbackEmpty),
           backgroundColor: AppColors.primary,
         ),
       );
@@ -61,7 +62,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppStrings.feedbackThankYou),
+        content: AppText(AppStrings.feedbackThankYou),
         backgroundColor: AppColors.primary,
         duration: const Duration(seconds: 2),
       ),
@@ -80,13 +81,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            AppText(
               AppStrings.feedbackWhatToImprove,
-              style: AppTextStyles.getStyle(
-                color: AppColors.textPrimary,
-                fontSize: 17.sp,
-                fontWeight: FontWeight.w600,
-              ),
+              textColor: AppColors.textPrimary,
+              textSize: 17.sp,
+              textWeight: FontWeight.w600,
             ),
             SizedBox(height: 12.h),
             // Text area
@@ -99,19 +98,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 controller: _controller,
                 maxLines: 7,
                 maxLength: 500,
-                style: AppTextStyles.getStyle(
+                style: GoogleFonts.poppins(
                   color: AppColors.textPrimary,
                   fontSize: 15.sp,
                 ),
                 decoration: InputDecoration(
                   hintText: AppStrings.feedbackHint,
-                  hintStyle: AppTextStyles.getStyle(
+                  hintStyle: GoogleFonts.poppins(
                     color: AppColors.textMuted.withValues(alpha: 0.6),
                     fontSize: 15.sp,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16.r),
-                  counterStyle: AppTextStyles.getStyle(
+                  counterStyle: GoogleFonts.poppins(
                     color: AppColors.textMuted,
                     fontSize: 12.sp,
                   ),
@@ -129,7 +128,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   gradient: _isSubmitting
                       ? null
                       : const LinearGradient(
-                          colors: [AppColors.buttonGradientStart, AppColors.primary],
+                          colors: [
+                            AppColors.buttonGradientStart,
+                            AppColors.primary,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -155,14 +157,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           color: AppColors.white,
                         ),
                       )
-                    : Text(
+                    : AppText(
                         AppStrings.feedbackSubmit,
-                        style: AppTextStyles.getStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white,
-                          letterSpacing: 0.5,
-                        ),
+                        textSize: 16.sp,
+                        textWeight: FontWeight.bold,
+                        textColor: AppColors.white,
+                        lettersSpace: 0.5,
                       ),
               ),
             ),

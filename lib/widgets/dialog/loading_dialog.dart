@@ -45,7 +45,7 @@ class LoadingDialog extends StatelessWidget {
       canPop: false, // Prevent dismissal via the back button.
       child: Center(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 24.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(20.r),
@@ -61,22 +61,20 @@ class LoadingDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                width: 38.w,
-                height: 38.h,
+                width: 36.w,
+                height: 36.h,
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                   strokeWidth: 3.5,
                 ),
               ),
               SizedBox(height: 20.h),
-              Text(
+              AppText(
                 text,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.none,
-                ),
+                textColor: AppColors.textPrimary,
+                textSize: 14.sp,
+                textWeight: FontWeight.bold,
+                textDecoration: TextDecoration.none,
               ),
             ],
           ),

@@ -334,14 +334,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                             ),
                           ),
                           SizedBox(width: 16.w),
-                          Text(
+                          AppText(
                             label,
-                            style: AppTextStyles.getStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.white,
-                              letterSpacing: 1.5,
-                            ),
+                            textSize: 15.sp,
+                            textWeight: FontWeight.w900,
+                            textColor: AppColors.white,
+                            lettersSpace: 1.5,
                           ),
                         ],
                       ),
@@ -388,21 +386,16 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18.r),
-          side: BorderSide(
-            color: AppColors.border,
-            width: 1.5.w,
-          ),
+          side: BorderSide(color: AppColors.border, width: 1.5.w),
         ),
         child: InkWell(
           onTap: () {
             favoritesService.toggleFavorite(_currentItem);
           },
-          splashColor: AppColors.primary.withValues(
-            alpha: 0.15,
-          ),
+          splashColor: AppColors.primary.withValues(alpha: 0.15),
           child: Center(
             child: AnimatedScale(
-              scale: isFav ? 1.12 : 1.10,
+              scale: isFav ? 1.11 : 1.10,
               duration: const Duration(milliseconds: 200),
               child: Image.asset(
                 isFav
@@ -511,8 +504,12 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
       extendBodyBehindAppBar: true,
       appBar: CommonAppBar(
         title: '',
-        backgroundColor: _isAppBarWhite ? AppColors.white : AppColors.transparent,
-        surfaceTintColor: _isAppBarWhite ? AppColors.white : AppColors.transparent,
+        backgroundColor: _isAppBarWhite
+            ? AppColors.white
+            : AppColors.transparent,
+        surfaceTintColor: _isAppBarWhite
+            ? AppColors.white
+            : AppColors.transparent,
         actions: (_isUnlocked || isFav)
             ? [
                 IconButton(
@@ -535,10 +532,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
           children: [
             _buildBlurredBackground(),
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-                vertical: 12.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -575,26 +569,40 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20.r),
                         topRight: Radius.circular(20.r),
-                        bottomLeft: Radius.circular((_isUnlocked || isFav) ? 20 : 0),
-                        bottomRight: Radius.circular((_isUnlocked || isFav) ? 20 : 0),
+                        bottomLeft: Radius.circular(
+                          (_isUnlocked || isFav) ? 20 : 0,
+                        ),
+                        bottomRight: Radius.circular(
+                          (_isUnlocked || isFav) ? 20 : 0,
+                        ),
                       ),
                       border: Border(
-                        top: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w),
-                        left: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w),
-                        right: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w),
+                        top: BorderSide(
+                          color: AppColors.border.withValues(alpha: 0.8),
+                          width: 1.2.w,
+                        ),
+                        left: BorderSide(
+                          color: AppColors.border.withValues(alpha: 0.8),
+                          width: 1.2.w,
+                        ),
+                        right: BorderSide(
+                          color: AppColors.border.withValues(alpha: 0.8),
+                          width: 1.2.w,
+                        ),
                         bottom: (_isUnlocked || isFav)
-                            ? BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1.2.w)
+                            ? BorderSide(
+                                color: AppColors.border.withValues(alpha: 0.8),
+                                width: 1.2.w,
+                              )
                             : BorderSide.none,
                       ),
                     ),
-                    child: Text(
+                    child: AppText(
                       displayPrompt,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 16.sp,
-                        height: 1.55.h,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      textColor: AppColors.textPrimary,
+                      textSize: 16.sp,
+                      fontHeight: 1.55.h,
+                      textWeight: FontWeight.w500,
                     ),
                   ),
                   SizedBox(height: 24.h),
@@ -616,7 +624,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
+                                  content: AppText(
                                     AppStrings.detailsCopiedMessage,
                                   ),
                                   backgroundColor: AppColors.primary,
@@ -670,97 +678,97 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                     _buildPromptGuidance(),
                     SizedBox(height: 6.h),
                   ],
-                                    if (!widget.isFromSaved) ...[
-Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppStrings.detailsExplore,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
+                  if (!widget.isFromSaved) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppText(
+                          AppStrings.detailsExplore,
+                          textColor: AppColors.textPrimary,
+                          textSize: 20.sp,
+                          textWeight: FontWeight.bold,
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () => NavigationService.pop(context),
-                        child: Text(
-                          AppStrings.detailsViewMore,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
+                        TextButton(
+                          onPressed: () => NavigationService.pop(context),
+                          child: AppText(
+                            AppStrings.detailsViewMore,
+                            textColor: AppColors.primary,
+                            textWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  if (recommendedItems.isEmpty)
-                    Center(child: Text(AppStrings.detailsNoRecommendations))
-                  else
-                    MasonryGridView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                          ),
-                      mainAxisSpacing: 14,
-                      crossAxisSpacing: 14,
-                      itemCount: _getGridItemCount(recommendedItems.length),
-                      itemBuilder: (context, index) {
-                        if (_isGridAdIndex(index)) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.cardBackground,
-                              borderRadius: BorderRadius.circular(24.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.black.withValues(alpha: 0.03),
-                                  blurRadius: 8.r,
-                                  offset: Offset(0.w, 4.h),
-                                ),
-                              ],
+                      ],
+                    ),
+                    if (recommendedItems.isEmpty)
+                      Center(
+                        child: AppText(AppStrings.detailsNoRecommendations),
+                      )
+                    else
+                      MasonryGridView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
                             ),
-                            clipBehavior: Clip.antiAlias,
-                            child: _nativeAdService.buildNativeAdTile(
-                              index,
-                              () => setState(() {}),
-                              customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
-                              factoryId: Platform.isAndroid
-                                  ? AppStrings.nativeAdFactoryGridAndroid
-                                  : AppStrings.nativeAdFactoryGridIOS,
-                              height: 0.35.sh,
-                              screenName: 'AiPromptDetailsScreen_Grid',
-                              shimmer:
-                                  ShimmerNativeAd.gridViewNativeAdShimmer(),
+                        mainAxisSpacing: 14,
+                        crossAxisSpacing: 14,
+                        itemCount: _getGridItemCount(recommendedItems.length),
+                        itemBuilder: (context, index) {
+                          if (_isGridAdIndex(index)) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.cardBackground,
+                                borderRadius: BorderRadius.circular(24.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.black.withValues(
+                                      alpha: 0.03,
+                                    ),
+                                    blurRadius: 8.r,
+                                    offset: Offset(0.w, 4.h),
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: _nativeAdService.buildNativeAdTile(
+                                index,
+                                () => setState(() {}),
+                                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                                factoryId: Platform.isAndroid
+                                    ? AppStrings.nativeAdFactoryGridAndroid
+                                    : AppStrings.nativeAdFactoryGridIOS,
+                                height: 0.35.sh,
+                                screenName: 'AiPromptDetailsScreen_Grid',
+                                shimmer:
+                                    ShimmerNativeAd.gridViewNativeAdShimmer(),
+                              ),
+                            );
+                          }
+
+                          final contentIndex = _gridIndexToContentIndex(index);
+                          final item = recommendedItems[contentIndex];
+                          return AspectRatio(
+                            aspectRatio: 0.72,
+                            child: PromptGridCard(
+                              item: item,
+                              categoryName: '',
+                              isPremium: contentIndex % 3 == 0,
+                              onTap: () {
+                                NavigationService.push(
+                                  context,
+                                  PromptDetailsScreen(
+                                    item: item,
+                                    categoryItems: widget.categoryItems,
+                                    categoryName: widget.categoryName,
+                                    categoryId: widget.categoryId,
+                                  ),
+                                );
+                              },
                             ),
                           );
-                        }
-
-                        final contentIndex = _gridIndexToContentIndex(index);
-                        final item = recommendedItems[contentIndex];
-                        return AspectRatio(
-                          aspectRatio: 0.72,
-                          child: PromptGridCard(
-                            item: item,
-                            categoryName: '',
-                            isPremium: contentIndex % 3 == 0,
-                            onTap: () {
-                              NavigationService.push(
-                                context,
-                                PromptDetailsScreen(
-                                  item: item,
-                                  categoryItems: widget.categoryItems,
-                                  categoryName: widget.categoryName,
-                                  categoryId: widget.categoryId,
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                        },
+                      ),
                   ],
 
                   SizedBox(height: 20.h),
@@ -795,13 +803,11 @@ Row(
                 size: 22.sp,
               ),
               SizedBox(width: 14.w),
-              Text(
+              AppText(
                 AppStrings.guidanceHeaderTitle,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                textColor: AppColors.textPrimary,
+                textSize: 18.sp,
+                textWeight: FontWeight.bold,
               ),
             ],
           ),
@@ -855,13 +861,11 @@ Row(
             ],
           ),
           child: Center(
-            child: Text(
+            child: AppText(
               stepNumber,
-              style: AppTextStyles.getStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 13.sp,
-              ),
+              textColor: AppColors.white,
+              textWeight: FontWeight.bold,
+              textSize: 13.sp,
             ),
           ),
         ),
@@ -870,22 +874,18 @@ Row(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AppText(
                 title,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                textColor: AppColors.textPrimary,
+                textSize: 15.sp,
+                textWeight: FontWeight.bold,
               ),
               SizedBox(height: 5.h),
-              Text(
+              AppText(
                 description,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 13.sp,
-                  height: 1.4.h,
-                ),
+                textColor: AppColors.textMuted,
+                textSize: 13.sp,
+                fontHeight: 1.4.h,
               ),
             ],
           ),

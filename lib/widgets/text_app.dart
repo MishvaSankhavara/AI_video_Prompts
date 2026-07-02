@@ -2,36 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppTextStyles {
-  // Base TextStyle helper using Google Fonts (Plus Jakarta Sans)
-  static TextStyle getStyle({
-    double? fontSize,
-    FontWeight? fontWeight,
-    Color? color,
-    double? height,
-    double? letterSpacing,
-    TextDecoration? decoration,
-  }) {
-    return GoogleFonts.poppins(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      height: height,
-      letterSpacing: letterSpacing,
-      decoration: decoration,
+
+
+class AppText extends StatelessWidget {
+  final String text;
+  final double? textSize;
+  final FontWeight? textWeight;
+  final Color? textColor;
+  final TextAlign? textAlignment;
+  final int? maxLinesCount;
+  final TextOverflow? fontOverflow;
+  final TextDecoration? textDecoration;
+  final double? fontHeight;
+  final double? lettersSpace;
+
+  const AppText(
+    this.text, {
+    super.key,
+    this.textSize,
+    this.textWeight,
+    this.textColor,
+    this.textAlignment,
+    this.maxLinesCount,
+    this.fontOverflow,
+    this.textDecoration,
+    this.fontHeight,
+    this.lettersSpace,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      textAlign: textAlignment,
+      maxLines: maxLinesCount,
+      overflow: fontOverflow,
+      style: GoogleFonts.poppins(
+        fontSize: textSize,
+        fontWeight: textWeight,
+        color: textColor,
+        decoration: textDecoration,
+        height: fontHeight,
+        letterSpacing: lettersSpace,
+      ),
     );
-  }
-
-  // Unified pre-defined typography styles
-  static TextStyle get displayLarge => getStyle(fontSize: 32.sp, fontWeight: FontWeight.bold);
-  static TextStyle get titleLarge => getStyle(fontSize: 22.sp, fontWeight: FontWeight.bold);
-  static TextStyle get titleMedium => getStyle(fontSize: 18.sp, fontWeight: FontWeight.bold);
-  static TextStyle get bodyLarge => getStyle(fontSize: 16.sp, fontWeight: FontWeight.w500);
-  static TextStyle get bodyMedium => getStyle(fontSize: 14.sp, fontWeight: FontWeight.normal);
-  static TextStyle get labelLarge => getStyle(fontSize: 16.sp, fontWeight: FontWeight.bold);
-
-  // Converts a base TextTheme to use the Google Fonts family globally
-  static TextTheme getTextTheme(TextTheme baseTheme) {
-    return GoogleFonts.plusJakartaSansTextTheme(baseTheme);
   }
 }

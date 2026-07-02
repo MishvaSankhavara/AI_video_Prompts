@@ -13,7 +13,6 @@ import '../../widgets/shimmer_grid_card.dart';
 import '../category/category_details_screen.dart';
 import '../../utils/strings.dart';
 
-
 /// Home tab content: the grid of video categories.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -50,15 +49,17 @@ class HomeScreen extends StatelessWidget {
 
     if (categoryVM.categories.isEmpty) {
       return Center(
-        child: Text(
-          AppStrings.homeNoCategories,
-          style: AppTextStyles.getStyle(color: AppColors.textMuted),
-        ),
+        child: AppText(AppStrings.homeNoCategories, textColor: AppColors.textMuted),
       );
     }
 
     return GridView.builder(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h, bottom: 150.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 12.h,
+        bottom: 150.h,
+      ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio

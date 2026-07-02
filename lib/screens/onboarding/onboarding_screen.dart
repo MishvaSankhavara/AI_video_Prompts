@@ -130,10 +130,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     fit: StackFit.expand,
                     children: [
                       // Image taking full space
-                      Image.asset(
-                        page.imagePath,
-                        fit: BoxFit.fill,
-                      ),
+                      Image.asset(page.imagePath, fit: BoxFit.fill),
                       // Gradient fade effect at the bottom
                       Positioned(
                         bottom: 0.h,
@@ -170,23 +167,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
+                              AppText(
                                 page.title,
-                                style: AppTextStyles.getStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                ),
+                                textColor: AppColors.textPrimary,
+                                textSize: 20.sp,
+                                textWeight: FontWeight.bold,
+                                lettersSpace: -0.5,
                               ),
                               SizedBox(height: 14.h),
-                              Text(
+                              AppText(
                                 page.subtitle,
-                                style: AppTextStyles.getStyle(
-                                  color: AppColors.textMuted,
-                                  fontSize: 12.sp,
-                                  height: 1.5.h,
-                                ),
+                                textColor: AppColors.textMuted,
+                                textSize: 12.sp,
+                                fontHeight: 1.5.h,
                               ),
                             ],
                           ),
@@ -213,7 +206,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Dot Indicators
                     Row(
                       children: List.generate(3, (index) {
-                        final activeDotIndex = _currentPage > 2 ? _currentPage - 1 : _currentPage;
+                        final activeDotIndex = _currentPage > 2
+                            ? _currentPage - 1
+                            : _currentPage;
                         final isActive = index == activeDotIndex;
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -252,12 +247,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           vertical: 8.h,
                         ),
                       ),
-                      child: Text(
+                      child: AppText(
                         _currentPage == 3 ? 'Start' : 'Next',
-                        style: AppTextStyles.getStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        textSize: 18.sp,
+                        textWeight: FontWeight.bold,
                       ),
                     ),
                   ],

@@ -146,9 +146,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     // Empty state
     if (_viewModel.videos.isEmpty) {
       return Center(
-        child: Text(
+        child: AppText(
           AppStrings.categoryNoTemplates,
-          style: AppTextStyles.getStyle(color: AppColors.textMuted),
+          textColor: AppColors.textMuted,
         ),
       );
     }

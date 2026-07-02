@@ -56,14 +56,12 @@ class ApiErrorResponse extends StatelessWidget {
           children: [
             FaIcon(icon, size: 64.sp, color: AppColors.textMuted),
             SizedBox(height: 16.h),
-            Text(
+            AppText(
               title,
-              textAlign: TextAlign.center,
-              style: AppTextStyles.getStyle(
-                color: AppColors.textPrimary,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              textAlignment: TextAlign.center,
+              textColor: AppColors.textPrimary,
+              textSize: 18.sp,
+              textWeight: FontWeight.bold,
             ),
             SizedBox(height: 24.h),
             ElevatedButton(
@@ -72,7 +70,7 @@ class ApiErrorResponse extends StatelessWidget {
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
               ),
-              child: Text(AppStrings.tryAgain),
+              child: AppText(AppStrings.tryAgain),
             ),
           ],
         ),

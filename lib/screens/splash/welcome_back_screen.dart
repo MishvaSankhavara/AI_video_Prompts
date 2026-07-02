@@ -75,7 +75,10 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
             screenName: 'WelcomeBackScreen',
             onAdClosed: () {
               if (!mounted) return;
-              NavigationService.pushReplacement(context, const BottomNavBarScreen());
+              NavigationService.pushReplacement(
+                context,
+                const BottomNavBarScreen(),
+              );
             },
           );
         }
@@ -202,15 +205,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                                     ),
                                     SizedBox(height: 28.h),
                                     // Welcome Text
-                                    Text(
+                                    AppText(
                                       AppStrings.welcomeBackTitle,
-                                      textAlign: TextAlign.center,
-                                      style: AppTextStyles.getStyle(
-                                        color: AppColors.textPrimary,
-                                        fontSize: 28.sp,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.8,
-                                      ),
+                                      textAlignment: TextAlign.center,
+                                      textColor: AppColors.textPrimary,
+                                      textSize: 28.sp,
+                                      textWeight: FontWeight.bold,
+                                      lettersSpace: 0.8,
                                     ),
                                   ],
                                 ),

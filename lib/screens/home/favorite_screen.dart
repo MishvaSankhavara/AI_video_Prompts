@@ -10,7 +10,6 @@ import '../category/prompt_details_screen.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/strings.dart';
 
-
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
 
@@ -30,21 +29,17 @@ class FavoriteScreen extends StatelessWidget {
               color: AppColors.primary,
             ),
             SizedBox(height: 16.h),
-            Text(
+            AppText(
               AppStrings.favoriteNoFavoritesTitle,
-              style: AppTextStyles.getStyle(
-                color: AppColors.textPrimary,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              textColor: AppColors.textPrimary,
+              textSize: 18.sp,
+              textWeight: FontWeight.bold,
             ),
             SizedBox(height: 8.h),
-            Text(
+            AppText(
               AppStrings.favoriteNoFavoritesSubtitle,
-              style: AppTextStyles.getStyle(
-                color: AppColors.textMuted,
-                fontSize: 13.sp,
-              ),
+              textColor: AppColors.textMuted,
+              textSize: 13.sp,
             ),
           ],
         ),
@@ -52,7 +47,12 @@ class FavoriteScreen extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h, bottom: 150.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 12.h,
+        bottom: 150.h,
+      ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.70, // Matches 9:16 layout ratio

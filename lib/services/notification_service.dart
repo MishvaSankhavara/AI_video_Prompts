@@ -16,7 +16,9 @@ class NotificationService {
 
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   bool _isInitialized = false;
 
   Future<void> initialize() async {
@@ -27,7 +29,8 @@ class NotificationService {
     try {
       tz.initializeTimeZones();
       // CommonUtils.printLog('>>> NOTIFICATION INIT: TIMEZONE DB LOADED');
-      final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+      final TimezoneInfo timeZoneInfo =
+          await FlutterTimezone.getLocalTimezone();
       // CommonUtils.printLog('>>> NOTIFICATION INIT: LOCAL TIMEZONE FETCHED -> ${timeZoneInfo.identifier}');
       tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
       // CommonUtils.printLog('>>> NOTIFICATION INIT: LOCATION SET');
@@ -41,15 +44,16 @@ class NotificationService {
 
       final DarwinInitializationSettings initializationSettingsDarwin =
           DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      );
+            requestAlertPermission: true,
+            requestBadgePermission: true,
+            requestSoundPermission: true,
+          );
 
-      final InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS: initializationSettingsDarwin,
-      );
+      final InitializationSettings initializationSettings =
+          InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin,
+          );
 
       // CommonUtils.printLog('>>> NOTIFICATION INIT: CALLING PLUGIN INIT');
       await flutterLocalNotificationsPlugin.initialize(
@@ -74,7 +78,9 @@ class NotificationService {
     try {
       // 1. Fetch data from Firebase Realtime Database
       // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FETCHING FIREBASE');
-      final DataSnapshot snapshot = await FirebaseDatabase.instance.ref('notifications').get();
+      final DataSnapshot snapshot = await FirebaseDatabase.instance
+          .ref('notifications')
+          .get();
       if (!snapshot.exists || snapshot.value == null) {
         // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: NO DATA IN FIREBASE!');
       } else {
@@ -94,7 +100,8 @@ class NotificationService {
           }
         }
       } else if (snapshot.value is Map) {
-        final Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
+        final Map<dynamic, dynamic> map =
+            snapshot.value as Map<dynamic, dynamic>;
         map.forEach((key, value) {
           if (value is Map) {
             fetchedNotifications.add({
@@ -109,7 +116,7 @@ class NotificationService {
         // CommonUtils.printLog('>>> NOTIFICATION SCHEDULING: FIREBASE WAS EMPTY. USING FALLBACK.');
         fetchedNotifications.add({
           'title': 'AI Video Prompts! 🚀',
-          'message': 'Create amazing AI magic in just few seconds!'
+          'message': 'Create amazing AI magic in just few seconds!',
         });
       }
 
@@ -137,13 +144,21 @@ class NotificationService {
 
       for (int i = 0; i < 7; i++) {
         // --- MORNING NOTIFICATION (9:00 AM) ---
-        var morningTime = tz.TZDateTime(tz.local, now.year, now.month, now.day, 9, 0);
+        var morningTime = tz.TZDateTime(
+          tz.local,
+          now.year,
+          now.month,
+          now.day,
+          9,
+          0,
+        );
         morningTime = morningTime.add(Duration(days: i));
         // If the morning time has already passed today, skip to avoid immediate firing
         if (i == 0 && morningTime.isBefore(now)) {
           // Do not schedule for today's past morning
         } else {
-          final morningItem = fetchedNotifications[random.nextInt(fetchedNotifications.length)];
+          final morningItem =
+              fetchedNotifications[random.nextInt(fetchedNotifications.length)];
           await _scheduleNotification(
             id: (i * 2), // Unique ID
             title: morningItem['title']!,
@@ -153,13 +168,21 @@ class NotificationService {
         }
 
         // --- EVENING NOTIFICATION (6:00 PM / 18:00) ---
-        var eveningTime = tz.TZDateTime(tz.local, now.year, now.month, now.day, 18, 0);
+        var eveningTime = tz.TZDateTime(
+          tz.local,
+          now.year,
+          now.month,
+          now.day,
+          18,
+          0,
+        );
         eveningTime = eveningTime.add(Duration(days: i));
         // If the evening time has already passed today, skip
         if (i == 0 && eveningTime.isBefore(now)) {
           // Do not schedule for today's past evening
         } else {
-          final eveningItem = fetchedNotifications[random.nextInt(fetchedNotifications.length)];
+          final eveningItem =
+              fetchedNotifications[random.nextInt(fetchedNotifications.length)];
           await _scheduleNotification(
             id: (i * 2) + 1, // Unique ID
             title: eveningItem['title']!,
@@ -183,20 +206,20 @@ class NotificationService {
   }) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'daily_notifications_v2',
-      'Daily Notifications',
-      channelDescription: 'Daily reminders for new content',
-      importance: Importance.max,
-      priority: Priority.high,
-      largeIcon: DrawableResourceAndroidBitmap('logo'),
-    );
+          'daily_notifications_v2',
+          'Daily Notifications',
+          channelDescription: 'Daily reminders for new content',
+          importance: Importance.max,
+          priority: Priority.high,
+          largeIcon: DrawableResourceAndroidBitmap('logo'),
+        );
 
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
@@ -221,23 +244,23 @@ class NotificationService {
         // CommonUtils.printLog('>>> NOTIFICATION PERMS: REQUESTING IOS');
         await flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-                IOSFlutterLocalNotificationsPlugin>()
-            ?.requestPermissions(
-              alert: true,
-              badge: true,
-              sound: true,
-            );
+              IOSFlutterLocalNotificationsPlugin
+            >()
+            ?.requestPermissions(alert: true, badge: true, sound: true);
         // CommonUtils.printLog('>>> NOTIFICATION PERMS: IOS DONE');
       } else if (Platform.isAndroid) {
         // CommonUtils.printLog('>>> NOTIFICATION PERMS: REQUESTING ANDROID');
         final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-            flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>();
+            flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin
+                >();
 
         if (androidImplementation == null) {
           // CommonUtils.printLog('>>> NOTIFICATION PERMS: ERROR - androidImplementation is null!');
         } else {
-          final bool? granted = await androidImplementation.requestNotificationsPermission();
+          final bool? granted = await androidImplementation
+              .requestNotificationsPermission();
           // CommonUtils.printLog('>>> NOTIFICATION PERMS: ANDROID GRANTED? $granted');
         }
       }

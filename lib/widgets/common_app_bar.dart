@@ -25,13 +25,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(
+      title: AppText(
         title,
-        style: AppTextStyles.getStyle(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.bold,
-          fontSize: 18.sp,
-        ),
+        textColor: AppColors.textPrimary,
+        textWeight: FontWeight.bold,
+        textSize: 18.sp,
       ),
       leading: showBackButton
           ? IconButton(

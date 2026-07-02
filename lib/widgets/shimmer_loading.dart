@@ -15,18 +15,14 @@ class ShimmerLoading extends StatelessWidget {
         Shimmer.fromColors(
           baseColor: AppColors.shimmerBase,
           highlightColor: AppColors.shimmerHighlight,
-          child: Container(
-            color: AppColors.white,
-          ),
+          child: Container(color: AppColors.white),
         ),
         Center(
-          child: Text(
+          child: AppText(
             "AI Video Prompts",
-            style: AppTextStyles.getStyle(
-              color: AppColors.grey.withValues(alpha: 0.4),
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-            ),
+            textColor: AppColors.grey.withValues(alpha: 0.4),
+            textSize: 14.sp,
+            textWeight: FontWeight.w600,
           ),
         ),
       ],

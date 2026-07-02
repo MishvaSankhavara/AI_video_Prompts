@@ -78,7 +78,7 @@ class _ProScreenState extends State<ProScreen> {
                         padding: EdgeInsets.only(
                           left: 24.w,
                           top: 36.h,
-                          bottom: 24.h,
+                          bottom: 10.h,
                           right:
                               size.width *
                               0.45, // Prevent text from overlapping the image too much
@@ -106,13 +106,11 @@ class _ProScreenState extends State<ProScreen> {
                                     color: AppColors.white,
                                   ),
                                   SizedBox(width: 8.w),
-                                  Text(
+                                  AppText(
                                     AppStrings.proUnlockPremium,
-                                    style: AppTextStyles.getStyle(
-                                      color: AppColors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.sp,
-                                    ),
+                                    textColor: AppColors.white,
+                                    textWeight: FontWeight.bold,
+                                    textSize: 10.sp,
                                   ),
                                 ],
                               ),
@@ -120,27 +118,23 @@ class _ProScreenState extends State<ProScreen> {
                             SizedBox(height: 16.h),
 
                             // Title
-                            Text(
+                            AppText(
                               AppStrings.proTitle,
-                              style: AppTextStyles.getStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w900,
-                                height: 1.1.h,
-                                letterSpacing: -0.5,
-                              ),
+                              textColor: AppColors.textPrimary,
+                              textSize: 20.sp,
+                              textWeight: FontWeight.w900,
+                              fontHeight: 1.1.h,
+                              lettersSpace: -0.5,
                             ),
                             SizedBox(
                               height: 10.h,
                             ), // Give extra space at the bottom of the stack
                             // Subtitle placed below the image so it spans full width and doesn't overlap the 3D podium
-                            Text(
+                            AppText(
                               AppStrings.proSubtitle,
-                              style: AppTextStyles.getStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 12.sp,
-                                height: 1.5.h,
-                              ),
+                              textColor: AppColors.textMuted,
+                              textSize: 12.sp,
+                              fontHeight: 1.5.h,
                             ),
                           ],
                         ),
@@ -150,51 +144,23 @@ class _ProScreenState extends State<ProScreen> {
 
                   // SizedBox(height: 0.h),
 
-                  // Features Row
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 24.w),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 24.h,
-                      horizontal: 8.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(24.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.05),
-                          blurRadius: 20.r,
-                          offset: Offset(0.w, 10.h),
-                        ),
-                      ],
-                    ),
-                    child: Row(
+                  // Prompt Example View
+                  const _PromptExampleView(),
+                  SizedBox(height: 14.h),
+
+                  // Features List
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _FeatureItem(
-                          iconPath: 'assets/images/ic_sparkle.png',
-                          title: AppStrings.proFeature1,
-                        ),
-                        _buildDivider(),
-                        _FeatureItem(
-                          iconPath: 'assets/images/ic_remove_ad.png',
-                          title: AppStrings.proFeature2,
-                        ),
-                        _buildDivider(),
-                        _FeatureItem(
-                          iconPath: 'assets/images/ic_crown.png',
-                          title: AppStrings.proFeature3,
-                        ),
-                        _buildDivider(),
-                        _FeatureItem(
-                          iconPath: 'assets/images/ic_infinite.png',
-                          title: AppStrings.proFeature4,
-                        ),
+                        _FeatureItem(title: AppStrings.proFeature1),
+                        _FeatureItem(title: AppStrings.proFeature2),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 8.h),
 
                   // Subscription Plans
                   Padding(
@@ -220,7 +186,8 @@ class _ProScreenState extends State<ProScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 8.w),
+
+                          SizedBox(width: 20.w,),
 
                           // Yearly Plan
                           Expanded(
@@ -250,17 +217,15 @@ class _ProScreenState extends State<ProScreen> {
                   // Billing Text
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
+                    child: AppText(
                       isYearlySelected
                           ? AppStrings.proBillingYearly
                           : AppStrings.proBillingWeekly,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w600,
-                        height: 1.5.h,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textPrimary,
+                      textSize: 13.sp,
+                      textWeight: FontWeight.w600,
+                      fontHeight: 1.5.h,
                     ),
                   ),
 
@@ -298,13 +263,11 @@ class _ProScreenState extends State<ProScreen> {
                             borderRadius: BorderRadius.circular(28.r),
                           ),
                         ),
-                        child: Text(
+                        child: AppText(
                           AppStrings.proContinueBtn,
-                          style: AppTextStyles.getStyle(
-                            color: AppColors.white,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          textColor: AppColors.white,
+                          textSize: 18.sp,
+                          textWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -313,34 +276,39 @@ class _ProScreenState extends State<ProScreen> {
                   SizedBox(height: 16.h),
 
                   // Legal Links
-                  /*Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     children: [
-                      Text(
-                        AppStrings.proTermsOfService,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12.sp,
-                        ).copyWith(decoration: TextDecoration.underline),
-                      ),
-                      SizedBox(width: 16.w),
-                      Text(
-                        AppStrings.proRestore,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12.sp,
-                        ).copyWith(decoration: TextDecoration.underline),
-                      ),
-                      SizedBox(width: 16.w),
-                      Text(
-                        AppStrings.proPrivacyPolicy,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12.sp,
-                        ).copyWith(decoration: TextDecoration.underline),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {}, // TODO: Restore Purchases
+                            child: AppText(
+                              AppStrings.proRestore,
+                              textColor: AppColors.buttonGradientEnd,
+                              textSize: 12.sp,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            child: AppText(
+                              '|',
+                              textColor: AppColors.textMuted.withValues(alpha: 0.5),
+                              textSize: 12.sp,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {}, // TODO: Cancel Subscription
+                            child: AppText(
+                              AppStrings.proCancelSubscription,
+                              textColor: AppColors.buttonGradientEnd,
+                              textSize: 12.sp,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),*/
+                  ),
                   SizedBox(height: 40.h),
                 ],
               ),
@@ -393,15 +361,6 @@ class _ProScreenState extends State<ProScreen> {
       ),
     );
   }
-
-  Widget _buildDivider() {
-    return Container(
-      height: 40.h,
-      width: 1.w,
-      color: AppColors.border.withValues(alpha: 0.5),
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-    );
-  }
 }
 
 class _PlanCard extends StatelessWidget {
@@ -429,7 +388,7 @@ class _PlanCard extends StatelessWidget {
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+          padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.05)
@@ -455,31 +414,21 @@ class _PlanCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              AppText(
                 title,
-                style: AppTextStyles.getStyle(
-                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                ),
+                textColor: isSelected ? AppColors.primary : AppColors.textPrimary,
+                textSize: 16.sp,
+                textWeight: FontWeight.w700,
               ),
               SizedBox(height: 8.h),
-              Text(
+              AppText(
                 price,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w900,
-                ),
+                textColor: AppColors.textPrimary,
+                textSize: 24.sp,
+                textWeight: FontWeight.w900,
               ),
               SizedBox(height: 4.h),
-              Text(
-                subtitle,
-                style: AppTextStyles.getStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 12.sp,
-                ),
-              ),
+              AppText(subtitle, textColor: AppColors.textMuted, textSize: 12.sp),
             ],
           ),
         ),
@@ -492,10 +441,7 @@ class _PlanCard extends StatelessWidget {
             right: 0.w,
             child: Center(
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12.w,
-                  vertical: 4.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [AppColors.primary, AppColors.purpleAccent],
@@ -509,13 +455,11 @@ class _PlanCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Text(
+                child: AppText(
                   badgeText!,
-                  style: AppTextStyles.getStyle(
-                    color: AppColors.white,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  textColor: AppColors.white,
+                  textSize: 10.sp,
+                  textWeight: FontWeight.w800,
                 ),
               ),
             ),
@@ -526,45 +470,108 @@ class _PlanCard extends StatelessWidget {
 }
 
 class _FeatureItem extends StatelessWidget {
-  final String iconPath;
   final String title;
 
-  const _FeatureItem({required this.iconPath, required this.title});
+  const _FeatureItem({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: 44.w,
-            height: 44.h,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
+            width: 24.w,
+            height: 24.w,
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Image.asset(
-                iconPath,
-                width: 24.w,
-                height: 24.h,
-                color: AppColors.primary,
-              ),
-            ),
+            child: Icon(Icons.check, color: AppColors.white, size: 16.w),
           ),
-          SizedBox(height: 12.h),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: AppTextStyles.getStyle(
-              color: AppColors.textPrimary,
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
-              height: 1.3.h,
+          SizedBox(width: 16.w),
+          Expanded(
+            child: AppText(
+              title,
+              textColor: AppColors.textPrimary,
+              textSize: 13.sp,
+              textWeight: FontWeight.w600,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PromptExampleView extends StatelessWidget {
+  const _PromptExampleView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(30.r),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.05),
+              blurRadius: 10.r,
+              offset: Offset(0, 4.h),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              'assets/images/ic_sparkle.png',
+              width: 20.w,
+              height: 20.h,
+              color: AppColors.amber500, // Or primary, if amber isn't ideal
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: AppText(
+                'High-Detail realistic portr...',
+                textColor: AppColors.textPrimary,
+                textSize: 13.sp,
+                textWeight: FontWeight.w500,
+                maxLinesCount: 1,
+                fontOverflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.copy_rounded,
+                    size: 14.w,
+                    color: AppColors.primary,
+                  ),
+                  SizedBox(width: 4.w),
+                  AppText(
+                    'Copy',
+                    textColor: AppColors.primary,
+                    textSize: 12.sp,
+                    textWeight: FontWeight.w700,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

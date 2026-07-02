@@ -269,17 +269,13 @@ class _CommonVideoPlayerState extends State<CommonVideoPlayer> {
           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
           decoration: BoxDecoration(
             color: AppColors.black.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(12.r),
-            ),
+            borderRadius: BorderRadius.only(bottomRight: Radius.circular(12.r)),
           ),
-          child: Text(
+          child: AppText(
             AppStrings.loading,
-            style: AppTextStyles.getStyle(
-              fontSize: widget.loadingTextSize ?? 11,
-              fontWeight: FontWeight.w500,
-              color: AppColors.white,
-            ),
+            textSize: widget.loadingTextSize ?? 11,
+            textWeight: FontWeight.w500,
+            textColor: AppColors.white,
           ),
         ),
       ),

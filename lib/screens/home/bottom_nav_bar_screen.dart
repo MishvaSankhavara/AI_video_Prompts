@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../services/app_update_service.dart';
 import '../../services/navigation_service.dart';
@@ -11,8 +12,10 @@ import '../../utils/strings.dart';
 import '../../viewmodel/fetch_video_category.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
+import '../../services/fcm_service.dart';
 import '../pro/pro_screen.dart';
 import '../settings/settings_screen.dart';
+import '../category/category_details_screen.dart';
 import 'favorite_screen.dart';
 import 'home_screen.dart';
 
@@ -33,6 +36,8 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   @override
   void initState() {
     super.initState();
+    FcmService.instance.setupNotificationListener(context);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       Provider.of<FetchVideoCategoryViewModel>(
@@ -120,7 +125,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
               child: Padding(
                 padding: EdgeInsets.only(right: 16.w),
                 child: Image.asset(
-                  'assets/images/img_crown.png',
+                  'assets/images/img_pro_btn.png',
                   width: 32.w,
                   height: 32.h,
                   fit: BoxFit.contain,
@@ -235,7 +240,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
         child: AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 300),
           curve: Curves.fastOutSlowIn,
-          style: AppTextStyles.getStyle(
+          style: GoogleFonts.poppins(
             color: color,
             fontSize: isActive ? 12 : 11,
             fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
@@ -265,7 +270,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                 },
               ),
               SizedBox(height: 4.h),
-              Text(text),
+              AppText(text),
             ],
           ),
         ),

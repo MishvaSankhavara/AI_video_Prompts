@@ -57,10 +57,11 @@ class AppStrings {
   static const String tabHome = 'Home';
   static const String tabFavorite = 'Favorite';
   static const String tabSettings = 'Settings';
-  
+
   static const String homeNoCategories = 'No categories available.';
   static const String favoriteNoFavoritesTitle = 'No Favorites Yet';
-  static const String favoriteNoFavoritesSubtitle = 'Saved templates will appear here.';
+  static const String favoriteNoFavoritesSubtitle =
+      'Saved templates will appear here.';
 
   // Prompt Guidance strings
   static const String guidanceHeaderTitle = 'How to Use Prompt';
@@ -90,7 +91,8 @@ class AppStrings {
   static const String detailsViewMore = 'View More';
   static const String detailsNoRecommendations =
       'No recommendations available.';
-  static const String categoryNoTemplates = 'No templates found in this category.';
+  static const String categoryNoTemplates =
+      'No templates found in this category.';
   static const String categoryFavorites = 'Favorites';
   static const String categoryDefaultFallback = 'Category';
   static const String truncationSuffix = '....';
@@ -187,7 +189,8 @@ class AppStrings {
   static const String nativeAdFactoryMediumAndroid = 'medium_ad_factory';
   static const String nativeAdFactoryLargeAndroid = 'large_ad_factory';
   static const String nativeAdFactoryGridAndroid = 'grid_ad_factory';
-  static const String nativeAdFactoryFullscreenAndroid = 'fullscreen_ad_factory';
+  static const String nativeAdFactoryFullscreenAndroid =
+      'fullscreen_ad_factory';
 
   // iOS factory ids
   static const String nativeAdFactoryMediumIOS = 'medium_native';
@@ -199,12 +202,12 @@ class AppStrings {
   static const String proUnlockPremium = 'Unlock Premium';
   static const String proTitle = 'Unlock Unlimited AI Video Prompts';
   static const String proSubtitle =
-      'Create incredible AI videos with unlimited premium prompts and no ads.';
-  static const String proFeature1 = 'Unlock All\nPrompts';
-  static const String proFeature2 = 'Remove\nAds';
-  static const String proFeature3 = 'Exclusive\nPrompts';
-  static const String proFeature4 = 'Unlimited\nAccess';
-  
+      'Unlock unlimited premium AI video prompts and copy-ready ideas with no ads.';
+  static const String proFeature1 =
+      'No More Interstitial or Reward Ads';
+  static const String proFeature2 =
+      'Unlimited Video Prompts – Get Full Access to Every Prompt';
+
   static const String proPlanWeekly = 'Weekly';
   static const String proPriceWeekly = '\$4.99';
   static const String proSubtitleWeekly = 'per week';
@@ -217,9 +220,10 @@ class AppStrings {
   static const String proBillingWeekly =
       'You will be charged \$4.99/Week, billed\nautomatically until cancelled.';
   static const String proContinueBtn = 'Continue';
-  static const String proTermsOfService = 'Terms of Service';
-  static const String proRestore = 'Restore';
-  static const String proPrivacyPolicy = 'Privacy Policy';
+  static const String proTermsOfService = 'Terms & Conditions';
+  static const String proRestore = 'Restore Purchase';
+  static const String proPrivacyPolicy = 'Privacy policy';
+  static const String proCancelSubscription = 'Cancel Anytime';
 
   // Start Screen strings
   static const String startScreenSubtitle =

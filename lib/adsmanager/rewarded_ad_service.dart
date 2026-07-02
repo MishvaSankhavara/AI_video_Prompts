@@ -17,7 +17,6 @@ class RewardedAdService {
     VoidCallback? onAdFailedToShow,
     required VoidCallback onUserEarnedReward,
   }) {
-
     // Ads disabled (e.g. via remote config) -> skip the ad, continue app flow.
     if (!RemoteConfigService.instance.showAdsEnabled) {
       onAdFailedToShow?.call();
@@ -31,7 +30,13 @@ class RewardedAdService {
     }
 
     LoadingDialog.show(text: AppStrings.loadingAd);
-    _loadAndShow(customAdIds, 0, onAdClosed, onAdFailedToShow, onUserEarnedReward);
+    _loadAndShow(
+      customAdIds,
+      0,
+      onAdClosed,
+      onAdFailedToShow,
+      onUserEarnedReward,
+    );
   }
 
   static void _loadAndShow(
@@ -50,27 +55,35 @@ class RewardedAdService {
     }
 
     final adUnitId = adIds[index];
-    CommonUtils.printLog('RewardedAdService: Attempting to load Rewarded Ad ID: $adUnitId');
+    CommonUtils.printLog(
+      'RewardedAdService: Attempting to load Rewarded Ad ID: $adUnitId',
+    );
 
     RewardedAd.load(
       adUnitId: adUnitId,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
-          CommonUtils.printLog('RewardedAdService: Rewarded Ad loaded successfully ID: $adUnitId');
+          CommonUtils.printLog(
+            'RewardedAdService: Rewarded Ad loaded successfully ID: $adUnitId',
+          );
 
           bool rewardEarned = false;
 
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
-              CommonUtils.printLog('RewardedAdService: Rewarded Ad dismissed. Reward earned: $rewardEarned');
+              CommonUtils.printLog(
+                'RewardedAdService: Rewarded Ad dismissed. Reward earned: $rewardEarned',
+              );
               if (rewardEarned) onUserEarnedReward();
               onAdClosed?.call();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
-              CommonUtils.printLog('RewardedAdService: Rewarded Ad failed to show: $error');
+              CommonUtils.printLog(
+                'RewardedAdService: Rewarded Ad failed to show: $error',
+              );
               LoadingDialog.hide();
               onAdFailedToShow?.call();
             },
@@ -88,11 +101,18 @@ class RewardedAdService {
           );
         },
         onAdFailedToLoad: (error) {
-          CommonUtils.printLog('RewardedAdService: Rewarded Ad failed to load ID: $adUnitId ($error). Trying next...');
-          _loadAndShow(adIds, index + 1, onAdClosed, onAdFailedToShow, onUserEarnedReward);
+          CommonUtils.printLog(
+            'RewardedAdService: Rewarded Ad failed to load ID: $adUnitId ($error). Trying next...',
+          );
+          _loadAndShow(
+            adIds,
+            index + 1,
+            onAdClosed,
+            onAdFailedToShow,
+            onUserEarnedReward,
+          );
         },
       ),
     );
   }
 }
-

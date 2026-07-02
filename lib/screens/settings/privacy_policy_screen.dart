@@ -113,23 +113,19 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       ),
                     ),
                     SizedBox(height: 24.h),
-                    Text(
+                    AppText(
                       AppStrings.settingsPrivacyPolicy,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      textColor: AppColors.textPrimary,
+                      textSize: 20.sp,
+                      textWeight: FontWeight.bold,
                     ),
                     SizedBox(height: 12.h),
-                    Text(
+                    AppText(
                       AppStrings.privacyPolicyComingSoon,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 14.sp,
-                        height: 1.5.h,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textMuted,
+                      textSize: 14.sp,
+                      fontHeight: 1.5.h,
                     ),
                   ],
                 ),
@@ -161,24 +157,20 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       color: AppColors.textMuted,
                     ),
                     SizedBox(height: 24.h),
-                    Text(
+                    AppText(
                       AppStrings.privacyPolicyViewOnline,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textPrimary,
+                      textSize: 20.sp,
+                      textWeight: FontWeight.bold,
                     ),
                     SizedBox(height: 12.h),
-                    Text(
+                    AppText(
                       AppStrings.privacyPolicyNoWebView,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.getStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 14.sp,
-                        height: 1.5.h,
-                      ),
+                      textAlignment: TextAlign.center,
+                      textColor: AppColors.textMuted,
+                      textSize: 14.sp,
+                      fontHeight: 1.5.h,
                     ),
                     SizedBox(height: 32.h),
                     ElevatedButton.icon(
@@ -187,13 +179,11 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         FontAwesomeIcons.arrowUpRightFromSquare,
                         color: AppColors.white,
                       ),
-                      label: Text(
+                      label: AppText(
                         AppStrings.privacyPolicyOpenWeb,
-                        style: AppTextStyles.getStyle(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.sp,
-                        ),
+                        textColor: AppColors.white,
+                        textWeight: FontWeight.bold,
+                        textSize: 15.sp,
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,

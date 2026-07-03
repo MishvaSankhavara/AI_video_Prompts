@@ -1,10 +1,13 @@
 import 'dart:ui';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../widgets/text_app.dart';
 import '../../utils/strings.dart';
 import '../../services/navigation_service.dart';
+import '../settings/privacy_policy_screen.dart';
+import '../settings/terms_of_use_screen.dart';
 
 class ProScreen extends StatefulWidget {
   const ProScreen({super.key});
@@ -42,7 +45,7 @@ class _ProScreenState extends State<ProScreen> {
           // Fixed Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/img_pro_screen_bg.png',
+              ImageUtils.imgProScreenBg,
               fit: BoxFit.cover,
             ),
           ),
@@ -67,7 +70,7 @@ class _ProScreenState extends State<ProScreen> {
                             -40, // Allows the image to overflow downwards nicely
                         width: size.width * 0.45,
                         child: Image.asset(
-                          'assets/images/img_pro_screen_design.png',
+                          ImageUtils.imgProScreenDesign,
                           fit: BoxFit.contain,
                           alignment: Alignment.centerRight,
                         ),
@@ -100,7 +103,7 @@ class _ProScreenState extends State<ProScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Image.asset(
-                                    'assets/images/ic_crown.png',
+                                    ImageUtils.icCrown,
                                     width: 16.w,
                                     height: 16.h,
                                     color: AppColors.white,
@@ -301,6 +304,40 @@ class _ProScreenState extends State<ProScreen> {
                             onTap: () {}, // TODO: Cancel Subscription
                             child: AppText(
                               AppStrings.proCancelSubscription,
+                              textColor: AppColors.buttonGradientEnd,
+                              textSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              NavigationService.push(context, const PrivacyPolicyScreen());
+                            },
+                            child: AppText(
+                              AppStrings.proPrivacyPolicy,
+                              textColor: AppColors.buttonGradientEnd,
+                              textSize: 12.sp,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            child: AppText(
+                              '|',
+                              textColor: AppColors.textMuted.withValues(alpha: 0.5),
+                              textSize: 12.sp,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              NavigationService.push(context, const TermsOfUseScreen());
+                            },
+                            child: AppText(
+                              AppStrings.proTermsConditions,
                               textColor: AppColors.buttonGradientEnd,
                               textSize: 12.sp,
                             ),
@@ -529,7 +566,7 @@ class _PromptExampleView extends StatelessWidget {
         child: Row(
           children: [
             Image.asset(
-              'assets/images/ic_sparkle.png',
+              ImageUtils.icSparkle,
               width: 20.w,
               height: 20.h,
               color: AppColors.amber500, // Or primary, if amber isn't ideal

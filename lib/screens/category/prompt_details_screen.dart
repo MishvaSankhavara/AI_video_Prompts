@@ -1,4 +1,5 @@
 import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -18,6 +19,7 @@ import '../../services/favorites_service.dart';
 import '../../viewmodel/fetch_video_category.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/common_video_player.dart';
@@ -25,7 +27,7 @@ import '../../widgets/shimmer_loading.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
-import '../../services/remote_config_service.dart';
+import '../../services/firebase/remote_config_service.dart';
 import '../pro/pro_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -399,8 +401,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
               duration: const Duration(milliseconds: 200),
               child: Image.asset(
                 isFav
-                    ? 'assets/images/ic_like.png'
-                    : 'assets/images/ic_like_border.png',
+                    ? ImageUtils.icLike
+                    : ImageUtils.icLikeBorder,
                 color: AppColors.primary,
                 width: 24.w,
                 height: 24.h,
@@ -622,18 +624,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                               Clipboard.setData(
                                 ClipboardData(text: _currentItem.aiPrompt),
                               );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: AppText(
-                                    AppStrings.detailsCopiedMessage,
-                                  ),
-                                  backgroundColor: AppColors.primary,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                ),
-                              );
+                              CommonUtils.showToast(AppStrings.detailsCopiedMessage);
                             },
                             icon: FontAwesomeIcons.copy,
                             label: AppStrings.detailsCopyPrompt,

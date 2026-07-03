@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 // import '../../services/analytics_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
+import '../../services/firebase/feedback_firebase_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -35,12 +37,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Future<void> _submitFeedback() async {
     final text = _controller.text.trim();
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: AppText(AppStrings.feedbackEmpty),
-          backgroundColor: AppColors.primary,
-        ),
-      );
+      CommonUtils.showToast(AppStrings.feedbackEmpty);
       return;
     }
 
@@ -54,21 +51,18 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       },
     ); */
 
-    // Simulate submission delay
-    await Future.delayed(const Duration(milliseconds: 800));
+    // Save feedback to Firebase Realtime Database
+    bool success = await FeedbackFirebaseService.submitFeedback(text);
 
     if (!mounted) return;
     setState(() => _isSubmitting = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: AppText(AppStrings.feedbackThankYou),
-        backgroundColor: AppColors.primary,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-
-    NavigationService.pop(context);
+    if (success) {
+      CommonUtils.showToast(AppStrings.feedbackThankYou);
+      NavigationService.pop(context);
+    } else {
+      CommonUtils.showToast("Failed to submit feedback. Please try again.");
+    }
   }
 
   @override

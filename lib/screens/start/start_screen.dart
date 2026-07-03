@@ -1,4 +1,5 @@
 import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 
@@ -45,7 +46,7 @@ class _StartScreenState extends State<StartScreen> {
                   fit: StackFit.expand,
                   children: [
                     Image.asset(
-                      'assets/images/start_screen_img.png', // Using an existing nice illustration
+                      ImageUtils.startScreenImg, // Using an existing nice illustration
                       fit: BoxFit.cover,
                     ),
                     Positioned(

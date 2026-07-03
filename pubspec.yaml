@@ -60,6 +60,10 @@ dependencies:
   shimmer: ^3.0.0
   flutter_screenutil: ^5.9.3
   firebase_messaging: ^16.4.1
+  fluttertoast: ^9.1.0
+  device_info_plus: ^13.2.0
+  android_id: ^0.5.1
+  palette_generator: ^0.3.3+7
 
 dev_dependencies:
   flutter_test:
@@ -72,7 +76,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/json/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

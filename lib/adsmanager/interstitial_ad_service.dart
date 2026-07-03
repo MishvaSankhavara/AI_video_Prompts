@@ -3,7 +3,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../utils/common_utils.dart';
 import '../utils/strings.dart';
 import '../widgets/dialog/loading_dialog.dart';
-import '../services/remote_config_service.dart';
+import '../services/firebase/remote_config_service.dart';
 import 'ad_ids.dart';
 
 class InterstitialAdService {

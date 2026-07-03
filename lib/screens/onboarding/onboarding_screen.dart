@@ -1,4 +1,5 @@
 import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 
@@ -38,17 +39,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingPageData(
       title: AppStrings.onboardingTitle1,
       subtitle: AppStrings.onboardingSubtitle1,
-      imagePath: 'assets/images/onboarding_1.png',
+      imagePath: ImageUtils.onboarding1,
     ),
     OnboardingPageData(
       title: AppStrings.onboardingTitle2,
       subtitle: AppStrings.onboardingSubtitle2,
-      imagePath: 'assets/images/onboarding_2.png',
+      imagePath: ImageUtils.onboarding2,
     ),
     OnboardingPageData(
       title: AppStrings.onboardingTitle3,
       subtitle: AppStrings.onboardingSubtitle3,
-      imagePath: 'assets/images/onboarding_3.png',
+      imagePath: ImageUtils.onboarding3,
     ),
   ];
 

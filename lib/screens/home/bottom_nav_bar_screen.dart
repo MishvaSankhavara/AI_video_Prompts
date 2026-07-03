@@ -1,4 +1,5 @@
 import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,7 +13,7 @@ import '../../utils/strings.dart';
 import '../../viewmodel/fetch_video_category.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
-import '../../services/fcm_service.dart';
+import '../../services/firebase/firebase_notification_service.dart';
 import '../pro/pro_screen.dart';
 import '../settings/settings_screen.dart';
 import '../category/category_details_screen.dart';
@@ -29,14 +30,31 @@ class BottomNavBarScreen extends StatefulWidget {
   State<BottomNavBarScreen> createState() => _BottomNavBarScreenState();
 }
 
-class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
+class _BottomNavBarScreenState extends State<BottomNavBarScreen> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   int _previousIndex = 0;
+
+  late AnimationController _proBtnAnimController;
+  late Animation<double> _proBtnScaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    FcmService.instance.setupNotificationListener(context);
+    
+    // Pro button pulse animation
+    _proBtnAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _proBtnScaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(
+        parent: _proBtnAnimController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _proBtnAnimController.repeat(reverse: true);
+
+    FirebaseNotificationService.instance.setupNotificationListener(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -46,6 +64,12 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
       ).loadCategories();
       AppUpdateService.checkForUpdate(context);
     });
+  }
+
+  @override
+  void dispose() {
+    _proBtnAnimController.dispose();
+    super.dispose();
   }
 
   // ── Tab selection ────────────────────────────────────────────────────────
@@ -123,12 +147,15 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                 NavigationService.push(context, const ProScreen());
               },
               child: Padding(
-                padding: EdgeInsets.only(right: 16.w),
-                child: Image.asset(
-                  'assets/images/img_pro_btn.png',
-                  width: 32.w,
-                  height: 32.h,
-                  fit: BoxFit.contain,
+                padding: EdgeInsets.only(right: 24.w),
+                child: ScaleTransition(
+                  scale: _proBtnScaleAnimation,
+                  child: Image.asset(
+                    ImageUtils.imgProBtn,
+                    width: 32.w,
+                    height: 32.h,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -193,21 +220,21 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                       _buildTab(
                         index: 0,
                         activeIndex: activeIndex,
-                        imagePath: 'assets/images/ic_home.png',
+                        imagePath: ImageUtils.icHome,
                         text: AppStrings.tabHome,
                         width: tabWidth,
                       ),
                       _buildTab(
                         index: 1,
                         activeIndex: activeIndex,
-                        imagePath: 'assets/images/ic_like.png',
+                        imagePath: ImageUtils.icLike,
                         text: AppStrings.tabFavorite,
                         width: tabWidth,
                       ),
                       _buildTab(
                         index: 2,
                         activeIndex: activeIndex,
-                        imagePath: 'assets/images/ic_settings.png',
+                        imagePath: ImageUtils.icSettings,
                         text: AppStrings.tabSettings,
                         width: tabWidth,
                       ),

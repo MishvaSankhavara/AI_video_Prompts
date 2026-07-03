@@ -1,4 +1,5 @@
 import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -197,7 +198,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                                         ],
                                       ),
                                       child: Image.asset(
-                                        'assets/images/logo.png',
+                                        ImageUtils.logo,
                                         width: 130.w,
                                         height: 130.h,
                                         fit: BoxFit.contain,

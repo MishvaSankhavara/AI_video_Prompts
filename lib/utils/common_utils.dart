@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonUtils {
   static void printLog(String? message) {
@@ -10,5 +11,15 @@ class CommonUtils {
         log('[Empty or Null Log]');
       }
     }
+  }
+
+  static void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 2,
+      fontSize: 16.0,
+    );
   }
 }

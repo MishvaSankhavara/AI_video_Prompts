@@ -1,4 +1,5 @@
 import 'package:aivideoprompt/widgets/text_app.dart';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
 
@@ -126,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen>
                     children: [
                       // Light-optimized Image Logo from assets
                       Image.asset(
-                        'assets/images/logo.png',
+                        ImageUtils.logo,
                         width: 180.w,
                         height: 180.h,
                         fit: BoxFit.contain,

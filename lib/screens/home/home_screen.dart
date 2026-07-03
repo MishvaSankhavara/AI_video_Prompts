@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
           left: 16.w,
           right: 16.w,
           top: 12.h,
-          bottom: 150.h,
+          bottom: 100.h,
         ),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
         left: 16.w,
         right: 16.w,
         top: 12.h,
-        bottom: 150.h,
+        bottom: 100.h,
       ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

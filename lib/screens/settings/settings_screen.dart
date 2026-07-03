@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,6 +15,7 @@ import '../../widgets/text_app.dart';
 import 'feedback_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_of_use_screen.dart';
+import '../../widgets/dialog/support_login_dialog.dart';
 import '../../services/navigation_service.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -56,15 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: AppText(message),
-        backgroundColor: AppColors.primary,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+
 
   void _showRatingDialog(BuildContext context) {
     /* AnalyticsService.instance.logEvent(name: 'rate_app_dialog_viewed'); */
@@ -93,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               } else {
                 if (context.mounted) {
-                  _showSnackbar(context, AppStrings.settingsPlayStoreError);
+                  CommonUtils.showToast(AppStrings.settingsPlayStoreError);
                 }
               }
             } catch (e) {
@@ -119,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         left: 20.w,
         right: 20.w,
         top: 20.h,
-        bottom: 120.h,
+        bottom: 90.h,
       ),
       children: [
         _buildHeaderCard(),
@@ -127,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_share.png',
+              imagePath: ImageUtils.icShare,
               title: AppStrings.settingsShareApp,
               onTap: () async {
                 /* AnalyticsService.instance.logEvent(name: 'share_app_tapped'); */
@@ -152,12 +146,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_rate.png',
+              imagePath: ImageUtils.icRate,
               title: AppStrings.settingsRateApp,
               onTap: () => _showRatingDialog(context),
             ),
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_feedback.png',
+              imagePath: ImageUtils.icFeedback,
               title: AppStrings.settingsFeedback,
               onTap: () {
                 NavigationService.push(context, const FeedbackScreen());
@@ -170,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _buildSettingsGroup(
           items: [
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_privacy_policy.png',
+              imagePath: ImageUtils.icPrivacyPolicy,
               title: AppStrings.settingsPrivacyPolicy,
               onTap: () {
                 NavigationService.push(context, const PrivacyPolicyScreen());
@@ -178,37 +172,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             if (Platform.isIOS)
               _buildSettingsTile(
-                imagePath: 'assets/images/ic_privacy_policy.png',
+                imagePath: ImageUtils.icPrivacyPolicy,
                 title: AppStrings.settingsTermsOfUse,
                 onTap: () {
                   NavigationService.push(context, const TermsOfUseScreen());
                 },
               ),
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_feedback.png',
+              imagePath: ImageUtils.icFeedback,
               title: AppStrings.settingsSupport,
-              onTap: () async {
-                final Uri emailLaunchUri = Uri(
-                  scheme: 'mailto',
-                  path: 'support@example.com', // Replace with real support email
-                  query: 'subject=App Support Request', 
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) => const SupportLoginDialog(),
                 );
-                try {
-                  if (await canLaunchUrl(emailLaunchUri)) {
-                    await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
-                  }
-                } catch (e) {
-                  // Fallback to feedback screen
-                  if (context.mounted) {
-                    NavigationService.push(context, const FeedbackScreen());
-                  }
-                }
               },
             ),
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_crown.png',
+              imagePath: ImageUtils.icCrown,
               title: AppStrings.settingsCancelSubscription,
-              // onTap: 
+              // onTap:
               // () async {
               //   try {
               //     final packageInfo = await PackageInfo.fromPlatform();
@@ -225,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // },
             ),
             _buildSettingsTile(
-              imagePath: 'assets/images/ic_app_version.png',
+              imagePath: ImageUtils.icAppVersion,
               title: AppStrings.settingsAppVersion,
               trailing: AppText(
                 _appVersion,
@@ -271,7 +255,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(40.r),
               child: Image.asset(
-                'assets/images/logo.png',
+                ImageUtils.logo,
                 width: 60.w,
                 height: 60.h,
                 fit: BoxFit.contain,

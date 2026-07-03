@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../utils/common_utils.dart';
 import 'package:flutter/services.dart';
 
 class AssetPreloader {
@@ -25,7 +26,7 @@ class AssetPreloader {
           .toList();
 
       if (imageAssets.isEmpty) {
-        debugPrint(
+        CommonUtils.printLog(
           'flutter: Preloaded 0 image assets (None found in manifest).',
         );
         return;
@@ -37,9 +38,9 @@ class AssetPreloader {
       );
       await Future.wait(futures);
 
-      debugPrint('flutter: Preloaded ${imageAssets.length} image assets.');
+      CommonUtils.printLog('flutter: Preloaded ${imageAssets.length} image assets.');
     } catch (e) {
-      debugPrint('flutter: Error preloading assets: $e');
+      CommonUtils.printLog('flutter: Error preloading assets: $e');
     }
   }
 }

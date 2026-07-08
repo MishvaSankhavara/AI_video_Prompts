@@ -19,6 +19,7 @@ import '../../widgets/common_app_bar.dart';
 import '../../widgets/prompt_grid_card.dart';
 import 'prompt_details_screen.dart';
 import '../../services/navigation_service.dart';
+import '../../services/firebase/remote_config_service.dart';
 
 class CategoryDetailsScreen extends StatefulWidget {
   final int categoryId;
@@ -87,13 +88,17 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
         categoryName: '',
         playVideo: false, // Category grid shows thumbnails only — no playback.
         onTap: () {
-          // Continue to prompt details whether the ad shows, closes, or fails.
-          InterstitialAdService.showAd(
-            context: context,
-            customAdIds: [AdIds.interstitialAd3, AdIds.interstitialAd4],
-            onAdClosed: openDetails,
-            onAdFailedToShow: openDetails,
-          );
+          if (RemoteConfigService.instance.showInterAdCategoryDetails) {
+            // Continue to prompt details whether the ad shows, closes, or fails.
+            InterstitialAdService.showAd(
+              context: context,
+              customAdIds: [AdIds.interstitialAd3, AdIds.interstitialAd4],
+              onAdClosed: openDetails,
+              onAdFailedToShow: openDetails,
+            );
+          } else {
+            openDetails();
+          }
         },
       ),
     );
@@ -164,6 +169,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       itemCount: _gridItemCount,
       itemBuilder: (context, index) {
         if (_isAdIndex(index)) {
+          if (!RemoteConfigService.instance.showNativeAdCategoryDetails) {
+            return const SizedBox.shrink();
+          }
           return Container(
             decoration: BoxDecoration(
               color: AppColors.cardBackground,

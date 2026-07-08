@@ -36,6 +36,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> with SingleTick
 
   late AnimationController _proBtnAnimController;
   late Animation<double> _proBtnScaleAnimation;
+  late Animation<double> _proBtnRotationAnimation;
 
   @override
   void initState() {
@@ -47,6 +48,12 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> with SingleTick
       duration: const Duration(milliseconds: 1200),
     );
     _proBtnScaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(
+        parent: _proBtnAnimController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _proBtnRotationAnimation = Tween<double>(begin: -0.02, end: 0.02).animate(
       CurvedAnimation(
         parent: _proBtnAnimController,
         curve: Curves.easeInOut,
@@ -148,13 +155,16 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> with SingleTick
               },
               child: Padding(
                 padding: EdgeInsets.only(right: 24.w),
-                child: ScaleTransition(
-                  scale: _proBtnScaleAnimation,
-                  child: Image.asset(
-                    ImageUtils.imgProBtn,
-                    width: 32.w,
-                    height: 32.h,
-                    fit: BoxFit.contain,
+                child: RotationTransition(
+                  turns: _proBtnRotationAnimation,
+                  child: ScaleTransition(
+                    scale: _proBtnScaleAnimation,
+                    child: Image.asset(
+                      ImageUtils.imgProBtn,
+                      width: 32.w,
+                      height: 32.h,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),

@@ -15,6 +15,7 @@ import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../home/bottom_nav_bar_screen.dart';
+import '../../services/firebase/remote_config_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -59,6 +60,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // Removed manual NativeAd load methods
+
+
 
   Future<void> _completeOnboarding() async {
     try {
@@ -109,6 +112,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 itemBuilder: (context, index) {
                   if (index == 2) {
+                    if (!RemoteConfigService.instance.showNativeAdOnboardingFullScreen) {
+                      return const SizedBox.shrink();
+                    }
                     return _fullscreenAd.buildNativeAdTile(
                       0, // Fullscreen ad index 0
                       () => setState(() {}),
@@ -192,7 +198,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Navigation Row (Dots on Left, Next/Start on Right) - Hidden on Ad Slide
             if (!isAdPage)
               Padding(
                 padding: EdgeInsets.only(
@@ -258,10 +263,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
 
-            // Large Native Ad at bottom (only on onboarding slides, not the ad slide itself).
-            // A separate service per page loads a fresh ad whenever the page changes.
-            if (!isAdPage)
-              _pageAds[_currentPage].buildNativeAdTile(
+            if (_currentPage == 0 && RemoteConfigService.instance.showNativeAdOnboarding1)
+              _pageAds[0].buildNativeAdTile(
                 0,
                 () => setState(() {}),
                 customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
@@ -271,7 +274,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 height: 0.34.sh,
                 width: double.infinity,
                 backgroundColor: AppColors.mainBackground,
-                screenName: 'AiOnboardingScreen_Large_$_currentPage',
+                screenName: 'AiOnboardingScreen_Large_0',
+                shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+              ),
+            if (_currentPage == 1 && RemoteConfigService.instance.showNativeAdOnboarding2)
+              _pageAds[1].buildNativeAdTile(
+                0,
+                () => setState(() {}),
+                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                factoryId: Platform.isAndroid
+                    ? AppStrings.nativeAdFactoryLargeAndroid
+                    : AppStrings.nativeAdFactoryLargeIOS,
+                height: 0.34.sh,
+                width: double.infinity,
+                backgroundColor: AppColors.mainBackground,
+                screenName: 'AiOnboardingScreen_Large_1',
+                shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+              ),
+            if (_currentPage == 3 && RemoteConfigService.instance.showNativeAdOnboarding3)
+              _pageAds[3].buildNativeAdTile(
+                0,
+                () => setState(() {}),
+                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                factoryId: Platform.isAndroid
+                    ? AppStrings.nativeAdFactoryLargeAndroid
+                    : AppStrings.nativeAdFactoryLargeIOS,
+                height: 0.34.sh,
+                width: double.infinity,
+                backgroundColor: AppColors.mainBackground,
+                screenName: 'AiOnboardingScreen_Large_3',
                 shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
               ),
           ],

@@ -29,8 +29,12 @@ class ImageUtils {
   static const String logoLight = '$_imagesPath/logo_light.webp';
   
   static const String onboarding1 = '$_imagesPath/onboarding_1.webp';
+  // static const String onboarding1 = '$_imagesPath/start_screen_img.png';
   static const String onboarding2 = '$_imagesPath/onboarding_2.webp';
+  // static const String onboarding2 = '$_imagesPath/sample2.jpeg';
   static const String onboarding3 = '$_imagesPath/onboarding_3.webp';
-  
+  // static const String onboarding3 = '$_imagesPath/sample3.jpeg';
+
   static const String startScreenImg = '$_imagesPath/start_screen_img.webp';
+  // static const String startScreenImg = '$_imagesPath/start_screen_img.png';
 }

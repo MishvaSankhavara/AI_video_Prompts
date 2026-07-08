@@ -12,6 +12,7 @@ import '../../widgets/prompt_grid_card.dart';
 import '../../widgets/shimmer_grid_card.dart';
 import '../category/category_details_screen.dart';
 import '../../utils/strings.dart';
+import '../../services/firebase/remote_config_service.dart';
 
 /// Home tab content: the grid of video categories.
 class HomeScreen extends StatelessWidget {
@@ -79,6 +80,7 @@ class HomeScreen extends StatelessWidget {
           item: firstItem,
           categoryName: category.categoryName,
           isPremium: isPremium,
+          playVideo: false,
           onTap: () {
             // Continue to category details whether the ad shows, closes, or fails.
             void openCategory() {
@@ -91,13 +93,17 @@ class HomeScreen extends StatelessWidget {
               );
             }
 
-            InterstitialAdService.showAd(
-              context: context,
-              customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
-              screenName: 'HomeScreen',
-              onAdClosed: openCategory,
-              onAdFailedToShow: openCategory,
-            );
+            if (RemoteConfigService.instance.showInterAdHome) {
+              InterstitialAdService.showAd(
+                context: context,
+                customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
+                screenName: 'HomeScreen',
+                onAdClosed: openCategory,
+                onAdFailedToShow: openCategory,
+              );
+            } else {
+              openCategory();
+            }
           },
         );
       },

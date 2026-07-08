@@ -40,15 +40,15 @@ class AppStrings {
   static const String onboardingContinue = 'Continue';
   static const String onboardingGetStarted = 'Get Started';
   static const String onboardingProBadge = 'PRO';
-  static const String onboardingTitle1 = 'Discover AI Video Magic';
+  static const String onboardingTitle1 = 'One-Tap Copy Prompts';
   static const String onboardingSubtitle1 =
-      'Explore a curated library of high-quality, pre-tested prompts for cutting-edge AI video generators.';
-  static const String onboardingTitle2 = 'One-Tap Copy & Go';
+      'Copy premium AI video prompts with one tap and use them in your favorite AI video generator.';
+  static const String onboardingTitle2 = 'Select Your AI Video Style';
   static const String onboardingSubtitle2 =
-      'Tap to copy elite prompts to your clipboard. Perfect for Sora, Runway, Kling, Luma, and more.';
-  static const String onboardingTitle3 = 'Unlock Premium Prompts';
+      'Browse a variety of creative prompts and find the perfect style for your next video.';
+  static const String onboardingTitle3 = 'Save Your Favorites';
   static const String onboardingSubtitle3 =
-      'Get access to exclusive cinematic prompts, high-resolution guides & secret tags to elevate your generation.';
+      'Keep your favorite AI video prompts in one place and access them anytime.';
 
   // Welcome Back Screen strings
   static const String welcomeBackTitle = 'Welcome Back';

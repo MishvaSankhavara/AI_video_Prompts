@@ -289,7 +289,7 @@ class _ProScreenState extends State<ProScreen> {
                             child: AppText(
                               AppStrings.proRestore,
                               textColor: AppColors.buttonGradientEnd,
-                              textSize: 12.sp,
+                              textSize: 13.sp,
                             ),
                           ),
                           Padding(
@@ -297,7 +297,7 @@ class _ProScreenState extends State<ProScreen> {
                             child: AppText(
                               '|',
                               textColor: AppColors.textMuted.withValues(alpha: 0.5),
-                              textSize: 12.sp,
+                              textSize: 13.sp,
                             ),
                           ),
                           GestureDetector(
@@ -305,7 +305,7 @@ class _ProScreenState extends State<ProScreen> {
                             child: AppText(
                               AppStrings.proCancelSubscription,
                               textColor: AppColors.buttonGradientEnd,
-                              textSize: 12.sp,
+                              textSize: 13.sp,
                             ),
                           ),
                         ],
@@ -321,7 +321,7 @@ class _ProScreenState extends State<ProScreen> {
                             child: AppText(
                               AppStrings.proPrivacyPolicy,
                               textColor: AppColors.buttonGradientEnd,
-                              textSize: 12.sp,
+                              textSize: 11.sp,
                             ),
                           ),
                           Padding(
@@ -329,7 +329,7 @@ class _ProScreenState extends State<ProScreen> {
                             child: AppText(
                               '|',
                               textColor: AppColors.textMuted.withValues(alpha: 0.5),
-                              textSize: 12.sp,
+                              textSize: 11.sp,
                             ),
                           ),
                           GestureDetector(
@@ -339,7 +339,7 @@ class _ProScreenState extends State<ProScreen> {
                             child: AppText(
                               AppStrings.proTermsConditions,
                               textColor: AppColors.buttonGradientEnd,
-                              textSize: 12.sp,
+                              textSize: 11.sp,
                             ),
                           ),
                         ],

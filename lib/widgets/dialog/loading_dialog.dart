@@ -73,7 +73,7 @@ class LoadingDialog extends StatelessWidget {
                 text,
                 textColor: AppColors.textPrimary,
                 textSize: 14.sp,
-                textWeight: FontWeight.bold,
+                textWeight: FontWeight.normal,
                 textDecoration: TextDecoration.none,
               ),
             ],

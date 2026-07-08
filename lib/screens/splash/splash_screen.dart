@@ -18,6 +18,7 @@ import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../start/start_screen.dart';
+import '../../services/firebase/remote_config_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -81,12 +82,16 @@ class _SplashScreenState extends State<SplashScreen>
           NavigationService.pushReplacement(context, targetScreen);
         }
 
-        InterstitialAdService.showAd(
-          context: context,
-          customAdIds: [AdIds.interstitialAd5, AdIds.interstitialAd6],
-          onAdClosed: navigateToTarget,
-          onAdFailedToShow: navigateToTarget,
-        );
+        if (RemoteConfigService.instance.showInterAdSplash) {
+          InterstitialAdService.showAd(
+            context: context,
+            customAdIds: [AdIds.interstitialAd5, AdIds.interstitialAd6],
+            onAdClosed: navigateToTarget,
+            onAdFailedToShow: navigateToTarget,
+          );
+        } else {
+          navigateToTarget();
+        }
       }
     });
   }
@@ -187,11 +192,12 @@ class _SplashScreenState extends State<SplashScreen>
               ),
 
               // Medium Native Ad at Bottom
-              Positioned(
-                bottom: 6.h,
-                left: 6.w,
-                right: 6.w,
-                child: _nativeAdService.buildNativeAdTile(
+              if (RemoteConfigService.instance.showNativeAdSplash)
+                Positioned(
+                  bottom: 6.h,
+                  left: 6.w,
+                  right: 6.w,
+                  child: _nativeAdService.buildNativeAdTile(
                   0, // Index 0 for splash single ad
                   () => setState(() {}),
                   customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],

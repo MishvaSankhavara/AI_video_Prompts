@@ -157,6 +157,8 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
   }
 
   void _showUnlockDialog() {
+    final bool showRewardedAd = RemoteConfigService.instance.showRewardedAdPromptDetails;
+
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -182,13 +184,17 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
               _showRewardGrantedDialog();
             }
 
-            RewardedAdService.showAd(
-              context: context,
-              customAdIds: [AdIds.rewardedAds1, AdIds.rewardedAds2],
-              onUserEarnedReward: () {},
-              onAdClosed: grantUnlock,
-              onAdFailedToShow: grantUnlock,
-            );
+            if (showRewardedAd) {
+              RewardedAdService.showAd(
+                context: context,
+                customAdIds: [AdIds.rewardedAds1, AdIds.rewardedAds2],
+                onUserEarnedReward: () {},
+                onAdClosed: grantUnlock,
+                onAdFailedToShow: grantUnlock,
+              );
+            } else {
+              grantUnlock();
+            }
           },
           showCloseButton: true,
         );
@@ -634,7 +640,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                         _buildLikeButton(favoritesService, isFav),
                       ],
                     ),
-                  if (RemoteConfigService.instance.showAdsEnabled) ...[
+                  if (RemoteConfigService.instance.showAdsEnabled && RemoteConfigService.instance.showNativeAdPromptDetailsMedium) ...[
                     SizedBox(height: 20.h),
                     Container(
                       key: const ValueKey('prompt_details_native_ad'),
@@ -707,6 +713,9 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                         itemCount: _getGridItemCount(recommendedItems.length),
                         itemBuilder: (context, index) {
                           if (_isGridAdIndex(index)) {
+                            if (!RemoteConfigService.instance.showNativeAdPromptDetailsGrid) {
+                              return const SizedBox.shrink();
+                            }
                             return Container(
                               decoration: BoxDecoration(
                                 color: AppColors.cardBackground,

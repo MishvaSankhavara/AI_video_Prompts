@@ -12,6 +12,7 @@ import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
 import '../home/bottom_nav_bar_screen.dart';
+import '../../services/firebase/remote_config_service.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -34,7 +35,6 @@ class _StartScreenState extends State<StartScreen> {
     return Scaffold(
       backgroundColor: AppColors.mainBackground,
       body: SafeArea(
-        top: false,
         child: Column(
           children: [
             // Top Half: App Related Image
@@ -48,12 +48,13 @@ class _StartScreenState extends State<StartScreen> {
                     Image.asset(
                       ImageUtils.startScreenImg, // Using an existing nice illustration
                       fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
                     ),
                     Positioned(
                       bottom: 0.h,
                       left: 0.w,
                       right: 0.w,
-                      height: 180.h, // Height of the fade effect
+                      height: 100.h, // Height of the fade effect
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -122,7 +123,8 @@ class _StartScreenState extends State<StartScreen> {
             ),
 
             // Native ad at the bottom (collapses to nothing when unavailable)
-            _nativeAdService.buildNativeAdTile(
+            if (RemoteConfigService.instance.showNativeAdStartScreen)
+              _nativeAdService.buildNativeAdTile(
               0, // Index 0 for start screen single ad
               () => setState(() {}),
               customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],

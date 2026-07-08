@@ -1,4 +1,4 @@
-package com.example.aivideoprompts
+package com.aivideoprompts.app
 
 import android.content.Context
 import android.view.LayoutInflater

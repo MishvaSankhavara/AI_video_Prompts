@@ -149,7 +149,8 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> with SingleTick
           title: _getAppBarTitle(_currentIndex),
           showBackButton: false,
           actions: [
-            GestureDetector(
+            if (_currentIndex != 2)
+              GestureDetector(
               onTap: () {
                 NavigationService.push(context, const ProScreen());
               },

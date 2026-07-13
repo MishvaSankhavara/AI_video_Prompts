@@ -17,8 +17,10 @@ import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../onboarding/onboarding_screen.dart';
+import '../settings/privacy_policy_screen.dart';
 import '../start/start_screen.dart';
 import '../../services/firebase/remote_config_service.dart';
+import '../../services/subscription_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -58,8 +60,11 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       AssetPreloader.preloadAssets(context);
+      await SubscriptionService.instance.init();
+      CommonUtils.printLog('--- SPLASH LOG: Fetched Weekly Price: ${SubscriptionService.instance.weeklyPrice} ---');
+      CommonUtils.printLog('--- SPLASH LOG: Fetched Yearly Price: ${SubscriptionService.instance.yearlyPrice} ---');
     });
 
     _controller.addStatusListener((status) async {
@@ -75,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
 
         Widget targetScreen = hasSeenOnboarding
             ? const StartScreen()
-            : const OnboardingScreen();
+            : const PrivacyPolicyScreen(isFirstTime: true);
 
         void navigateToTarget() {
           if (!mounted) return;
@@ -132,12 +137,12 @@ class _SplashScreenState extends State<SplashScreen>
                     children: [
                       // Light-optimized Image Logo from assets
                       Image.asset(
-                        ImageUtils.logo,
+                        ImageUtils.logoRounded,
                         width: 180.w,
                         height: 180.h,
                         fit: BoxFit.contain,
                       ),
-                      SizedBox(height: 1.h),
+                      SizedBox(height: 40.h),
                       // Text Title
                       AppText(
                         AppStrings.appName,

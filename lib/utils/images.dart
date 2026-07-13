@@ -26,6 +26,7 @@ class ImageUtils {
   static const String imgProScreenDesign = '$_imagesPath/img_pro_screen_design.webp';
   
   static const String logo = '$_imagesPath/logo.webp';
+  static const String logoRounded = '$_imagesPath/logo_rounded.webp';
   static const String logoLight = '$_imagesPath/logo_light.webp';
   
   static const String onboarding1 = '$_imagesPath/onboarding_1.webp';

@@ -8,6 +8,7 @@ import '../../utils/strings.dart';
 import '../../services/navigation_service.dart';
 import '../settings/privacy_policy_screen.dart';
 import '../settings/terms_of_use_screen.dart';
+import '../../services/subscription_service.dart';
 
 class ProScreen extends StatefulWidget {
   const ProScreen({super.key});
@@ -58,35 +59,15 @@ class _ProScreenState extends State<ProScreen> {
                 children: [
                   SizedBox(height: 16.h),
 
-                  // Top Section: Badge, Title, and Image in a Stack
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // 3D Design Image on the Right
-                      Positioned(
-                        right: -2,
-                        top: 10.h,
-                        bottom:
-                            -40, // Allows the image to overflow downwards nicely
-                        width: size.width * 0.45,
-                        child: Image.asset(
-                          ImageUtils.imgProScreenDesign,
-                          fit: BoxFit.contain,
-                          alignment: Alignment.centerRight,
-                        ),
-                      ),
-
-                      // Text Content on the Left
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 24.w,
-                          top: 36.h,
-                          bottom: 10.h,
-                          right:
-                              size.width *
-                              0.45, // Prevent text from overlapping the image too much
-                        ),
-                        child: Column(
+                  // Top Section: Badge and Title
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 24.w,
+                      top: 36.h,
+                      bottom: 10.h,
+                      right: 24.w,
+                    ),
+                    child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Badge
@@ -141,11 +122,7 @@ class _ProScreenState extends State<ProScreen> {
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-
-                  // SizedBox(height: 0.h),
+                      ),                  // SizedBox(height: 0.h),
 
                   // Prompt Example View
                   const _PromptExampleView(),
@@ -182,7 +159,7 @@ class _ProScreenState extends State<ProScreen> {
                               },
                               child: _PlanCard(
                                 title: AppStrings.proPlanWeekly,
-                                price: AppStrings.proPriceWeekly,
+                                price: SubscriptionService.instance.weeklyPrice,
                                 subtitle: AppStrings.proSubtitleWeekly,
                                 isSelected: !isYearlySelected,
                                 isBestValue: false,
@@ -202,7 +179,7 @@ class _ProScreenState extends State<ProScreen> {
                               },
                               child: _PlanCard(
                                 title: AppStrings.proPlanYearly,
-                                price: AppStrings.proPriceYearly,
+                                price: SubscriptionService.instance.yearlyPrice,
                                 subtitle: AppStrings.proSubtitleYearly,
                                 isSelected: isYearlySelected,
                                 isBestValue: true,
@@ -222,8 +199,8 @@ class _ProScreenState extends State<ProScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: AppText(
                       isYearlySelected
-                          ? AppStrings.proBillingYearly
-                          : AppStrings.proBillingWeekly,
+                          ? 'You will be charged ${SubscriptionService.instance.yearlyPrice}/Year, billed\nautomatically until cancelled.'
+                          : 'You will be charged ${SubscriptionService.instance.weeklyPrice}/Week, billed\nautomatically until cancelled.',
                       textAlignment: TextAlign.center,
                       textColor: AppColors.textPrimary,
                       textSize: 13.sp,
@@ -257,7 +234,9 @@ class _ProScreenState extends State<ProScreen> {
                       ),
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: Implement purchase flow
+                          SubscriptionService.instance.buySubscription(
+                            isYearly: isYearlySelected,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.transparent,
@@ -285,7 +264,9 @@ class _ProScreenState extends State<ProScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () {}, // TODO: Restore Purchases
+                            onTap: () {
+                              SubscriptionService.instance.restorePurchases();
+                            },
                             child: AppText(
                               AppStrings.proRestore,
                               textColor: AppColors.buttonGradientEnd,

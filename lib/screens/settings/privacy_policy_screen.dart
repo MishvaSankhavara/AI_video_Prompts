@@ -9,9 +9,11 @@ import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
 import '../../widgets/text_app.dart';
 import '../../widgets/common_app_bar.dart';
-
+import '../../services/navigation_service.dart';
+import '../onboarding/onboarding_screen.dart';
 class PrivacyPolicyScreen extends StatefulWidget {
-  const PrivacyPolicyScreen({super.key});
+  final bool isFirstTime;
+  const PrivacyPolicyScreen({super.key, this.isFirstTime = false});
 
   @override
   State<PrivacyPolicyScreen> createState() => _PrivacyPolicyScreenState();
@@ -89,8 +91,12 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: AppColors.mainBackground,
-      appBar: const CommonAppBar(title: AppStrings.settingsPrivacyPolicy),
+      appBar: CommonAppBar(
+        title: AppStrings.settingsPrivacyPolicy,
+        showBackButton: !widget.isFirstTime,
+      ),
       body: _privacyPolicyUrl.isEmpty
           // No URL set yet — show coming soon placeholder
           ? Center(
@@ -201,6 +207,38 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                 ),
               ),
             ),
+      bottomNavigationBar: widget.isFirstTime
+          ? Container(
+              padding: EdgeInsets.all(24.w),
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: SafeArea(
+                child: ElevatedButton(
+                  onPressed: () {
+                    NavigationService.pushReplacement(
+                      context,
+                      const OnboardingScreen(),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: AppText(
+                    'Accept & Continue',
+                    textColor: AppColors.white,
+                    textWeight: FontWeight.bold,
+                    textSize: 16.sp,
+                  ),
+                ),
+              ),
+            )
+          : null,
     );
   }
 }

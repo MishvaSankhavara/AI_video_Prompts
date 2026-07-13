@@ -17,6 +17,7 @@ import 'privacy_policy_screen.dart';
 import 'terms_of_use_screen.dart';
 import '../../widgets/dialog/support_login_dialog.dart';
 import '../../services/navigation_service.dart';
+import '../pro/pro_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -226,65 +227,117 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildHeaderCard() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.secondary],
-        ),
-        borderRadius: BorderRadius.circular(24.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.15),
-            blurRadius: 15.r,
-            offset: Offset(0.w, 8.h),
+    return GestureDetector(
+      onTap: () {
+        NavigationService.push(context, const ProScreen());
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.buttonGradientStart, AppColors.buttonGradientEnd],
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(4.r),
-            decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: 0.25),
-              shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.4),
+              blurRadius: 20.r,
+              offset: Offset(0.w, 10.h),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(40.r),
-              child: Image.asset(
-                ImageUtils.logo,
-                width: 60.w,
-                height: 60.h,
-                fit: BoxFit.contain,
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            // Decorative background shapes
+            Positioned(
+              top: -30.h,
+              right: -20.w,
+              child: Container(
+                width: 120.w,
+                height: 120.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.white.withOpacity(0.08),
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 20.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(
-                  AppStrings.appName,
-                  textColor: AppColors.white,
-                  textSize: 20.sp,
-                  textWeight: FontWeight.bold,
-                  lettersSpace: 0.3,
+            Positioned(
+              bottom: -40.h,
+              right: 80.w,
+              child: Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.white.withOpacity(0.05),
                 ),
-                SizedBox(height: 4.h),
-                AppText(
-                  AppStrings.settingsHeaderSubtitle,
-                  textColor: AppColors.white.withValues(alpha: 0.75),
-                  textSize: 12.sp,
-                  textWeight: FontWeight.w500,
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            // Card Content
+            Padding(
+              padding: EdgeInsets.all(24.w),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.white.withOpacity(0.3),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: Image.asset(
+                      ImageUtils.icCrown,
+                      width: 32.w,
+                      height: 32.h,
+                      color: AppColors.amber500, // Premium Gold
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(width: 20.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          AppStrings.proUnlockPremium,
+                          textColor: AppColors.amber500, // Premium Gold
+                          textSize: 18.sp,
+                          textWeight: FontWeight.w800,
+                          lettersSpace: 0.5,
+                        ),
+                        SizedBox(height: 6.h),
+                        AppText(
+                          AppStrings.settingsProSubtitle,
+                          textColor: AppColors.white.withOpacity(0.9),
+                          textSize: 13.sp,
+                          textWeight: FontWeight.w500,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: AppColors.white,
+                      size: 16.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

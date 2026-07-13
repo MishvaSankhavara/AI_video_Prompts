@@ -148,6 +148,8 @@ class AppStrings {
   static const String settingsAppVersion = 'App Version';
   static const String settingsHeaderSubtitle =
       'Unleash Your Cinematic Creativity';
+  static const String settingsProSubtitle =
+      'Get full access to all features';
   static const String settingsShareMessage =
       'Check out this amazing AI Video Prompt app: ';
   static const String settingsPlayStoreError = 'Could not open Play Store.';
@@ -211,10 +213,10 @@ class AppStrings {
       'Unlimited Video Prompts – Get Full Access to Every Prompt';
 
   static const String proPlanWeekly = 'Weekly';
-  static const String proPriceWeekly = '\$4.99';
+  static const String proPriceWeekly = '\₹30';
   static const String proSubtitleWeekly = 'per week';
   static const String proPlanYearly = 'Yearly';
-  static const String proPriceYearly = '\$39.99';
+  static const String proPriceYearly = '\₹699';
   static const String proSubtitleYearly = 'per year';
   static const String proBestDealBadge = 'BEST DEAL';
   static const String proBillingYearly =

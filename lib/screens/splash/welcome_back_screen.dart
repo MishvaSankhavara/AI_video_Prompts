@@ -198,7 +198,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen>
                                         ],
                                       ),
                                       child: Image.asset(
-                                        ImageUtils.logo,
+                                        ImageUtils.logoRounded,
                                         width: 130.w,
                                         height: 130.h,
                                         fit: BoxFit.contain,

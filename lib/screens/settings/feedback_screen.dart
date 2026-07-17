@@ -7,7 +7,7 @@ import '../../utils/common_utils.dart';
 import '../../utils/strings.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../services/navigation_service.dart';
-import '../../services/firebase/feedback_firebase_service.dart';
+import '../../services/firebase/firebase_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -52,7 +52,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     ); */
 
     // Save feedback to Firebase Realtime Database
-    bool success = await FeedbackFirebaseService.submitFeedback(text);
+    bool success = await FirebaseService.submitFeedback(text);
 
     if (!mounted) return;
     setState(() => _isSubmitting = false);

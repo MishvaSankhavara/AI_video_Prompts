@@ -1,9 +1,13 @@
-import 'package:aivideoprompt/widgets/text_app.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:aivideoprompt/widgets/text_app.dart';
 import '../../utils/colors.dart';
 import 'custom_app_dialog.dart';
+import '../../utils/constants.dart';
+import '../../services/shareed_prefe.dart';
+import '../../services/firebase/remote_config_service.dart';
+import '../../utils/common_utils.dart';
 
 class SupportLoginDialog extends StatefulWidget {
   const SupportLoginDialog({super.key});
@@ -15,9 +19,31 @@ class SupportLoginDialog extends StatefulWidget {
 class _SupportLoginDialogState extends State<SupportLoginDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isFormValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(_validateForm);
+    _passwordController.addListener(_validateForm);
+  }
+
+  void _validateForm() {
+    final name = _nameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final expectedName = RemoteConfigService.instance.nameAccountDemo;
+    final expectedPassword = RemoteConfigService.instance.passwordDemo;
+
+    setState(() {
+      _isFormValid = name == expectedName && password == expectedPassword;
+    });
+  }
 
   @override
   void dispose() {
+    _nameController.removeListener(_validateForm);
+    _passwordController.removeListener(_validateForm);
     _nameController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -122,30 +148,45 @@ class _SupportLoginDialogState extends State<SupportLoginDialog> {
                 
                 // Login Button
                 ScaleButton(
-                  onTap: () {
-                    // TODO: Implement Login Action
-                    Navigator.pop(context);
-                  },
+                  onTap: _isFormValid
+                      ? () async {
+                          AppConstants.isSubscribed = true;
+                          await SharedPrefs.setSubscribed(true);
+                          // Set a far expiry date so they stay subscribed until reinstall
+                          await SharedPrefs.setExpiryDate(DateTime(2099, 12, 31).toIso8601String());
+                          
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            CommonUtils.showToast('Login Successful! Premium unlocked.');
+                          }
+                        }
+                      : null,
                   child: Container(
                     width: double.infinity,
                     height: 52.h,
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
+                      color: _isFormValid
+                          ? AppColors.primary
+                          : AppColors.primary.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(30.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.25),
-                          blurRadius: 14.r,
-                          offset: Offset(0.w, 6.h),
-                        ),
-                      ],
+                      boxShadow: _isFormValid
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.25),
+                                blurRadius: 14.r,
+                                offset: Offset(0.w, 6.h),
+                              ),
+                            ]
+                          : [],
                     ),
                     alignment: Alignment.center,
                     child: AppText(
                       'Login',
                       textSize: 16.sp,
                       textWeight: FontWeight.bold,
-                      textColor: AppColors.white,
+                      textColor: _isFormValid
+                          ? AppColors.white
+                          : AppColors.white.withValues(alpha: 0.6),
                     ),
                   ),
                 ),

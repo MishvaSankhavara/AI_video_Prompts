@@ -6,6 +6,8 @@ import '../widgets/dialog/loading_dialog.dart';
 import '../services/firebase/remote_config_service.dart';
 import 'ad_ids.dart';
 
+import '../utils/constants.dart';
+
 class RewardedAdService {
   RewardedAdService._();
 
@@ -17,9 +19,10 @@ class RewardedAdService {
     VoidCallback? onAdFailedToShow,
     required VoidCallback onUserEarnedReward,
   }) {
-    // Ads disabled (e.g. via remote config) -> skip the ad, continue app flow.
-    if (!RemoteConfigService.instance.showAdsEnabled) {
-      onAdFailedToShow?.call();
+    // Ads disabled or user subscribed -> skip the ad and give reward!
+    if (!RemoteConfigService.instance.showAdsEnabled || AppConstants.isSubscribed) {
+      onUserEarnedReward();
+      onAdClosed?.call();
       return;
     }
 

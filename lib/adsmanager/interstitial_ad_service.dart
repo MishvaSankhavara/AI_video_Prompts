@@ -6,6 +6,8 @@ import '../widgets/dialog/loading_dialog.dart';
 import '../services/firebase/remote_config_service.dart';
 import 'ad_ids.dart';
 
+import '../utils/constants.dart';
+
 class InterstitialAdService {
   InterstitialAdService._();
 
@@ -16,8 +18,8 @@ class InterstitialAdService {
     VoidCallback? onAdClosed,
     VoidCallback? onAdFailedToShow,
   }) {
-    // Ads disabled (e.g. via remote config) -> skip the ad, continue app flow.
-    if (!RemoteConfigService.instance.showAdsEnabled) {
+    // Ads disabled or user has active subscription -> skip the ad, continue app flow.
+    if (!RemoteConfigService.instance.showAdsEnabled || AppConstants.isSubscribed) {
       onAdFailedToShow?.call();
       return;
     }

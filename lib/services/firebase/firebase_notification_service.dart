@@ -9,7 +9,7 @@ import '../../widgets/dialog/firebase_notification_dialog.dart';
 import '../../screens/category/category_details_screen.dart';
 import '../navigation_service.dart';
 import '../../viewmodel/fetch_video_category.dart';
-import 'notification_service.dart';
+import '../notification_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

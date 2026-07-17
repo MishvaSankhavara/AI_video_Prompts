@@ -20,7 +20,7 @@ import 'adsmanager/app_open_ad_service.dart';
 import 'adsmanager/ad_ids.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'services/firebase/remote_config_service.dart';
-import 'services/firebase/notification_service.dart';
+import 'services/notification_service.dart';
 import 'services/firebase/firebase_notification_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 

@@ -15,6 +15,7 @@ import '../../services/shareed_prefe.dart';
 import '../../services/asset_preloader.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_utils.dart';
+import '../../utils/constants.dart';
 import '../../utils/strings.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../settings/privacy_policy_screen.dart';
@@ -61,10 +62,31 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      bool isSub = await SharedPrefs.isSubscribed();
+      if (isSub) {
+        String? expiryString = await SharedPrefs.getExpiryDate();
+        if (expiryString != null) {
+          try {
+            DateTime expiryDate = DateTime.parse(expiryString);
+            if (DateTime.now().isAfter(expiryDate)) {
+              isSub = false;
+              await SharedPrefs.setSubscribed(false);
+            }
+          } catch (e) {
+            // Ignored
+          }
+        }
+      }
+      
+      AppConstants.isSubscribed = isSub;
+      CommonUtils.printLog('>>> SPLASH SCREEN isSubscribed (cached): ${AppConstants.isSubscribed}');
+      if (mounted) setState(() {});
       AssetPreloader.preloadAssets(context);
       await SubscriptionService.instance.init();
+      CommonUtils.printLog('>>> SPLASH SCREEN isSubscribed (after init): ${AppConstants.isSubscribed}');
       CommonUtils.printLog('--- SPLASH LOG: Fetched Weekly Price: ${SubscriptionService.instance.weeklyPrice} ---');
       CommonUtils.printLog('--- SPLASH LOG: Fetched Yearly Price: ${SubscriptionService.instance.yearlyPrice} ---');
+      CommonUtils.printLog('--- SPLASH LOG: isSubscribed is currently ${AppConstants.isSubscribed} ---');
     });
 
     _controller.addStatusListener((status) async {
@@ -87,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen>
           NavigationService.pushReplacement(context, targetScreen);
         }
 
-        if (RemoteConfigService.instance.showInterAdSplash) {
+        if (RemoteConfigService.instance.showInterAdSplash && !AppConstants.isSubscribed) {
           InterstitialAdService.showAd(
             context: context,
             customAdIds: [AdIds.interstitialAd5, AdIds.interstitialAd6],
@@ -197,7 +219,7 @@ class _SplashScreenState extends State<SplashScreen>
               ),
 
               // Medium Native Ad at Bottom
-              if (RemoteConfigService.instance.showNativeAdSplash)
+              if (RemoteConfigService.instance.showNativeAdSplash && !AppConstants.isSubscribed)
                 Positioned(
                   bottom: 6.h,
                   left: 6.w,

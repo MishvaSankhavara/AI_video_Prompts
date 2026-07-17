@@ -1,6 +1,7 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../api/api_const.dart';
 import '../../adsmanager/ad_ids.dart';
 import '../../utils/common_utils.dart';
 
@@ -37,6 +38,10 @@ class RemoteConfigService {
   bool showNativeAdPromptDetailsMedium = true;
   bool showNativeAdStartScreen = true;
 
+  bool loginDemo = true;
+  String nameAccountDemo = "";
+  String passwordDemo = "";
+
   Future<void> initialize() async {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
@@ -64,6 +69,9 @@ class RemoteConfigService {
         'native_ad_prompt_details_screen_grid': true,
         'native_ad_prompt_details_screen_medium': true,
         'native_ad_start_screen': true,
+        'login_demo': true,
+        'name_account_demo': '123456',
+        'password_demo': '123456',
       });
 
       await remoteConfig.fetchAndActivate();
@@ -74,6 +82,8 @@ class RemoteConfigService {
         CommonUtils.printLog('RemoteConfig -> $key: ${value.asString()}');
       });
       CommonUtils.printLog('====================================');
+
+      await ApiConst.applyServerConfig(remoteConfig);
 
       showRewardedAdPromptDetails = remoteConfig.getBool('rewarded_ad_prompt_details_screen');
       showInterAdCategoryDetails = remoteConfig.getBool('inter_ad_category_details_screen');
@@ -90,6 +100,10 @@ class RemoteConfigService {
       showNativeAdPromptDetailsGrid = remoteConfig.getBool('native_ad_prompt_details_screen_grid');
       showNativeAdPromptDetailsMedium = remoteConfig.getBool('native_ad_prompt_details_screen_medium');
       showNativeAdStartScreen = remoteConfig.getBool('native_ad_start_screen');
+
+      loginDemo = remoteConfig.getBool('login_demo');
+      nameAccountDemo = remoteConfig.getString('name_account_demo');
+      passwordDemo = remoteConfig.getString('password_demo');
 
       final String disabledVersionsStr = remoteConfig.getString(
         'ads_disabled_versions',

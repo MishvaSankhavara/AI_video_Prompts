@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:ui';
 import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -281,8 +284,21 @@ class _ProScreenState extends State<ProScreen> {
                               textSize: 13.sp,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {}, // TODO: Cancel Subscription
+                           GestureDetector(
+                            onTap: () async {
+                              try {
+                                final packageInfo = await PackageInfo.fromPlatform();
+                                final String url = Platform.isAndroid
+                                  ? 'https://play.google.com/store/account/subscriptions?package=${packageInfo.packageName}'
+                                  : 'https://apps.apple.com/account/subscriptions';
+                                final uri = Uri.parse(url);
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                }
+                              } catch (e) {
+                                // Ignore
+                              }
+                            },
                             child: AppText(
                               AppStrings.proCancelSubscription,
                               textColor: AppColors.buttonGradientEnd,

@@ -24,6 +24,7 @@ class ImageUtils {
   static const String imgProBtn = '$_imagesPath/img_pro_btn.webp';
   static const String imgProScreenBg = '$_imagesPath/img_pro_screen_bg.webp';
   static const String imgProScreenDesign = '$_imagesPath/img_pro_screen_design.webp';
+  static const String buyProCard = '$_imagesPath/buy_pro_card.webp';
   
   static const String logo = '$_imagesPath/logo.webp';
   static const String logoRounded = '$_imagesPath/logo_rounded.webp';

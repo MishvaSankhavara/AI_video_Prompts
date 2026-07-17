@@ -31,6 +31,8 @@ import '../../services/firebase/remote_config_service.dart';
 import '../pro/pro_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../../utils/constants.dart';
+
 class PromptDetailsScreen extends StatefulWidget {
   final VideoItem item;
   final List<VideoItem> categoryItems;
@@ -83,7 +85,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
   late Animation<double> _shimmerAnimation;
   late Animation<double> _scaleAnimation;
 
-  bool get _isUnlocked => _unlockedItemIds.contains(_currentItem.id);
+  bool get _isUnlocked => AppConstants.isSubscribed || _unlockedItemIds.contains(_currentItem.id);
 
   @override
   void initState() {

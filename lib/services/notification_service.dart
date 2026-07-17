@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
-import '../../utils/common_utils.dart';
+import '../utils/common_utils.dart';
 
 class NotificationService {
   static final NotificationService instance = NotificationService._internal();

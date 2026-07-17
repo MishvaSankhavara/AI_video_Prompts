@@ -10,6 +10,7 @@ import '../../services/app_update_service.dart';
 import '../../services/navigation_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/strings.dart';
+import '../../utils/constants.dart';
 import '../../viewmodel/fetch_video_category.dart';
 import '../../widgets/common_app_bar.dart';
 import '../../widgets/dialog/custom_app_dialog.dart';
@@ -149,26 +150,33 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> with SingleTick
           title: _getAppBarTitle(_currentIndex),
           showBackButton: false,
           actions: [
-            if (_currentIndex != 2)
-              GestureDetector(
-              onTap: () {
-                NavigationService.push(context, const ProScreen());
-              },
-              child: Padding(
-                padding: EdgeInsets.only(right: 24.w),
-                child: RotationTransition(
-                  turns: _proBtnRotationAnimation,
-                  child: ScaleTransition(
-                    scale: _proBtnScaleAnimation,
-                    child: Image.asset(
-                      ImageUtils.imgProBtn,
-                      width: 32.w,
-                      height: 32.h,
-                      fit: BoxFit.contain,
+            ValueListenableBuilder<bool>(
+              valueListenable: AppConstants.isSubscribedNotifier,
+              builder: (context, isSubscribed, child) {
+                if (_currentIndex != 2 && !isSubscribed) {
+                  return GestureDetector(
+                    onTap: () {
+                      NavigationService.push(context, const ProScreen());
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 24.w),
+                      child: RotationTransition(
+                        turns: _proBtnRotationAnimation,
+                        child: ScaleTransition(
+                          scale: _proBtnScaleAnimation,
+                          child: Image.asset(
+                            ImageUtils.imgProBtn,
+                            width: 32.w,
+                            height: 32.h,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ],
         ),

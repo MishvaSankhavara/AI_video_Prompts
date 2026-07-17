@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:android_id/android_id.dart';
 import '../utils/common_utils.dart';
 
 class DeviceInfoService {
@@ -12,8 +11,8 @@ class DeviceInfoService {
         var iosInfo = await _deviceInfoPlugin.iosInfo;
         return iosInfo.identifierForVendor;
       } else if (Platform.isAndroid) {
-        const androidIdPlugin = AndroidId();
-        return await androidIdPlugin.getId();
+        var androidInfo = await _deviceInfoPlugin.androidInfo;
+        return androidInfo.id;
       }
     } catch (e) {
       CommonUtils.printLog('>>> DEVICE ID ERROR: $e');

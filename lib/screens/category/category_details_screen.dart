@@ -86,7 +86,6 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
       child: PromptGridCard(
         item: item,
         categoryName: '',
-        playVideo: false, // Category grid shows thumbnails only — no playback.
         onTap: () {
           if (RemoteConfigService.instance.showInterAdCategoryDetails) {
             // Continue to prompt details whether the ad shows, closes, or fails.

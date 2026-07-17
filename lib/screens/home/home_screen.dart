@@ -80,7 +80,6 @@ class HomeScreen extends StatelessWidget {
           item: firstItem,
           categoryName: category.categoryName,
           isPremium: isPremium,
-          playVideo: false,
           onTap: () {
             // Continue to category details whether the ad shows, closes, or fails.
             void openCategory() {

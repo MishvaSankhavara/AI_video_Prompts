@@ -13,6 +13,8 @@ class ApiService {
       '${ApiConst.baseUrl}${ApiConst.getAiVideoCategories}',
     );
 
+    print('GET fetchVideoCategories: $url');
+
     try {
       final response = await _client.get(
         url,
@@ -22,8 +24,10 @@ class ApiService {
         },
       );
 
+      print('fetchVideoCategories Response Status: ${response.statusCode}');
       if (response.statusCode == 200) {
         final Map<String, dynamic> decodedData = json.decode(response.body);
+        print('fetchVideoCategories Response Body: $decodedData');
         if (decodedData['status'] == true) {
           final list = decodedData['data'] as List? ?? [];
           return list.map((json) => VideoCategory.fromJson(json)).toList();
@@ -45,6 +49,8 @@ class ApiService {
       '${ApiConst.baseUrl}${ApiConst.getAiVideoByCategoryId}',
     );
 
+    print('POST fetchVideosByCategoryId: $url, categoryId: $categoryId');
+
     try {
       final response = await _client.post(
         url,
@@ -56,8 +62,10 @@ class ApiService {
         body: json.encode({'category_id': categoryId}),
       );
 
+      print('fetchVideosByCategoryId Response Status: ${response.statusCode}');
       if (response.statusCode == 200) {
         final Map<String, dynamic> decodedData = json.decode(response.body);
+        print('fetchVideosByCategoryId Response Body: $decodedData');
         if (decodedData['status'] == true) {
           final list = decodedData['data'] as List? ?? [];
           return list.map((json) => VideoItem.fromJson(json)).toList();

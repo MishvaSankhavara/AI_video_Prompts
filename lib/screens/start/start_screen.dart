@@ -39,7 +39,7 @@ class _StartScreenState extends State<StartScreen> {
           children: [
             // Top Half: App Related Image - Fixed height to prevent resizing
             Container(
-              height: 0.48.sh,
+              height: 0.38.sh,
               width: double.infinity,
               child: Stack(
                 fit: StackFit.expand,

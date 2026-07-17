@@ -662,7 +662,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                       child: _nativeAdService.buildNativeAdTile(
                         0, // Using 0 as index for single ad
                         () => setState(() {}),
-                        customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                        customAdIds: [AdIds.nativeAd5, AdIds.nativeAd6],
                         factoryId: Platform.isAndroid
                             ? AppStrings.nativeAdFactoryMediumAndroid
                             : AppStrings.nativeAdFactoryMediumIOS,
@@ -736,7 +736,7 @@ class _PromptDetailsScreenState extends State<PromptDetailsScreen>
                               child: _nativeAdService.buildNativeAdTile(
                                 index,
                                 () => setState(() {}),
-                                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                                customAdIds: [AdIds.nativeAd7, AdIds.nativeAd8],
                                 factoryId: Platform.isAndroid
                                     ? AppStrings.nativeAdFactoryGridAndroid
                                     : AppStrings.nativeAdFactoryGridIOS,

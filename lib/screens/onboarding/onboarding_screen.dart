@@ -89,7 +89,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isAdPage = _currentPage == 2;
+    final bool showAd = RemoteConfigService.instance.showNativeAdOnboardingFullScreen &&
+                        !_fullscreenAd.hasAdFailed(0) &&
+                        _fullscreenAd.canShowAds;
+    final bool isAdPage = showAd && _currentPage == 2;
 
     return Scaffold(
       backgroundColor:
@@ -104,21 +107,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: 4, // 3 onboarding pages + 1 full-screen ad page
+                itemCount: showAd ? 4 : 3, // 3 onboarding pages + 1 full-screen ad page if loaded
                 onPageChanged: (index) {
                   setState(() {
                     _currentPage = index;
                   });
                 },
                 itemBuilder: (context, index) {
-                  if (index == 2) {
-                    if (!RemoteConfigService.instance.showNativeAdOnboardingFullScreen) {
-                      return const SizedBox.shrink();
-                    }
+                  if (showAd && index == 2) {
                     return _fullscreenAd.buildNativeAdTile(
                       0, // Fullscreen ad index 0
                       () => setState(() {}),
-                      customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                      customAdIds: [AdIds.nativeAd7, AdIds.nativeAd8],
                       factoryId: Platform.isAndroid
                           ? AppStrings.nativeAdFactoryFullscreenAndroid
                           : AppStrings.nativeAdFactoryFullscreenIOS,
@@ -130,66 +130,73 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     );
                   }
 
-                  // Resolve onboarding page data: index 0,1 -> 0,1; index 3 -> 2
-                  final pageIndex = index > 2 ? index - 1 : index;
+                  // Resolve onboarding page data:
+                  // If showAd is true: pageIndex is index for index < 2, and index - 1 for index > 2 (i.e. index 3 -> 2).
+                  // If showAd is false: pageIndex is simply index (since there is no ad page).
+                  final pageIndex = (showAd && index > 2) ? index - 1 : index;
                   final page = _pages[pageIndex];
-                  return Stack(
-                    fit: StackFit.expand,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Image taking full space
-                      Image.asset(page.imagePath, fit: BoxFit.fill),
-                      // Gradient fade effect at the bottom
-                      Positioned(
-                        bottom: 0.h,
-                        left: 0.w,
-                        right: 0.w,
-                        height: 250.h, // Height of the fade effect
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                AppColors.white,
-                                AppColors.white.withValues(alpha: 0.8),
-                                AppColors.white.withValues(alpha: 0),
-                              ],
+                      // Top portion: App Related Image with fixed height to prevent vertical stretching
+                      Container(
+                        height: 0.38.sh,
+                        width: double.infinity,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.asset(
+                              page.imagePath,
+                              fit: BoxFit.cover, // Preserves aspect ratio, prevents skewing
                             ),
-                          ),
+                            // Gradient fade effect at the bottom of the image
+                            Positioned(
+                              bottom: 0.h,
+                              left: 0.w,
+                              right: 0.w,
+                              height: 120.h, // Height of the fade effect
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      AppColors.white,
+                                      AppColors.white.withValues(alpha: 0),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      // Text details positioned at the bottom on top of the gradient
-                      Positioned(
-                        bottom: 0.h,
-                        left: 0.w,
-                        right: 0.w,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            left: 24.w,
-                            right: 24.w,
-                            top: 16.h,
-                            bottom: 0.h,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AppText(
-                                page.title,
-                                textColor: AppColors.textPrimary,
-                                textSize: 20.sp,
-                                textWeight: FontWeight.bold,
-                                lettersSpace: -0.5,
-                              ),
-                              SizedBox(height: 14.h),
-                              AppText(
-                                page.subtitle,
-                                textColor: AppColors.textMuted,
-                                textSize: 12.sp,
-                                fontHeight: 1.5.h,
-                              ),
-                            ],
-                          ),
+                      const Spacer(), // <--- Push the text details to the bottom when ad is not showing!
+                      // Bottom portion: Text details
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 16.h,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AppText(
+                              page.title,
+                              textColor: AppColors.textPrimary,
+                              textSize: 20.sp,
+                              textWeight: FontWeight.bold,
+                              lettersSpace: -0.5,
+                            ),
+                            SizedBox(height: 14.h),
+                            AppText(
+                              page.subtitle,
+                              textColor: AppColors.textMuted,
+                              textSize: 12.sp,
+                              fontHeight: 1.5.h,
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -212,7 +219,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Dot Indicators
                     Row(
                       children: List.generate(3, (index) {
-                        final activeDotIndex = _currentPage > 2
+                        final activeDotIndex = (showAd && _currentPage > 2)
                             ? _currentPage - 1
                             : _currentPage;
                         final isActive = index == activeDotIndex;
@@ -236,7 +243,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Next / Start Button
                     TextButton(
                       onPressed: () {
-                        if (_currentPage < 3) {
+                        final maxPages = showAd ? 3 : 2;
+                        if (_currentPage < maxPages) {
                           _pageController.nextPage(
                             duration: const Duration(milliseconds: 400),
                             curve: Curves.easeInOutCubic,
@@ -254,7 +262,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       child: AppText(
-                        _currentPage == 3 ? 'Start' : 'Next',
+                        (showAd ? _currentPage == 3 : _currentPage == 2) ? 'Start' : 'Next',
                         textSize: 18.sp,
                         textWeight: FontWeight.bold,
                       ),
@@ -267,7 +275,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               _pageAds[0].buildNativeAdTile(
                 0,
                 () => setState(() {}),
-                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                customAdIds: [AdIds.nativeAd3, AdIds.nativeAd4],
                 factoryId: Platform.isAndroid
                     ? AppStrings.nativeAdFactoryLargeAndroid
                     : AppStrings.nativeAdFactoryLargeIOS,
@@ -281,7 +289,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               _pageAds[1].buildNativeAdTile(
                 0,
                 () => setState(() {}),
-                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                customAdIds: [AdIds.nativeAd5, AdIds.nativeAd6],
                 factoryId: Platform.isAndroid
                     ? AppStrings.nativeAdFactoryLargeAndroid
                     : AppStrings.nativeAdFactoryLargeIOS,
@@ -295,7 +303,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               _pageAds[3].buildNativeAdTile(
                 0,
                 () => setState(() {}),
-                customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+                customAdIds: [AdIds.nativeAd9, AdIds.nativeAd10],
                 factoryId: Platform.isAndroid
                     ? AppStrings.nativeAdFactoryLargeAndroid
                     : AppStrings.nativeAdFactoryLargeIOS,

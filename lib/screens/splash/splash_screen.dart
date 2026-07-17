@@ -112,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
         if (RemoteConfigService.instance.showInterAdSplash && !AppConstants.isSubscribed) {
           InterstitialAdService.showAd(
             context: context,
-            customAdIds: [AdIds.interstitialAd5, AdIds.interstitialAd6],
+            customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
             onAdClosed: navigateToTarget,
             onAdFailedToShow: navigateToTarget,
           );

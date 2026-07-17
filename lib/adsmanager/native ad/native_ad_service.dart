@@ -23,6 +23,12 @@ class NativeAdService {
   final Set<int> _failedAdIndices = {};
   bool _disposed = false;
 
+  /// Check if the ad at [adIndex] failed to load.
+  bool hasAdFailed(int adIndex) => _failedAdIndices.contains(adIndex);
+
+  /// Check if the ad at [adIndex] has loaded.
+  bool isAdLoaded(int adIndex) => _loadedAdIndices.contains(adIndex);
+
   /// Whether native ads may be shown at all.
   bool get canShowAds => RemoteConfigService.instance.showAdsEnabled;
 

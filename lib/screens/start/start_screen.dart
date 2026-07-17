@@ -37,50 +37,46 @@ class _StartScreenState extends State<StartScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Half: App Related Image
-            Expanded(
-              flex: 7,
-              child: Container(
-                width: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      ImageUtils.startScreenImg, // Using an existing nice illustration
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                    ),
-                    Positioned(
-                      bottom: 0.h,
-                      left: 0.w,
-                      right: 0.w,
-                      height: 100.h, // Height of the fade effect
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              AppColors.white,
-                              AppColors.white.withValues(alpha: 0),
-                            ],
-                          ),
+            // Top Half: App Related Image - Fixed height to prevent resizing
+            Container(
+              height: 0.48.sh,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    ImageUtils.startScreenImg, // Using an existing nice illustration
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                  ),
+                  Positioned(
+                    bottom: 0.h,
+                    left: 0.w,
+                    right: 0.w,
+                    height: 100.h, // Height of the fade effect
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            AppColors.white,
+                            AppColors.white.withValues(alpha: 0),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
             // Bottom Half: Text and Button
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                     SizedBox(height: 12.h),
                     AppText(
                       AppStrings.startScreenSubtitle,
@@ -120,14 +116,13 @@ class _StartScreenState extends State<StartScreen> {
                   ],
                 ),
               ),
-            ),
-
-            // Native ad at the bottom (collapses to nothing when unavailable)
-            if (RemoteConfigService.instance.showNativeAdStartScreen)
+              const Spacer(),
+              // Native ad at the bottom (collapses to nothing when unavailable)
+              if (RemoteConfigService.instance.showNativeAdStartScreen)
               _nativeAdService.buildNativeAdTile(
               0, // Index 0 for start screen single ad
               () => setState(() {}),
-              customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+              customAdIds: [AdIds.nativeAd9, AdIds.nativeAd10],
               factoryId: Platform.isAndroid
                   ? AppStrings.nativeAdFactoryLargeAndroid
                   : AppStrings.nativeAdFactoryLargeIOS,

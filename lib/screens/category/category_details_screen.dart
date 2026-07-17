@@ -91,7 +91,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             // Continue to prompt details whether the ad shows, closes, or fails.
             InterstitialAdService.showAd(
               context: context,
-              customAdIds: [AdIds.interstitialAd3, AdIds.interstitialAd4],
+              customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
               onAdClosed: openDetails,
               onAdFailedToShow: openDetails,
             );
@@ -187,7 +187,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             child: _nativeAdService.buildNativeAdTile(
               index,
               () => setState(() {}),
-              customAdIds: [AdIds.nativeAd1, AdIds.nativeAd2],
+              customAdIds: [AdIds.nativeAd3, AdIds.nativeAd4],
               factoryId: Platform.isAndroid
                   ? AppStrings.nativeAdFactoryGridAndroid
                   : AppStrings.nativeAdFactoryGridIOS,

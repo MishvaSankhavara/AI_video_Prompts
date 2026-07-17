@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:aivideoprompt/utils/strings.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   bool _useWebView = false;
   bool _isLoading = true;
 
-  static const String _privacyPolicyUrl = 'https://www.google.com';
+  static const String _privacyPolicyUrlAndroid = 'https://ai-video-prompt.web.app/AI_Video_Prompts_android.html'; // TODO: Set Android Privacy Policy URL here
+  static const String _privacyPolicyUrlIOS = 'https://ai-video-prompt.web.app/AI_Video_Prompts_ios.html';     // TODO: Set iOS Privacy Policy URL here
+
+  String get _privacyPolicyUrl => Platform.isAndroid ? _privacyPolicyUrlAndroid : _privacyPolicyUrlIOS;
 
   @override
   void initState() {

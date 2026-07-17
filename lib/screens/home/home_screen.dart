@@ -95,7 +95,7 @@ class HomeScreen extends StatelessWidget {
             if (RemoteConfigService.instance.showInterAdHome) {
               InterstitialAdService.showAd(
                 context: context,
-                customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
+                customAdIds: [AdIds.interstitialAd3, AdIds.interstitialAd4],
                 screenName: 'HomeScreen',
                 onAdClosed: openCategory,
                 onAdFailedToShow: openCategory,

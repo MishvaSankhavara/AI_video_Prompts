@@ -22,7 +22,7 @@ class _TermsOfUseScreenState extends State<TermsOfUseScreen> {
   bool _useWebView = false;
   bool _isLoading = true;
 
-  static const String _termsOfUseUrl = 'https://www.google.com';
+  static const String _termsOfUseUrl = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
 
   @override
   void initState() {

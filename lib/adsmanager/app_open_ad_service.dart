@@ -62,18 +62,23 @@ class AppOpenAdService {
               ad.dispose();
               CommonUtils.printLog('AppOpenAdService: App Open Ad dismissed.');
               print('AppOpenAdService: App Open Ad dismissed.');
+              Future.delayed(const Duration(milliseconds: 500), () {
+                AppConstants.isAdShowing = false;
+              });
               onAdClosed?.call();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               ad.dispose();
               CommonUtils.printLog('AppOpenAdService: App Open Ad failed to show: $error');
               print('AppOpenAdService: App Open Ad failed to show: $error');
+              AppConstants.isAdShowing = false;
               onAdFailedToShow?.call();
               onAdClosed?.call();
             },
             onAdShowedFullScreenContent: (ad) {
               CommonUtils.printLog('AppOpenAdService: App Open Ad displayed.');
               print('AppOpenAdService: App Open Ad displayed.');
+              AppConstants.isAdShowing = true;
             },
           );
 

@@ -8,4 +8,6 @@ class AppConstants {
   
   static bool get isSubscribed => isSubscribedNotifier.value;
   static set isSubscribed(bool value) => isSubscribedNotifier.value = value;
+
+  static bool isAdShowing = false;
 }

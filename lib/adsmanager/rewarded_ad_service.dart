@@ -80,6 +80,9 @@ class RewardedAdService {
                 'RewardedAdService: Rewarded Ad dismissed. Reward earned: $rewardEarned',
               );
               if (rewardEarned) onUserEarnedReward();
+              Future.delayed(const Duration(milliseconds: 500), () {
+                AppConstants.isAdShowing = false;
+              });
               onAdClosed?.call();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
@@ -87,11 +90,13 @@ class RewardedAdService {
               CommonUtils.printLog(
                 'RewardedAdService: Rewarded Ad failed to show: $error',
               );
+              AppConstants.isAdShowing = false;
               LoadingDialog.hide();
               onAdFailedToShow?.call();
             },
             onAdShowedFullScreenContent: (ad) {
               CommonUtils.printLog('RewardedAdService: Rewarded Ad displayed.');
+              AppConstants.isAdShowing = true;
               LoadingDialog.hide();
             },
           );

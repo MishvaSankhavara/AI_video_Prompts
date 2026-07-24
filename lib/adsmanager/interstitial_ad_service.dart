@@ -68,6 +68,9 @@ class InterstitialAdService {
               CommonUtils.printLog(
                 'InterstitialAdService: Interstitial dismissed.',
               );
+              Future.delayed(const Duration(milliseconds: 500), () {
+                AppConstants.isAdShowing = false;
+              });
               onAdClosed?.call();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
@@ -75,6 +78,7 @@ class InterstitialAdService {
               CommonUtils.printLog(
                 'InterstitialAdService: Interstitial failed to show: $error',
               );
+              AppConstants.isAdShowing = false;
               LoadingDialog.hide();
               onAdFailedToShow?.call();
             },
@@ -82,6 +86,7 @@ class InterstitialAdService {
               CommonUtils.printLog(
                 'InterstitialAdService: Interstitial displayed.',
               );
+              AppConstants.isAdShowing = true;
               LoadingDialog.hide();
             },
           );

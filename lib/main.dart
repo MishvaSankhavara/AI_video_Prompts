@@ -14,6 +14,7 @@ import 'viewmodel/fetch_video_category.dart';
 // import 'services/analytics_service.dart';
 import 'utils/colors.dart';
 import 'utils/common_utils.dart';
+import 'utils/constants.dart';
 import 'utils/strings.dart';
 import 'widgets/text_app.dart';
 import 'adsmanager/ad_manager.dart';
@@ -115,7 +116,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       if (_wasPaused) {
         _wasPaused = false;
-        _showWelcomeBackIfNeeded();
+        if (!AppConstants.isAdShowing) {
+          _showWelcomeBackIfNeeded();
+        }
       }
     }
   }

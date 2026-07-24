@@ -30,6 +30,15 @@ class AdManager {
 
   Future<void> initialize() async {
     await MobileAds.instance.initialize();
-    // // // CommonUtils.printLog('AdManager: MobileAds SDK initialized.');
+    
+    // Register test devices programmatically (highly recommended for physical iOS/Android devices)
+    // If you see "To get test ads on this device, set: requestConfiguration.testDeviceIdentifiers..." 
+    // in the logs, paste the 32-character ID in the list below.
+    final RequestConfiguration requestConfiguration = RequestConfiguration(
+      testDeviceIds: [
+        '48D802F0-7D54-4696-A75B-4BF7C3826011',
+      ],
+    );
+    await MobileAds.instance.updateRequestConfiguration(requestConfiguration);
   }
 }

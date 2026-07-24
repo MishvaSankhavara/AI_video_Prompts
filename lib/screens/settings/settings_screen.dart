@@ -180,13 +180,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 if (Platform.isIOS)
                   _buildSettingsTile(
-                    imagePath: ImageUtils.icPrivacyPolicy,
+                    imagePath: ImageUtils.icTermsOfUse,
                     title: AppStrings.settingsTermsOfUse,
                     onTap: () {
                       NavigationService.push(context, const TermsOfUseScreen());
                     },
                   ),
-                if (RemoteConfigService.instance.loginDemo)
+                if (Platform.isAndroid && RemoteConfigService.instance.loginDemo)
                   _buildSettingsTile(
                     imagePath: ImageUtils.icFeedback,
                     title: AppStrings.settingsSupport,

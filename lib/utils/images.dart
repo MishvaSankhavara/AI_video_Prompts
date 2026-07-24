@@ -13,6 +13,7 @@ class ImageUtils {
   static const String icLike = '$_iconsPath/ic_like.webp';
   static const String icLikeBorder = '$_iconsPath/ic_like_border.webp';
   static const String icPrivacyPolicy = '$_iconsPath/ic_privacy_policy.webp';
+  static const String icTermsOfUse = '$_iconsPath/ic_terms_of_use.webp';
   static const String icRate = '$_iconsPath/ic_rate.webp';
   static const String icRemoveAd = '$_iconsPath/ic_remove_ad.webp';
   static const String icSettings = '$_iconsPath/ic_settings.webp';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,12 +29,15 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await MobileAds.instance.initialize();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   try {
+    print('>>> MAIN: Initializing Firebase...');
     await Firebase.initializeApp();
+    print('>>> MAIN: Firebase initialized successfully');
 
     if (kDebugMode) {
       // Disable Crashlytics collection while debugging
@@ -52,19 +56,23 @@ void main() async {
     }
 
     await RemoteConfigService.instance.initialize();
+    print('>>> MAIN: RemoteConfig initialized');
 
     // Initialize FCM and local notifications
     await FirebaseNotificationService.instance.initialize();
+    print('>>> MAIN: FirebaseNotificationService initialized');
     await FirebaseNotificationService.instance.requestPermissions();
 
     await NotificationService.instance.initialize();
     await NotificationService.instance.requestPermissions();
     NotificationService.instance.scheduleDailyNotifications();
   } catch (e) {
-    // CommonUtils.printLog('Firebase initialization failed: $e');
+    print('===================================================');
+    print('FIREBASE INITIALIZATION FAILED: $e');
+    print('===================================================');
   }
 
-  await AdManager.instance.initialize();
+  // AdManager.initialize is now delayed until after ATT consent is requested in splash_screen.dart
   runApp(
     MultiProvider(
       providers: [

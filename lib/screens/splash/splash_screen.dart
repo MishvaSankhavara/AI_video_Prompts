@@ -2,6 +2,11 @@ import 'package:aivideoprompt/widgets/text_app.dart';
 import 'package:aivideoprompt/utils/images.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +14,7 @@ import '../../adsmanager/native ad/native_ad_service.dart';
 import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/interstitial_ad_service.dart';
 import '../../adsmanager/ad_ids.dart';
+import '../../adsmanager/ad_manager.dart';
 // import '../../services/analytics_service.dart';
 import '../../services/navigation_service.dart';
 import '../../services/shareed_prefe.dart';
@@ -37,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
 
   final NativeAdService _nativeAdService = NativeAdService();
+  bool _isAdManagerInitialized = false;
 
   @override
   void initState() {
@@ -62,6 +69,69 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Request tracking authorization on iOS devices before continuing
+      try {
+        if (Platform.isIOS) {
+          final status = await AppTrackingTransparency.requestTrackingAuthorization();
+          CommonUtils.printLog('>>> SPLASH SCREEN: ATT status: $status');
+          print('>>> SPLASH SCREEN: ATT status: $status');
+
+          final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
+          CommonUtils.printLog('===================================================');
+          CommonUtils.printLog('SPLASH SCREEN: IDFA: $idfa');
+          CommonUtils.printLog('===================================================');
+          print('===================================================');
+          print('SPLASH SCREEN: IDFA: $idfa');
+          print('===================================================');
+
+          if (idfa.isNotEmpty && idfa != '00000000-0000-0000-0000-000000000000') {
+            final String rawIdfaUpper = idfa.toUpperCase();
+            final String rawIdfaLower = idfa.toLowerCase();
+
+            // AdMob expects lowercase MD5 hash of raw IDFA string
+            final String md5Upper = md5.convert(utf8.encode(rawIdfaUpper)).toString().toLowerCase();
+            final String md5Lower = md5.convert(utf8.encode(rawIdfaLower)).toString().toLowerCase();
+
+            CommonUtils.printLog('>>> REGISTERING TEST DEVICE MD5 (Upper): $md5Upper');
+            CommonUtils.printLog('>>> REGISTERING TEST DEVICE MD5 (Lower): $md5Lower');
+            print('>>> REGISTERING TEST DEVICE MD5 (Upper): $md5Upper');
+            print('>>> REGISTERING TEST DEVICE MD5 (Lower): $md5Lower');
+
+            // Apply configurations to Google Mobile Ads SDK dynamically
+            final requestConfig = RequestConfiguration(
+              testDeviceIds: [
+                md5Upper,
+                md5Lower,
+                idfa,
+              ],
+            );
+            await MobileAds.instance.updateRequestConfiguration(requestConfig);
+            CommonUtils.printLog('>>> Dynamic AdMob Test Device Registration Completed!');
+            print('>>> Dynamic AdMob Test Device Registration Completed!');
+          }
+        }
+      } catch (e) {
+        CommonUtils.printLog('>>> SPLASH SCREEN: ATT error: $e');
+        print('>>> SPLASH SCREEN: ATT error: $e');
+      }
+
+      // Initialize AdManager after ATT authorization has been resolved so the Ad SDK has full device identification
+      try {
+        CommonUtils.printLog('>>> SPLASH SCREEN: Initializing AdManager...');
+        print('>>> SPLASH SCREEN: Initializing AdManager...');
+        await AdManager.instance.initialize();
+        CommonUtils.printLog('>>> SPLASH SCREEN: AdManager Initialized successfully!');
+        print('>>> SPLASH SCREEN: AdManager Initialized successfully!');
+        if (mounted) {
+          setState(() {
+            _isAdManagerInitialized = true;
+          });
+        }
+      } catch (e) {
+        CommonUtils.printLog('>>> SPLASH SCREEN: AdManager Initialization Error: $e');
+        print('>>> SPLASH SCREEN: AdManager Initialization Error: $e');
+      }
+
       bool isSub = await SharedPrefs.isSubscribed();
       if (isSub) {
         String? expiryString = await SharedPrefs.getExpiryDate();
@@ -87,6 +157,18 @@ class _SplashScreenState extends State<SplashScreen>
       CommonUtils.printLog('--- SPLASH LOG: Fetched Weekly Price: ${SubscriptionService.instance.weeklyPrice} ---');
       CommonUtils.printLog('--- SPLASH LOG: Fetched Yearly Price: ${SubscriptionService.instance.yearlyPrice} ---');
       CommonUtils.printLog('--- SPLASH LOG: isSubscribed is currently ${AppConstants.isSubscribed} ---');
+
+      // Fetch and log FCM token after splash is fully running so it is guaranteed to show up in Android Studio console
+      try {
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        CommonUtils.printLog('===================================================');
+        CommonUtils.printLog('SPLASH FCM TOKEN: $fcmToken');
+        CommonUtils.printLog('===================================================');
+        CommonUtils.printLog('SPLASH FCM TOKEN: $fcmToken');
+      } catch (e) {
+        CommonUtils.printLog('SPLASH FCM TOKEN ERROR: $e');
+        print('SPLASH FCM TOKEN ERROR: $e');
+      }
     });
 
     _controller.addStatusListener((status) async {
@@ -109,7 +191,7 @@ class _SplashScreenState extends State<SplashScreen>
           NavigationService.pushReplacement(context, targetScreen);
         }
 
-        if (RemoteConfigService.instance.showInterAdSplash && !AppConstants.isSubscribed) {
+        if (_isAdManagerInitialized && RemoteConfigService.instance.showInterAdSplash && !AppConstants.isSubscribed) {
           InterstitialAdService.showAd(
             context: context,
             customAdIds: [AdIds.interstitialAd1, AdIds.interstitialAd2],
@@ -219,7 +301,7 @@ class _SplashScreenState extends State<SplashScreen>
               ),
 
               // Medium Native Ad at Bottom
-              if (RemoteConfigService.instance.showNativeAdSplash && !AppConstants.isSubscribed)
+              if (_isAdManagerInitialized && RemoteConfigService.instance.showNativeAdSplash && !AppConstants.isSubscribed)
                 Positioned(
                   bottom: 6.h,
                   left: 6.w,

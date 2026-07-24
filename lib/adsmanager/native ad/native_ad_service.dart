@@ -4,6 +4,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../services/firebase/remote_config_service.dart';
 import '../../utils/common_utils.dart';
+import '../../utils/constants.dart';
 // import '../services/remote_config_service.dart';
 import '../ad_ids.dart';
 
@@ -30,7 +31,7 @@ class NativeAdService {
   bool isAdLoaded(int adIndex) => _loadedAdIndices.contains(adIndex);
 
   /// Whether native ads may be shown at all.
-  bool get canShowAds => RemoteConfigService.instance.showAdsEnabled;
+  bool get canShowAds => RemoteConfigService.instance.showAdsEnabled && !AppConstants.isSubscribed;
 
   /// Disposes every ad held by this service. Call from the host screen's
   /// [State.dispose] so the loaded `NativeAd` platform views are released.
@@ -79,11 +80,11 @@ class NativeAdService {
     if (adIds.isEmpty || listIndex >= adIds.length) {
       _loadingAdIndices.remove(adIndex);
       _failedAdIndices.add(adIndex);
-      // CommonUtils.printLog(
-      //   'NativeAdService: all ad ids failed'
-      //   '${screenName != null ? ' | Screen: $screenName' : ''}'
-      //   ' | AdIndex: $adIndex',
-      // );
+      final logMsg = 'NativeAdService: all ad ids failed'
+          '${screenName != null ? ' | Screen: $screenName' : ''}'
+          ' | AdIndex: $adIndex';
+      CommonUtils.printLog(logMsg);
+      print(logMsg);
       if (!_disposed) refreshUI();
       return;
     }
@@ -91,6 +92,11 @@ class NativeAdService {
     _nativeAds[adIndex]?.dispose();
 
     final adUnitId = adIds[listIndex];
+    final attemptMsg = 'NativeAdService: Attempting to load ID: $adUnitId'
+        '${screenName != null ? ' | Screen: $screenName' : ''}'
+        ' | AdIndex: $adIndex | Factory: $factoryId';
+    CommonUtils.printLog(attemptMsg);
+    print(attemptMsg);
 
     final ad = NativeAd(
       adUnitId: adUnitId,
@@ -102,24 +108,24 @@ class NativeAdService {
             ad.dispose();
             return;
           }
-          _nativeAds[adIndex] = ad as NativeAd;
           _loadedAdIndices.add(adIndex);
           _loadingAdIndices.remove(adIndex);
-          // CommonUtils.printLog(
-          //   'NativeAdService: loaded'
-          //   '${screenName != null ? ' | Screen: $screenName' : ''}'
-          //   ' | AdIndex: $adIndex | AdUnitId: $adUnitId | Factory: $factoryId',
-          // );
+          final successMsg = 'NativeAdService: loaded'
+              '${screenName != null ? ' | Screen: $screenName' : ''}'
+              ' | AdIndex: $adIndex | AdUnitId: $adUnitId | Factory: $factoryId';
+          CommonUtils.printLog(successMsg);
+          print(successMsg);
           refreshUI();
         },
         onAdFailedToLoad: (ad, error) {
-          // CommonUtils.printLog(
-          //   'NativeAdService: failed'
-          //   '${screenName != null ? ' | Screen: $screenName' : ''}'
-          //   ' | AdIndex: $adIndex | AdUnitId: $adUnitId | Error: ${error.message}.'
-          //   ' Trying next...',
-          // );
+          final failMsg = 'NativeAdService: failed'
+              '${screenName != null ? ' | Screen: $screenName' : ''}'
+              ' | AdIndex: $adIndex | AdUnitId: $adUnitId | Error: $error.'
+              ' Trying next...';
+          CommonUtils.printLog(failMsg);
+          print(failMsg);
           ad.dispose();
+          _nativeAds.remove(adIndex);
           if (_disposed) return;
           _tryLoadAd(
             adIndex,
@@ -133,6 +139,7 @@ class NativeAdService {
       ),
     );
 
+    _nativeAds[adIndex] = ad;
     ad.load();
   }
 

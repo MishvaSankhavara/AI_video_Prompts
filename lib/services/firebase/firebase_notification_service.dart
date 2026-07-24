@@ -39,7 +39,14 @@ class FirebaseNotificationService {
 
     // Get FCM token
     FirebaseMessaging.instance.getToken().then((token) {
+      print('===================================================');
+      print('FCM TOKEN: $token');
+      print('===================================================');
       CommonUtils.printLog('>>> FCM Token: $token');
+    }).catchError((e) {
+      print('===================================================');
+      print('ERROR GETTING FCM TOKEN: $e');
+      print('===================================================');
     });
 
     // Listen to token refreshes

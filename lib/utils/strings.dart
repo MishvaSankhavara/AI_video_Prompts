@@ -197,7 +197,7 @@ class AppStrings {
       'fullscreen_ad_factory';
 
   // iOS factory ids
-  static const String nativeAdFactoryMediumIOS = 'medium_native';
+  static const String nativeAdFactoryMediumIOS = 'small_native';
   static const String nativeAdFactoryLargeIOS = 'large_native';
   static const String nativeAdFactoryGridIOS = 'grid_native';
   static const String nativeAdFactoryFullscreenIOS = 'fullscreen_native';
@@ -208,7 +208,7 @@ class AppStrings {
   static const String proSubtitle =
       'Unlock unlimited premium AI video prompts and copy-ready ideas with no ads.';
   static const String proFeature1 =
-      'No More Interstitial or Reward Ads';
+      'Unlock a Completely Ad-Free Experience';
   static const String proFeature2 =
       'Unlimited Video Prompts – Get Full Access to Every Prompt';
 

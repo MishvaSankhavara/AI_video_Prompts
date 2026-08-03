@@ -13,6 +13,10 @@ class CommonUtils {
     }
   }
 
+  static void print(String? message) {
+    printLog(message);
+  }
+
   static void showToast(String message) {
     Fluttertoast.showToast(
       msg: message,

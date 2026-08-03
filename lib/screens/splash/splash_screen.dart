@@ -9,7 +9,6 @@ import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../adsmanager/native ad/native_ad_service.dart';
 import '../../adsmanager/native ad/native_ad_shimmer.dart';
 import '../../adsmanager/interstitial_ad_service.dart';
@@ -28,6 +27,7 @@ import '../settings/privacy_policy_screen.dart';
 import '../start/start_screen.dart';
 import '../../services/firebase/remote_config_service.dart';
 import '../../services/subscription_service.dart';
+import '../../services/device_id_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -74,15 +74,16 @@ class _SplashScreenState extends State<SplashScreen>
         if (Platform.isIOS) {
           final status = await AppTrackingTransparency.requestTrackingAuthorization();
           CommonUtils.printLog('>>> SPLASH SCREEN: ATT status: $status');
-          print('>>> SPLASH SCREEN: ATT status: $status');
 
           final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
           CommonUtils.printLog('===================================================');
           CommonUtils.printLog('SPLASH SCREEN: IDFA: $idfa');
           CommonUtils.printLog('===================================================');
-          print('===================================================');
-          print('SPLASH SCREEN: IDFA: $idfa');
-          print('===================================================');
+
+          final iosDeviceId = await DeviceInfoService.getDeviceId();
+          CommonUtils.print('===================================================');
+          CommonUtils.print('SPLASH SCREEN: iOS Device ID: $iosDeviceId');
+          CommonUtils.print('===================================================');
 
           if (idfa.isNotEmpty && idfa != '00000000-0000-0000-0000-000000000000') {
             final String rawIdfaUpper = idfa.toUpperCase();
@@ -94,8 +95,6 @@ class _SplashScreenState extends State<SplashScreen>
 
             CommonUtils.printLog('>>> REGISTERING TEST DEVICE MD5 (Upper): $md5Upper');
             CommonUtils.printLog('>>> REGISTERING TEST DEVICE MD5 (Lower): $md5Lower');
-            print('>>> REGISTERING TEST DEVICE MD5 (Upper): $md5Upper');
-            print('>>> REGISTERING TEST DEVICE MD5 (Lower): $md5Lower');
 
             // Apply configurations to Google Mobile Ads SDK dynamically
             final requestConfig = RequestConfiguration(
@@ -107,29 +106,24 @@ class _SplashScreenState extends State<SplashScreen>
             );
             await MobileAds.instance.updateRequestConfiguration(requestConfig);
             CommonUtils.printLog('>>> Dynamic AdMob Test Device Registration Completed!');
-            print('>>> Dynamic AdMob Test Device Registration Completed!');
           }
         }
       } catch (e) {
         CommonUtils.printLog('>>> SPLASH SCREEN: ATT error: $e');
-        print('>>> SPLASH SCREEN: ATT error: $e');
       }
 
       // Initialize AdManager after ATT authorization has been resolved so the Ad SDK has full device identification
       try {
         CommonUtils.printLog('>>> SPLASH SCREEN: Initializing AdManager...');
-        print('>>> SPLASH SCREEN: Initializing AdManager...');
         await AdManager.instance.initialize();
         CommonUtils.printLog('>>> SPLASH SCREEN: AdManager Initialized successfully!');
-        print('>>> SPLASH SCREEN: AdManager Initialized successfully!');
         if (mounted) {
           setState(() {
             _isAdManagerInitialized = true;
           });
         }
       } catch (e) {
-        CommonUtils.printLog('>>> SPLASH SCREEN: AdManager Initialization Error: $e');
-        print('>>> SPLASH SCREEN: AdManager Initialization Error: $e');
+        // CommonUtils.printLog('>>> SPLASH SCREEN: AdManager Initialization Error: $e');
       }
 
       bool isSub = await SharedPrefs.isSubscribed();
@@ -149,25 +143,24 @@ class _SplashScreenState extends State<SplashScreen>
       }
       
       AppConstants.isSubscribed = isSub;
-      CommonUtils.printLog('>>> SPLASH SCREEN isSubscribed (cached): ${AppConstants.isSubscribed}');
+      // CommonUtils.printLog('>>> SPLASH SCREEN isSubscribed (cached): ${AppConstants.isSubscribed}');
       if (mounted) setState(() {});
       AssetPreloader.preloadAssets(context);
       await SubscriptionService.instance.init();
-      CommonUtils.printLog('>>> SPLASH SCREEN isSubscribed (after init): ${AppConstants.isSubscribed}');
-      CommonUtils.printLog('--- SPLASH LOG: Fetched Weekly Price: ${SubscriptionService.instance.weeklyPrice} ---');
-      CommonUtils.printLog('--- SPLASH LOG: Fetched Yearly Price: ${SubscriptionService.instance.yearlyPrice} ---');
-      CommonUtils.printLog('--- SPLASH LOG: isSubscribed is currently ${AppConstants.isSubscribed} ---');
+      // CommonUtils.printLog('>>> SPLASH SCREEN isSubscribed (after init): ${AppConstants.isSubscribed}');
+      // CommonUtils.printLog('--- SPLASH LOG: Fetched Weekly Price: ${SubscriptionService.instance.weeklyPrice} ---');
+      // CommonUtils.printLog('--- SPLASH LOG: Fetched Yearly Price: ${SubscriptionService.instance.yearlyPrice} ---');
+      // CommonUtils.printLog('--- SPLASH LOG: isSubscribed is currently ${AppConstants.isSubscribed} ---');
 
       // Fetch and log FCM token after splash is fully running so it is guaranteed to show up in Android Studio console
       try {
         final fcmToken = await FirebaseMessaging.instance.getToken();
         CommonUtils.printLog('===================================================');
         CommonUtils.printLog('SPLASH FCM TOKEN: $fcmToken');
-        CommonUtils.printLog('===================================================');
-        CommonUtils.printLog('SPLASH FCM TOKEN: $fcmToken');
+        // CommonUtils.printLog('===================================================');
+        // CommonUtils.printLog('SPLASH FCM TOKEN: $fcmToken');
       } catch (e) {
         CommonUtils.printLog('SPLASH FCM TOKEN ERROR: $e');
-        print('SPLASH FCM TOKEN ERROR: $e');
       }
     });
 

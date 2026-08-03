@@ -1,8 +1,8 @@
+import 'dart:io';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../api/api_const.dart';
-import '../../adsmanager/ad_ids.dart';
 import '../../utils/common_utils.dart';
 
 class RemoteConfigService {
@@ -56,6 +56,7 @@ class RemoteConfigService {
 
       await remoteConfig.setDefaults(const {
         'ads_disabled_versions': '',
+        'ads_disabled_versions_ios': '',
         'rewarded_ad_prompt_details_screen': true,
         'inter_ad_category_details_screen': true,
         'inter_ad_home_screen': true,
@@ -106,7 +107,7 @@ class RemoteConfigService {
       passwordDemo = remoteConfig.getString('password_demo');
 
       final String disabledVersionsStr = remoteConfig.getString(
-        'ads_disabled_versions',
+        Platform.isIOS ? 'ads_disabled_versions_ios' : 'ads_disabled_versions',
       );
 
       final packageInfo = await PackageInfo.fromPlatform();

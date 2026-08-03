@@ -272,46 +272,55 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
 
             if (_currentPage == 0 && RemoteConfigService.instance.showNativeAdOnboarding1)
-              _pageAds[0].buildNativeAdTile(
-                0,
-                () => setState(() {}),
-                customAdIds: [AdIds.nativeAd3, AdIds.nativeAd4],
-                factoryId: Platform.isAndroid
-                    ? AppStrings.nativeAdFactoryLargeAndroid
-                    : AppStrings.nativeAdFactoryLargeIOS,
+              SizedBox(
                 height: 0.34.sh,
-                width: double.infinity,
-                backgroundColor: AppColors.mainBackground,
-                screenName: 'AiOnboardingScreen_Large_0',
-                shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+                child: _pageAds[0].buildNativeAdTile(
+                  0,
+                  () => setState(() {}),
+                  customAdIds: [AdIds.nativeAd3, AdIds.nativeAd4],
+                  factoryId: Platform.isAndroid
+                      ? AppStrings.nativeAdFactoryLargeAndroid
+                      : AppStrings.nativeAdFactoryLargeIOS,
+                  height: 0.34.sh,
+                  width: double.infinity,
+                  backgroundColor: AppColors.mainBackground,
+                  screenName: 'AiOnboardingScreen_Large_0',
+                  shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+                ),
               ),
             if (_currentPage == 1 && RemoteConfigService.instance.showNativeAdOnboarding2)
-              _pageAds[1].buildNativeAdTile(
-                0,
-                () => setState(() {}),
-                customAdIds: [AdIds.nativeAd5, AdIds.nativeAd6],
-                factoryId: Platform.isAndroid
-                    ? AppStrings.nativeAdFactoryLargeAndroid
-                    : AppStrings.nativeAdFactoryLargeIOS,
+              SizedBox(
                 height: 0.34.sh,
-                width: double.infinity,
-                backgroundColor: AppColors.mainBackground,
-                screenName: 'AiOnboardingScreen_Large_1',
-                shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+                child: _pageAds[1].buildNativeAdTile(
+                  0,
+                  () => setState(() {}),
+                  customAdIds: [AdIds.nativeAd5, AdIds.nativeAd6],
+                  factoryId: Platform.isAndroid
+                      ? AppStrings.nativeAdFactoryLargeAndroid
+                      : AppStrings.nativeAdFactoryLargeIOS,
+                  height: 0.34.sh,
+                  width: double.infinity,
+                  backgroundColor: AppColors.mainBackground,
+                  screenName: 'AiOnboardingScreen_Large_1',
+                  shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+                ),
               ),
-            if (_currentPage == 3 && RemoteConfigService.instance.showNativeAdOnboarding3)
-              _pageAds[3].buildNativeAdTile(
-                0,
-                () => setState(() {}),
-                customAdIds: [AdIds.nativeAd9, AdIds.nativeAd10],
-                factoryId: Platform.isAndroid
-                    ? AppStrings.nativeAdFactoryLargeAndroid
-                    : AppStrings.nativeAdFactoryLargeIOS,
+            if ((showAd ? _currentPage == 3 : _currentPage == 2) && RemoteConfigService.instance.showNativeAdOnboarding3)
+              SizedBox(
                 height: 0.34.sh,
-                width: double.infinity,
-                backgroundColor: AppColors.mainBackground,
-                screenName: 'AiOnboardingScreen_Large_3',
-                shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+                child: _pageAds[3].buildNativeAdTile(
+                  0,
+                  () => setState(() {}),
+                  customAdIds: [AdIds.nativeAd9, AdIds.nativeAd10],
+                  factoryId: Platform.isAndroid
+                      ? AppStrings.nativeAdFactoryLargeAndroid
+                      : AppStrings.nativeAdFactoryLargeIOS,
+                  height: 0.34.sh,
+                  width: double.infinity,
+                  backgroundColor: AppColors.mainBackground,
+                  screenName: 'AiOnboardingScreen_Large_3',
+                  shimmer: ShimmerNativeAd.largeNativeAdShimmer(),
+                ),
               ),
           ],
         ),

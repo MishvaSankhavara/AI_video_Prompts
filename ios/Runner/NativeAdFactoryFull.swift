@@ -243,6 +243,7 @@ class NativeAdFactoryFullScreen: NSObject, FLTNativeAdFactory {
             bodyLabel.topAnchor.constraint(equalTo: ctaButton.bottomAnchor, constant: 24),
             bodyLabel.leadingAnchor.constraint(equalTo: textContentView.leadingAnchor, constant: 20),
             bodyLabel.trailingAnchor.constraint(equalTo: textContentView.trailingAnchor, constant: -20),
+            bodyLabel.bottomAnchor.constraint(equalTo: textContentView.bottomAnchor, constant: -40),
         ])
 
         // Assign outlets

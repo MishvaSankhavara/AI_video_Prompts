@@ -16,11 +16,12 @@ class AppOpenAdService {
     VoidCallback? onAdFailedToShow,
   }) {
     // Ads disabled (e.g. via remote config or premium subscription) -> skip the ad, continue app flow.
-    if (!RemoteConfigService.instance.showAdsEnabled || AppConstants.isSubscribed) {
+    if (!RemoteConfigService.instance.showAdsEnabled ||
+        !RemoteConfigService.instance.app_open_ad ||
+        AppConstants.isSubscribed) {
       onAdClosed?.call();
       return;
     }
-
     if (customAdIds.isEmpty) {
       CommonUtils.printLog('AppOpenAdService: No IDs provided.');
       print('AppOpenAdService: No IDs provided.');

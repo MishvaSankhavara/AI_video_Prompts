@@ -20,6 +20,7 @@ class RemoteConfigService {
 
   /// Whether the rewarded ad button is shown on the prompt details screen.
   bool showRewardedAdPromptDetails = true;
+  bool app_open_ad = true;
 
   /// Interstitial ad controls
   bool showInterAdCategoryDetails = true;
@@ -57,6 +58,7 @@ class RemoteConfigService {
       await remoteConfig.setDefaults(const {
         'ads_disabled_versions': '',
         'ads_disabled_versions_ios': '',
+        'app_open_ad': true,
         'rewarded_ad_prompt_details_screen': true,
         'inter_ad_category_details_screen': true,
         'inter_ad_home_screen': true,
@@ -87,6 +89,7 @@ class RemoteConfigService {
       await ApiConst.applyServerConfig(remoteConfig);
 
       showRewardedAdPromptDetails = remoteConfig.getBool('rewarded_ad_prompt_details_screen');
+      app_open_ad = remoteConfig.getBool('app_open_ad');
       showInterAdCategoryDetails = remoteConfig.getBool('inter_ad_category_details_screen');
       showInterAdHome = remoteConfig.getBool('inter_ad_home_screen');
       showInterAdSplash = remoteConfig.getBool('inter_ad_splash_screen');
